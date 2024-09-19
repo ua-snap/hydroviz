@@ -44,12 +44,25 @@ if __name__ == "__main__":
     geom_coords_dict["seg"] = get_unique_coords(seg_files)
     geom_coords_dict["hru"] = get_unique_coords(hru_files)
 
-    # create empty netCDFs
-    print(f"Writing empty netCDFs to {output_dir}...")
+    # create empty netCDFs and populate with the data from CSVs
     output_dir.mkdir(exist_ok=True, parents=True)
 
+    print("Creating empty netCDF dataset to hold stream segment statistics...")
     seg_ds = create_empty_dataset(geom_coords_dict["seg"], seg_ids)
-    seg_ds.to_netcdf(Path(output_dir).join("seg.nc"))
+    print(f"Populating dataset from {len(seg_files)} stream segment statistic CSVs...")
+    populate_dataset(seg_ds, seg_files)
+    seg_outfile = Path(output_dir).join("seg.nc")
+    print(f"Writing populated netCDF to {seg_outfile}...")
+    seg_ds.to_netcdf(seg_outfile)
+    del seg_ds
 
+    print("Creating empty netCDF dataset to hold watershed statistics...")
     hru_ds = create_empty_dataset(geom_coords_dict["hru"], hru_ids)
-    hru_ds.to_netcdf(Path(output_dir).join("hru.nc"))
+    print(f"Populating dataset from {len(hru_files)} watershed statistic CSVs...")
+    populate_dataset(hru_ds, hru_files)
+    hru_outfile = Path(output_dir).join("hru.nc")
+    print(f"Writing populated netCDF to {hru_outfile}...")
+    hru_ds.to_netcdf(hru_outfile)
+    del hru_ds
+
+

@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import xarray as xr
 from luts import era_lookup, stat_vars_dict
 
@@ -70,7 +71,7 @@ def get_unique_coords(files):
 
 def create_empty_dataset(dict, geom_ids):
 
-    stat_vars = stat_vars_dict.keys()
+    stat_vars = list(stat_vars_dict.keys())
 
     lcs, models, scenarios, eras = dict["lcs"], dict["models"], dict["scenarios"], dict["eras"]
 
@@ -98,3 +99,41 @@ def create_empty_dataset(dict, geom_ids):
     )
 
     return ds
+
+
+def populate_dataset(ds, files):
+
+    stat_vars = list(stat_vars_dict.keys())
+
+    # TODO: add a step to confirm that the CSV is the proper shape based on dataset geom_id coords
+    # TODO: add a step to confirm that all stat vars from luts.py are found in CSV column names
+    # TODO: add a step to confirm that the parsed coords all actually exist in the xarray dataset
+
+    for file in files:
+        # parse filename to find coords where data should go
+        try:
+            parts = file.name.split('_')
+            lc, model, scenario, era = parts[0], parts[1], parts[2], "_".join([parts[5], parts[6].split(".")[0]])
+        except:
+            print(f"Error parsing file: {file.name}")
+            print(f"Data will not be written to netCDF.")
+            continue
+        
+        # only read in the columns we want, and use actual NaNs
+        df = pd.read_csv(file, usecols = stat_vars)
+        df.replace(-99999, np.nan, inplace=True)
+
+        for stat in df.columns:
+            try:
+                ds[stat].loc[{"lc": lc, "model": model, "scenario": scenario, "era": era_lookup[era]}] = df[stat]
+            except:
+                print(f"Indexing error for {stat} in {file.name}: one of {lc}, {model}, {scenario}, {era_lookup[era]} could not be found in the dataset.")
+            # drop column after use (improves performance)
+            df.drop(columns=[stat], inplace=True)
+
+    return 
+
+
+#TODO: add QC function that picks random CSVs and checks that the data is in the right place in the netCDF
+
+#TODO: add function to write netCDF metadata from stat descriptions in luts.py and general dataset info
