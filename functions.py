@@ -1,13 +1,8 @@
 import pandas as pd
 import numpy as np
 import xarray as xr
+from luts import era_lookup, stat_vars_dict
 
-era_lookup = {
-    '1976_2005' : 'historical',
-    '2016_2045' : 'early_century',
-    '2046_2075' : 'mid_century',
-    '2071_2100' : 'late_century',
-   }
 
 def filter_files(files):
 # ignore Maurer files and the "diff" files
@@ -74,7 +69,9 @@ def get_unique_coords(files):
     return dict
 
 
-def create_empty_dataset(dict, stat_vars, geom_ids):
+def create_empty_dataset(dict, stat_vars_dict, geom_ids):
+
+    stat_vars = stat_vars_dict.keys()
 
     lcs, models, scenarios, eras = dict["lcs"], dict["models"], dict["scenarios"], dict["eras"]
 
