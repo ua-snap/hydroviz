@@ -1,8 +1,8 @@
 import argparse
 import sys
+import os
 from pathlib import Path
-from functions import *
-
+import subprocess
 
 def arguments(argv):
     """Parse some args"""
@@ -18,9 +18,84 @@ def arguments(argv):
     output_dir = args.output_dir
     conda_init_script = args.conda_init_script
     conda_env_name = args.conda_env_name
-    build_nc_script = args.build_nc
+    build_nc_script = args.build_nc_script
 
     return data_dir, output_dir, conda_init_script, conda_env_name, build_nc_script
+
+
+def write_sbatch_head(sbatch_out_fp, conda_init_script, conda_env_name):
+    """Make a string of SBATCH commands that can be written into a .slurm script
+
+    Args:
+        conda_init_script (path_like): path to a script that contains commands for initializing the shells on the compute nodes to use conda activate
+
+    Returns:
+        sbatch_head (str): string of SBATCH commands ready to be used as parameter in sbatch-writing functions. The following gaps are left for filling with .format:
+            - output slurm filename
+    """
+    sbatch_head = (
+        "#!/bin/sh\n"
+        "#SBATCH --nodes=1\n"
+        f"#SBATCH --cpus-per-task=24\n"
+        f"#SBATCH -p t2small\n"
+        f"#SBATCH --output {sbatch_out_fp}\n"
+        # print start time
+        "echo Start slurm && date\n"
+        # prepare shell for using activate
+        f"source {conda_init_script}\n"
+        f"conda activate {conda_env_name}\n"
+    )
+
+    return sbatch_head
+
+
+def write_sbatch(
+    sbatch_fp,
+    sbatch_out_fp,
+    sbatch_head,
+    build_nc_script,
+    data_dir,
+    output_dir,
+):
+    """Write an sbatch script for building the netCDFs
+
+    Args:
+        sbatch_fp (path_like): path to .slurm script to write sbatch commands to
+        sbatch_out_fp (path_like): path to where sbatch stdout should be written
+        sbatch_head (dict): string for sbatch head script
+
+    Returns:
+        None, writes the commands to sbatch_fp
+    """
+    pycommands = "\n"
+    pycommands += (
+        f"python {build_nc_script} "
+        f"--data_dir {data_dir} "
+        f"--output_dir {output_dir} "
+    )
+    pycommands += "\n\n"
+
+    commands = sbatch_head.format(sbatch_out_fp=sbatch_out_fp) + pycommands
+
+    with open(sbatch_fp, "w") as f:
+        f.write(commands)
+
+    return
+
+
+def submit_sbatch(sbatch_fp):
+    """Submit a script to slurm via sbatch
+
+    Args:
+        sbatch_fp (pathlib.PosixPath): path to .slurm script to submit
+
+    Returns:
+        job id for submitted job
+    """
+    out = subprocess.check_output(["sbatch", str(sbatch_fp)])
+    job_id = out.decode().replace("\n", "").split(" ")[-1]
+
+    return job_id
 
 
 if __name__ == "__main__":
@@ -28,8 +103,8 @@ if __name__ == "__main__":
     data_dir, output_dir, conda_init_script, conda_env_name, build_nc_script = arguments(sys.argv)
 
     # set up filepaths for slurm job
-    sbatch_fp = Path(output_dir).join("build_nc.slurm")
-    sbatch_out_fp = Path(output_dir).join("build_nc_%j.out")
+    sbatch_fp = os.path.join(output_dir, "build_nc.slurm")
+    sbatch_out_fp = os.path.join(output_dir, "build_nc_%j.out")
 
     # write sbatch head + commands, then submit job
     sbatch_head = write_sbatch_head(sbatch_out_fp, conda_init_script, conda_env_name)
