@@ -1,7 +1,6 @@
 import argparse
 import sys
 import os
-from pathlib import Path
 import subprocess
 
 def arguments(argv):
