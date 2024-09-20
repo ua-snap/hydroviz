@@ -4,10 +4,12 @@ import xarray as xr
 from luts import era_lookup, stat_vars_dict
 
 
-def filter_files(files):
+def filter_files(files, type):
 # ignore Maurer files and the "diff" files
 # also ignore the files with full historical range (1952-2005); this overlaps the
 # normal historical range (1976-2005) and is confusing
+
+# type is either "seg" or "hru": use possible filtering based on type in the future
 
     filtered_files = []
     starting_len = len(files)
@@ -25,7 +27,7 @@ def filter_files(files):
         else:
             filtered_files.append(f)
 
-    print(f"Removed {count} files from list; {len(filtered_files)} files remain out of {starting_len} original files.")
+    print(f"Filtered {count} files from type '{type}' list; {len(filtered_files)} files remain out of {starting_len} original files.\n")
     return filtered_files
 
 

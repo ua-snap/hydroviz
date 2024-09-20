@@ -3,6 +3,7 @@ import sys
 import os
 from pathlib import Path
 import pandas as pd
+from datetime import datetime
 from functions import *
 
 
@@ -23,7 +24,7 @@ if __name__ == "__main__":
 
     data_dir, output_dir = arguments(sys.argv)
 
-    print(f"Reading hydro stats CSVs from {data_dir}...")
+    print(f"Reading hydro stats CSVs from {data_dir}...\n")
 
     # list CSV files
     seg_files = list(Path(data_dir).glob("dynamic*seg*.csv"))
@@ -33,8 +34,10 @@ if __name__ == "__main__":
     hru_files += list(Path(data_dir).glob("static*hru*.csv"))
 
     # filter files
-    seg_files = filter_files(seg_files)
-    hru_files = filter_files(hru_files)
+    seg_files = filter_files(seg_files, "seg")
+    hru_files = filter_files(hru_files, "hru")
+
+    print(f"Parsing geometry IDs and model / scenario / era coordinates...\n")
 
     # get geometry IDs
     seg_ids = pd.read_csv(seg_files[0]).seg_id.astype(str).tolist()
@@ -48,22 +51,23 @@ if __name__ == "__main__":
     # create empty netCDFs and populate with the data from CSVs
     Path(output_dir).mkdir(exist_ok=True, parents=True)
 
-    print("Creating empty netCDF dataset to hold stream segment statistics...")
+    print("Creating empty netCDF dataset to hold stream segment statistics...\n")
     seg_ds = create_empty_dataset(geom_coords_dict["seg"], seg_ids)
-    print(f"Populating dataset from {len(seg_files)} stream segment statistic CSVs...")
+    print(f"Populating dataset from {len(seg_files)} stream segment statistic CSVs...\n")
     populate_dataset(seg_ds, seg_files)
     seg_outfile = os.path.join(output_dir, "seg.nc")
-    print(f"Writing populated netCDF to {seg_outfile}...")
+    print(f"Writing populated netCDF to {seg_outfile}...\n")
     seg_ds.to_netcdf(seg_outfile)
     del seg_ds
 
-    print("Creating empty netCDF dataset to hold watershed statistics...")
+    print("Creating empty netCDF dataset to hold watershed statistics...\n")
     hru_ds = create_empty_dataset(geom_coords_dict["hru"], hru_ids)
-    print(f"Populating dataset from {len(hru_files)} watershed statistic CSVs...")
+    print(f"Populating dataset from {len(hru_files)} watershed statistic CSVs...\n")
     populate_dataset(hru_ds, hru_files)
     hru_outfile = os.path.join(output_dir, "hru.nc")
-    print(f"Writing populated netCDF to {hru_outfile}...")
+    print(f"Writing populated netCDF to {hru_outfile}...\n")
     hru_ds.to_netcdf(hru_outfile)
     del hru_ds
 
+    print("Processing finished at ", datetime.now())
 

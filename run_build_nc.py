@@ -41,6 +41,7 @@ def write_sbatch_head(sbatch_out_fp, conda_init_script, conda_env_name):
         f"#SBATCH --output {sbatch_out_fp}\n"
         # print start time
         "echo Start slurm && date\n"
+        "echo\n"
         # prepare shell for using activate
         f"source {conda_init_script}\n"
         f"conda activate {conda_env_name}\n"
