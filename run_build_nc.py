@@ -2,6 +2,7 @@ import argparse
 import sys
 import os
 import subprocess
+from pathlib import Path
 
 def arguments(argv):
     """Parse some args"""
@@ -101,6 +102,9 @@ def submit_sbatch(sbatch_fp):
 if __name__ == "__main__":
 
     data_dir, output_dir, conda_init_script, conda_env_name, build_nc_script = arguments(sys.argv)
+
+    # create the output directory if it doesn't exist
+    Path(output_dir).mkdir(exist_ok=True, parents=True)
 
     # set up filepaths for slurm job
     sbatch_fp = os.path.join(output_dir, "build_nc.slurm")

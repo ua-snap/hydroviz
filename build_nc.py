@@ -49,7 +49,6 @@ if __name__ == "__main__":
     geom_coords_dict["hru"] = get_unique_coords(hru_files)
 
     # create empty netCDFs and populate with the data from CSVs
-    Path(output_dir).mkdir(exist_ok=True, parents=True)
 
     print("Creating empty netCDF dataset to hold stream segment statistics...\n")
     seg_ds = create_empty_dataset(geom_coords_dict["seg"], seg_ids)
