@@ -1,5 +1,6 @@
 import argparse
 import sys
+import os
 from pathlib import Path
 import pandas as pd
 from functions import *
@@ -51,7 +52,7 @@ if __name__ == "__main__":
     seg_ds = create_empty_dataset(geom_coords_dict["seg"], seg_ids)
     print(f"Populating dataset from {len(seg_files)} stream segment statistic CSVs...")
     populate_dataset(seg_ds, seg_files)
-    seg_outfile = Path(output_dir).join("seg.nc")
+    seg_outfile = os.path.join(output_dir, "seg.nc")
     print(f"Writing populated netCDF to {seg_outfile}...")
     seg_ds.to_netcdf(seg_outfile)
     del seg_ds
@@ -60,7 +61,7 @@ if __name__ == "__main__":
     hru_ds = create_empty_dataset(geom_coords_dict["hru"], hru_ids)
     print(f"Populating dataset from {len(hru_files)} watershed statistic CSVs...")
     populate_dataset(hru_ds, hru_files)
-    hru_outfile = Path(output_dir).join("hru.nc")
+    hru_outfile = os.path.join(output_dir, "hru.nc")
     print(f"Writing populated netCDF to {hru_outfile}...")
     hru_ds.to_netcdf(hru_outfile)
     del hru_ds
