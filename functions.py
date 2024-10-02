@@ -151,5 +151,6 @@ def clip_dataset(ds, shp, type):
         return ds
     elif type == "hru":
         ds = ds.sel(geom_id = ds.geom_id.isin(shp.hru_id_nat.astype(str).tolist()))
+        return ds
 
 #TODO: add function to write netCDF metadata from stat descriptions in luts.py and general dataset info

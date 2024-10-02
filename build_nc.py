@@ -80,7 +80,7 @@ if __name__ == "__main__":
     hru_ds = populate_dataset(hru_ds, hru_files)
     hru_ds = crosswalk_hrus(hru_ds, hru_xwalk)
     print(f"Clipping dataset to the extent of {hru_shp_path} ...\n")
-    hru_ds = clip_dataset(hru_ds, "hru")
+    hru_ds = clip_dataset(hru_ds, hru_shp, "hru")
     hru_outfile = os.path.join(output_dir, "hru.nc")
     print(f"Writing populated netCDF to {hru_outfile}...\n")
     hru_ds.to_netcdf(hru_outfile)
