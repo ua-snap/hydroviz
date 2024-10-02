@@ -133,9 +133,23 @@ def populate_dataset(ds, files):
             # drop column after use (improves performance)
             df.drop(columns=[stat], inplace=True)
 
-    return 
+    return ds
 
 
-#TODO: add QC function that picks random CSVs and checks that the data is in the right place in the netCDF
+def crosswalk_hrus(ds, df):
+    xwalk_dict = {k: v for k, v in zip(df['hru_id'], df['hru_id_nat'])}
+    new_ids = [xwalk_dict.get(k) for k in ds['geom_id'].values.tolist()]
+    ds['geom_id'] = new_ids
+    return ds
+
+
+def clip_dataset(ds, shp, type):
+# clip the dataset to the actual data extent using geometry IDs
+
+    if type == "seg":
+        ds = ds.sel(geom_id = ds.geom_id.isin(shp.seg_id_nat.astype(str).tolist()))
+        return ds
+    elif type == "hru":
+        ds = ds.sel(geom_id = ds.geom_id.isin(shp.hru_id_nat.astype(str).tolist()))
 
 #TODO: add function to write netCDF metadata from stat descriptions in luts.py and general dataset info
