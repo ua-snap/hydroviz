@@ -3,7 +3,7 @@ Visualization of hydrological futures data from the Southeast CASC.
 
 Read a project description [here](https://secasc.ncsu.edu/2023/08/28/modeling-hydrologic-simulations-for-past-future-conditions-across-the-conterminous-us/). Read a paper (Regan and others, 2018) about the Precipitation-Runoff Modeling System (PRMS) [here](https://pubs.usgs.gov/publication/tm6B9). The source data can be found [here](https://www.usgs.gov/data/model-input-and-output-hydrologic-simulations-conterminous-united-states-historical-and-future).
 
-According to the Regan paper above, the PRMS uses the original geospatial fabric of the National Hydrologic Model (Vigel & Bock, 2014; found [here](https://www.sciencebase.gov/catalog/item/535eda80e4b08e65d60fc834) and **NOT** the updated v1.1 geospatial fabric (Santiago et al, 2020; found [here](https://www.sciencebase.gov/catalog/item/5e29d1a0e4b0a79317cf7f63)).
+According to the Regan paper above, the PRMS uses the original geospatial fabric of the National Hydrologic Model (Vigel & Bock, 2014; found [here](https://www.sciencebase.gov/catalog/item/535eda80e4b08e65d60fc834)) and **NOT** the updated v1.1 geospatial fabric (Santiago et al, 2020; found [here](https://www.sciencebase.gov/catalog/item/5e29d1a0e4b0a79317cf7f63)).
 
 
 ### How to use this codebase
