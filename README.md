@@ -21,3 +21,5 @@ python run_build_nc.py --data_dir /beegfs/CMIP6/jdpaul3/hydroviz_data/stats --gi
 ```
 
 - Use the `qc.ipynb` notebook to compare values in the netCDFs to source values.
+
+- Run the `xwalk.ipynb` notebook to crosswalk stream segment IDs and watershed IDs from the project geospatial data (`Segments_subset.shp` and `HRU_subset.shp`) to the GNIS name attributes in the NHM geospatial fabric. This notebook exports new shapefiles with the added GNIS common names for hosting in GeoServer ([gs.earthmaps.io](http://gs.earthmaps.io/)).
