@@ -23,3 +23,23 @@ python run_build_nc.py --data_dir /beegfs/CMIP6/jdpaul3/hydroviz_data/stats --gi
 - Use the `qc.ipynb` notebook to compare values in the netCDFs to source values.
 
 - Run the `xwalk.ipynb` notebook to crosswalk stream segment IDs and watershed IDs from the project geospatial data (`Segments_subset.shp` and `HRU_subset.shp`) to the GNIS name attributes in the NHM geospatial fabric. This notebook exports new shapefiles with the added GNIS common names for hosting in GeoServer ([gs.earthmaps.io](http://gs.earthmaps.io/)).
+
+### Note about the CRS
+
+The native projection of the project data is [ESRI:102039](https://epsg.io/102039) (NAD 1983 USGS Contiguous USA Albers). This EPSG code is not recognized by GeoServer, where we want to host the vector data. However, [EPSG:5070](https://epsg.io/5070) (NAD83 / Conus Albers) is equivalent and is recognized by GeoServer. This codebase uses EPSG:5070.
+
+```
+from pyproj import CRS
+
+crs1 = CRS("ESRI:102039")
+crs2 = CRS("EPSG:5070")
+
+print(crs1.to_proj4())
+print(crs2.to_proj4())
+print(crs1 == crs2)
+```
+```
++proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs
++proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs
+True
+```
