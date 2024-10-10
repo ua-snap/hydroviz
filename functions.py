@@ -109,7 +109,7 @@ def encode(list, type):
     elif type == "scenario":
         return [encodings_lookup["scenario"][x] for x in list]
     elif type == "era":
-        return [encodings_lookup[x] for x in list]
+        return [encodings_lookup["era"][x] for x in list]
 
 
 def populate_dataset(ds, files):

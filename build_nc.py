@@ -48,7 +48,7 @@ if __name__ == "__main__":
     hru_shp_path = os.path.join(gis_dir, "HRU_subset.shp")
     hru_shp = gpd.read_file(hru_shp_path)
     # get crosswalk to fix HRU IDs
-    hru_xwalk = pd.read_csv(os.path.join(gis_dir, "nhm_hru_id_crosswalk.csv"), dtype={'hru_id':str, 'hru_id_nat':str})
+    hru_xwalk = pd.read_csv(os.path.join(gis_dir, "nhm_hru_id_crosswalk.csv"), dtype={'hru_id':int, 'hru_id_nat':int})
 
     print(f"Parsing geometry IDs and model / scenario / era coordinates...\n")
 
