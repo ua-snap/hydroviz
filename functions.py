@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import xarray as xr
-from luts import era_lookup, stat_vars_dict
+from luts import *
 
 
 def filter_files(files, type):
@@ -77,30 +77,39 @@ def create_empty_dataset(dict, geom_ids):
 
     lcs, models, scenarios, eras = dict["lcs"], dict["models"], dict["scenarios"], dict["eras"]
 
-    # build list of era strings
-    eras_index = []
-    for e in eras:
-        eras_index.append(era_lookup[e])
-
     # create a dict with an empty array of nan values for each stat variable
     # shape is defined by the length of all coords
     # we will fill in the nan values with actual data later, if they exists
     data_dict = {}
     for stat in stat_vars:
         data_dict[stat] = (["lc", "model", "scenario", "era", "geom_id"], 
-                           np.zeros((len(lcs), len(models), len(scenarios), len(eras_index), len(geom_ids))) * np.nan)
+                           np.zeros((len(lcs), len(models), len(scenarios), len(eras), len(geom_ids))) * np.nan)
 
     ds = xr.Dataset(data_dict, 
                     coords={
-            "lc": (["lc"], lcs),
-            "model": (["model"], models), 
-            "scenario": (["scenario"], scenarios),
-            "era": (["era"], eras_index),
+            "lc": (["lc"], encode(lcs, "lc")),
+            "model": (["model"], encode(models, "model")), 
+            "scenario": (["scenario"], encode(scenarios, "scenario")),
+            "era": (["era"], encode(eras, "era")),
             "geom_id": (["geom_id"], geom_ids),
         },
     )
 
     return ds
+
+
+def encode(list, type):
+    # encode the list of strings based on the encodings lookup table
+    # type is the type of encoding to use, e.g. "lc", "model", "scenario", "era"
+
+    if type == "lc":
+        return [encodings_lookup["lc"][x] for x in list]
+    elif type == "model":
+        return [encodings_lookup["model"][x] for x in list]
+    elif type == "scenario":
+        return [encodings_lookup["scenario"][x] for x in list]
+    elif type == "era":
+        return [encodings_lookup[x] for x in list]
 
 
 def populate_dataset(ds, files):
@@ -125,11 +134,20 @@ def populate_dataset(ds, files):
         df = pd.read_csv(file, usecols = stat_vars)
         df.replace(-99999, np.nan, inplace=True)
 
+        # replace the dimension strings with integers based on encodings lookup table
+        lc_encoded = encodings_lookup["lc"][lc]
+        model_encoded = encodings_lookup["model"][model]
+        scenario_encoded = encodings_lookup["scenario"][scenario]
+        era_encoded = encodings_lookup["era"][era]
+
         for stat in df.columns:
             try:
-                ds[stat].loc[{"lc": lc, "model": model, "scenario": scenario, "era": era_lookup[era]}] = df[stat]
+                ds[stat].loc[{"lc": lc_encoded, 
+                              "model": model_encoded, 
+                              "scenario": scenario_encoded, 
+                              "era": era_encoded}] = df[stat]
             except:
-                print(f"Indexing error for {stat} in {file.name}: one of {lc}, {model}, {scenario}, {era_lookup[era]} could not be found in the dataset.")
+                print(f"Indexing error for {stat} in {file.name}: one of {lc}, {model}, {scenario}, {era} could not be found in the dataset.")
             # drop column after use (improves performance)
             df.drop(columns=[stat], inplace=True)
 

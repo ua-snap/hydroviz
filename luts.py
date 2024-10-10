@@ -1,11 +1,3 @@
-era_lookup = {
-    '1976_2005' : 'historical',
-    '2016_2045' : 'early_century',
-    '2046_2075' : 'mid_century',
-    '2071_2100' : 'late_century',
-   }
-
-
 stat_vars_dict = {
     "dh3" : {
         "category" : "duration",
@@ -144,5 +136,41 @@ stat_vars_dict = {
         "code_base" : "mhit",
         "difference_method" : "absolute",
         "statistic_description" : "Julian date of annual minimum. Determine the Julian date that the minimum flow occurs for each water year. TL1 is the median of these values (Julian day - temporal)."
+    },
+}
+
+# encodings for netCDF, integers required for rasdaman ingest
+encodings_lookup = {
+    "lc": {
+        "dynamic": 0,
+        "static": 1,
+    },
+    "model": {
+        "ACCESS1-0": 0,
+        "bcc-csm1-1": 1,
+        "BNU-ESM": 2,
+        "CCSM4": 3,
+        "GFDL-ESM2G": 4,
+        "GFDL-ESM2M": 5,
+        "IPSL-CM5A-LR": 6,
+        "IPSL-CM5A-MR": 7,
+        "MIROC5": 8,
+        "MIROC-ESM": 9,
+        "MIROC-ESM-CHEM": 10,
+        "MRI-CGCM3": 11,
+        "NorESM1-M": 12,
+    },
+    "scenario": {
+        "historical": 0,
+        "rcp26": 1,
+        "rcp45": 2,
+        "rcp60": 3,
+        "rcp85": 4,
+    },
+    "era": {
+        "1976_2005": 0, # historical
+        "2016_2045": 1, # early century
+        "2046_2075": 2, # mid century
+        "2071_2100": 3, # late century
     },
 }
