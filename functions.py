@@ -150,6 +150,11 @@ def populate_dataset(ds, files):
                 print(f"Indexing error for {stat} in {file.name}: one of {lc}, {model}, {scenario}, {era} could not be found in the dataset.")
             # drop column after use (improves performance)
             df.drop(columns=[stat], inplace=True)
+        
+        ds.assign_attrs({"Statistics Metadata": stat_vars_dict,
+                         "Encodings": reverse_encodings_lookup,
+                         "Data Source": data_source_dict,
+                         "CMIP5 GCM Metadata": gcm_metadata_dict,})
 
     return ds
 
