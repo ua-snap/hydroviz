@@ -117,7 +117,6 @@ def populate_dataset(ds, files):
     stat_vars = list(stat_vars_dict.keys())
 
     # TODO: add a step to confirm that the CSV is the proper shape based on dataset geom_id coords
-    # TODO: add a step to confirm that all stat vars from luts.py are found in CSV column names
     # TODO: add a step to confirm that the parsed coords all actually exist in the xarray dataset
 
     for file in files:
@@ -151,6 +150,7 @@ def populate_dataset(ds, files):
             # drop column after use (improves performance)
             df.drop(columns=[stat], inplace=True)
         
+        # use luts dicts to add metadata to the dataset
         ds.assign_attrs({"Statistics Metadata": stat_vars_dict,
                          "Encodings": reverse_encodings_lookup,
                          "Data Source": data_source_dict,
@@ -175,5 +175,3 @@ def clip_dataset(ds, shp, type):
     elif type == "hru":
         ds = ds.sel(geom_id = ds.geom_id.isin(shp.hru_id_nat.astype(str).tolist()))
         return ds
-
-#TODO: add function to write netCDF metadata from stat descriptions in luts.py and general dataset info
