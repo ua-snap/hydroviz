@@ -78,6 +78,9 @@ def write_sbatch(
         f"--gis_dir {gis_dir} "
         f"--output_dir {output_dir} "
     )
+
+    #TODO: add the build_ingest_json.py script to pycommands here
+
     pycommands += "\n\n"
 
     commands = sbatch_head.format(sbatch_out_fp=sbatch_out_fp) + pycommands
