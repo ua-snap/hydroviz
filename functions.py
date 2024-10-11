@@ -151,7 +151,7 @@ def populate_dataset(ds, files):
             df.drop(columns=[stat], inplace=True)
         
         # use luts dicts to add metadata to the dataset
-        ds.assign_attrs({"Statistics Metadata": stat_vars_dict,
+        ds = ds.assign_attrs({"Statistics Metadata": stat_vars_dict,
                          "Encodings": reverse_encodings_lookup,
                          "Data Source": data_source_dict,
                          "CMIP5 GCM Metadata": gcm_metadata_dict,})
