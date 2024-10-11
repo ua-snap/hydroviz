@@ -1,3 +1,7 @@
+
+# this dict holds metadata for the summary statistics
+# the keys of this dict also serve to filter the columns read from the statistics CSVs in functions.populate_dataset()
+# therefore, commenting out keys in this dict will prevent those statistics from being read into the netCDFs
 stat_vars_dict = {
     "dh3" : {
         "category" : "duration",
