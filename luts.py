@@ -7,139 +7,162 @@ stat_vars_dict = {
         "category" : "duration",
         "code_base" : "mhit",
         "difference_method" : "ratio",
-        "statistic_description" : "Annual maximum of 7-day moving average flows. Compute the maximum of a 7-day moving average flow for each year. DH3 is the median of these values (cubic feet per second - temporal)."
+        "statistic_description" : "Annual maximum of 7-day moving average flows. Compute the maximum of a 7-day moving average flow for each year. DH3 is the median of these values (cubic feet per second - temporal).",
+        "units" : "cfs",
     },
     "dh15" : {
         "category" : "duration",
         "code_base" : "mhit",
         "difference_method" : "ratio",
-        "statistic_description" : "High flow pulse duration. Compute the average duration for flow events with flows above a threshold equal to the 75th percentile value for each year in the flow record. DH15 is the median of the yearly average durations (days/year - temporal)."
+        "statistic_description" : "High flow pulse duration. Compute the average duration for flow events with flows above a threshold equal to the 75th percentile value for each year in the flow record. DH15 is the median of the yearly average durations (days/year - temporal).",
+        "units" : "days/year",
     },
     "dl3" : {
         "category" : "duration",
         "code_base" : "mhit",
         "difference_method" : "ratio",
-        "statistic_description" : "Annual minimum of 7-day moving average flow. Compute the minimum of a 7-day moving average flow for each year. DL3 is the median of these values (cubic feet per second - temporal)."
+        "statistic_description" : "Annual minimum of 7-day moving average flow. Compute the minimum of a 7-day moving average flow for each year. DL3 is the median of these values (cubic feet per second - temporal).",
+        "units" : "cfs",
     },
     "dl16" : {
         "category" : "duration",
         "code_base" : "mhit",
         "difference_method" : "ratio",
-        "statistic_description" : "Low flow pulse duration. Compute the average pulse duration for each year for flow events below a threshold equal to the 25th percentile value for the entire flow record. DL16 is the median of the yearly average durations (days/year - temporal)."
+        "statistic_description" : "Low flow pulse duration. Compute the average pulse duration for each year for flow events below a threshold equal to the 25th percentile value for the entire flow record. DL16 is the median of the yearly average durations (days/year - temporal).",
+        "units" : "days/year",
     },
     "fh1" : {
         "category" : "frequency",
         "code_base" : "mhit",
         "difference_method" : "absolute",
-        "statistic_description" : "High flood pulse count. Compute the average number of flow events with flows above a threshold equal to the 75th percentile value for the entire flow record. FH1 is the median number of events (number of events/year - temporal)."
+        "statistic_description" : "High flood pulse count. Compute the average number of flow events with flows above a threshold equal to the 75th percentile value for the entire flow record. FH1 is the median number of events (number of events/year - temporal).",
+        "units" : "events/year",
     },
     "fl1" : {
         "category" : "frequency",
         "code_base" : "mhit",
         "difference_method" : "absolute",
-        "statistic_description" : "Low flood pulse count. Compute the average number of flow events with flows below a threshold equal to the 25th percentile value for the entire flow record. FL1 is the median number of events (number of events/year - temporal)."
+        "statistic_description" : "Low flood pulse count. Compute the average number of flow events with flows below a threshold equal to the 25th percentile value for the entire flow record. FL1 is the median number of events (number of events/year - temporal).",
+        "units" : "events/year",
     },
     "fl3" : {
         "category" : "frequency",
         "code_base" : "mhit",
         "difference_method" : "absolute",
-        "statistic_description" : "Frequency of low pulse spells. Compute the average number of flow events with flows below a threshold equal to 5 percent of the mean flow value for the entire flow record. FL3 is the median number of events (number of events/year - temporal)."
+        "statistic_description" : "Frequency of low pulse spells. Compute the average number of flow events with flows below a threshold equal to 5 percent of the mean flow value for the entire flow record. FL3 is the median number of events (number of events/year - temporal).",
+        "units" : "events/year",
     },
     "ma12" : {
         "category" : "magnitude",
         "code_base" : "mhit",
         "difference_method" : "ratio",
-        "statistic_description" : "Mean of monthly flow values for January."
+        "statistic_description" : "Mean of monthly flow values for January.",
+        "units" : "cfs",
     },
     "ma13" : {
         "category" : "magnitude",
         "code_base" : "mhit",
         "difference_method" : "ratio",
-        "statistic_description" : "Mean of monthly flow values for February."
+        "statistic_description" : "Mean of monthly flow values for February.",
+        "units" : "cfs",
     },
     "ma14" : {
         "category" : "magnitude",
         "code_base" : "mhit",
         "difference_method" : "ratio",
-        "statistic_description" : "Mean of monthly flow values for March."
+        "statistic_description" : "Mean of monthly flow values for March.",
+        "units" : "cfs",
     },
     "ma15" : {
         "category" : "magnitude",
         "code_base" : "mhit",
         "difference_method" : "ratio",
-        "statistic_description" : "Mean of monthly flow values for April."
+        "statistic_description" : "Mean of monthly flow values for April.",
+        "units" : "cfs",
     },
     "ma16" : {
         "category" : "magnitude",
         "code_base" : "mhit",
         "difference_method" : "ratio",
-        "statistic_description" : "Mean of monthly flow values for May."
+        "statistic_description" : "Mean of monthly flow values for May.",
+        "units" : "cfs",
     },
     "ma17" : {
         "category" : "magnitude",
         "code_base" : "mhit",
         "difference_method" : "ratio",
-        "statistic_description" : "Mean of monthly flow values for June."
+        "statistic_description" : "Mean of monthly flow values for June.",
+        "units" : "cfs",
     },
     "ma18" : {
         "category" : "magnitude",
         "code_base" : "mhit",
         "difference_method" : "ratio",
-        "statistic_description" : "Mean of monthly flow values for July."
+        "statistic_description" : "Mean of monthly flow values for July.",
+        "units" : "cfs",
     },
     "ma19" : {
         "category" : "magnitude",
         "code_base" : "mhit",
         "difference_method" : "ratio",
-        "statistic_description" : "Mean of monthly flow values for August."
+        "statistic_description" : "Mean of monthly flow values for August.",
+        "units" : "cfs",
     },
     "ma20" : {
         "category" : "magnitude",
         "code_base" : "mhit",
         "difference_method" : "ratio",
-        "statistic_description" : "Mean of monthly flow values for September."
+        "statistic_description" : "Mean of monthly flow values for September.",
+        "units" : "cfs",
     },
     "ma21" : {
         "category" : "magnitude",
         "code_base" : "mhit",
         "difference_method" : "ratio",
-        "statistic_description" : "Mean of monthly flow values for October."
+        "statistic_description" : "Mean of monthly flow values for October.",
+        "units" : "cfs",
     },
     "ma22" : {
         "category" : "magnitude",
         "code_base" : "mhit",
         "difference_method" : "ratio",
-        "statistic_description" : "Mean of monthly flow values for November."
+        "statistic_description" : "Mean of monthly flow values for November.",
+        "units" : "cfs",
     },
     "ma23" : {
         "category" : "magnitude",
         "code_base" : "mhit",
         "difference_method" : "ratio",
-        "statistic_description" : "Mean of monthly flow values for December."
+        "statistic_description" : "Mean of monthly flow values for December.",
+        "units" : "cfs",
     },
     "ra1" : {
         "category" : "rate_of_change",
         "code_base" : "mhit",
         "difference_method" : "ratio",
-        "statistic_description" : "Rise rate. Compute the change in flow for days in which the change is positive for the entire flow record. RA1 is the median of these values (cubic feet per second/day - temporal)."
+        "statistic_description" : "Rise rate. Compute the change in flow for days in which the change is positive for the entire flow record. RA1 is the median of these values (cubic feet per second/day - temporal).",
+        "units" : "cfs/day",
     },
     "ra3" : {
         "category" : "rate_of_change",
         "code_base" : "mhit",
         "difference_method" : "ratio",
-        "statistic_description" : "Fall rate. Compute the change in flow for days in which the change is negative for the entire flow record. RA3 is the median of these values (cubic feet per second/day - temporal)."
+        "statistic_description" : "Fall rate. Compute the change in flow for days in which the change is negative for the entire flow record. RA3 is the median of these values (cubic feet per second/day - temporal).",
+        "units" : "cfs/day",
     },
     "th1" : {
         "category" : "timing",
         "code_base" : "mhit",
         "difference_method" : "absolute",
-        "statistic_description" : "Julian date of annual maximum. Determine the Julian date that the maximum flow occurs for each year. TH1 is the median of these values (Julian day - temporal)."
+        "statistic_description" : "Julian date of annual maximum. Determine the Julian date that the maximum flow occurs for each year. TH1 is the median of these values (Julian day - temporal).",
+        "units" : "day",
     },
     "tl1" : {
         "category" : "timing",
         "code_base" : "mhit",
         "difference_method" : "absolute",
-        "statistic_description" : "Julian date of annual minimum. Determine the Julian date that the minimum flow occurs for each water year. TL1 is the median of these values (Julian day - temporal)."
+        "statistic_description" : "Julian date of annual minimum. Determine the Julian date that the minimum flow occurs for each water year. TL1 is the median of these values (Julian day - temporal).",
+        "units" : "day",
     },
 }
 

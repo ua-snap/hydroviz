@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import xarray as xr
+import json
 from luts import *
 
 
@@ -175,3 +176,102 @@ def clip_dataset(ds, shp, type):
     elif type == "hru":
         ds = ds.sel(geom_id = ds.geom_id.isin(shp.hru_id_nat.astype(str).tolist()))
         return ds
+
+
+def build_injest_json(ds, type):
+# build the ingest JSON file for Rasdaman
+
+    # geometry specific titles
+    if type == 'seg':
+        title_string = "'Hydrological Summary Statistics for CONUS Stream Segments'"
+        coverage_id = 'conus_hydro_segments'
+        nc_path = 'seg.nc'
+    elif type == 'hru':
+        title_string = "'Hydrological Summary Statistics for CONUS Watersheds'"
+        coverage_id = 'conus_hydro_hrus'
+        nc_path = 'hru.nc'
+
+    # read encodings from the dataset
+    nc_encoding_dict = eval(ds.attrs['Encodings'])
+    stats_metadata = eval(ds.attrs['Statistics Metadata'])
+
+    # build the ingest JSON parts
+    # encodings part
+    encoding_dict = {}
+    for stat in stats_metadata.keys():
+        encoding_dict[stat] = stats_metadata[stat]["units"]
+    for dim in nc_encoding_dict.keys():
+        encoding_dict[dim] = {}
+        # reverse the encoding dictionary
+        for dim_val in nc_encoding_dict[dim].keys():
+            encoding_dict[dim][nc_encoding_dict[dim][dim_val]] = dim_val
+    # bands part
+    band_list = []
+    for stat in stats_metadata.keys():
+        stat_dict = {"name": stat, "identifier": stat, "nilValue": "-9999.0"}
+        band_list.append(stat_dict)
+    # axes part
+    axes_dict = {}
+    for dim in nc_encoding_dict.keys():
+        axes_dict[dim] = {
+            "min": "${netcdf:variable:era:min}",
+            "max": "${netcdf:variable:era:max}",
+            "directPositions": "${netcdf:variable:era}",
+            "crsOrder": 0,
+            "gridOrder": 0,
+            "irregular": "true"
+        }
+    # assemble the parts into the ingest JSON
+    ingest_dict = {
+                "config": {
+                    "service_url": "http://localhost:8080/rasdaman/ows",
+                    "tmp_directory": "/tmp/",
+                    "crs_resolver": "http://localhost:8080/def/",
+                    "default_crs": "http://localhost:8080/def/crs/EPSG/0/3338",
+                    "default_null_values": [
+                    "-9999"
+                    ],
+                    "mock": "false",
+                    "automated": "true"
+                },
+                "input": {
+                    "coverage_id": f"{coverage_id}",
+                    "paths": [
+                    f"{nc_path}"
+                    ]
+                },
+                "recipe": {
+                    "name": "general_coverage",
+                    "options": {
+                    "wms_import": "false",
+                    "import_order": "ascending",
+                    "coverage": {
+                        "crs": "OGC/0/Index1D?axis-label=\"era\"@OGC/0/Index1D?axis-label=\"model\"@OGC/0/Index1D?axis-label=\"scenario\"@EPSG/0/3338",
+                        "metadata": {
+                        "type": "xml",
+                        "global": {
+                            "Title": f"{title_string}"
+                        },
+                        "local": {
+                            "Encoding": encoding_dict
+                        }
+                        },
+                        "slicer": {
+                        "type": "netcdf",
+                        "pixelIsPoint": "true",
+                        "bands": band_list,
+                        "axes": axes_dict
+                        }
+                    }
+                    }
+                }
+                }
+    
+    ingest_json = json.dumps(ingest_dict, indent=2)
+
+    # replace "true" and "false" quoted strings with non-quoted strings
+    # not sure if this is necessary, but this matches the formatting I see in the example injest JSON
+    ingest_json = ingest_json.replace('"false"', 'false')
+    ingest_json = ingest_json.replace('"true"', 'true')
+
+    return ingest_json

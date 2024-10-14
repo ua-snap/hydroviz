@@ -86,5 +86,5 @@ if __name__ == "__main__":
     hru_ds.to_netcdf(hru_outfile)
     del hru_ds
 
-    print("Processing finished at ", datetime.now())
+    print("Processing finished at ", datetime.now(), "\n")
 
