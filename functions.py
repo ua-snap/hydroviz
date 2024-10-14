@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import xarray as xr
-import json
 from luts import *
 
 
@@ -151,11 +150,11 @@ def populate_dataset(ds, files):
             # drop column after use (improves performance)
             df.drop(columns=[stat], inplace=True)
         
-        # use luts dicts to add metadata to the dataset, needs to be a string so we convert to a JSON string
-        ds = ds.assign_attrs(json.dumps({"Statistics Metadata": stat_vars_dict,
-                         "Encodings": reverse_encodings_lookup,
-                         "Data Source": data_source_dict,
-                         "CMIP5 GCM Metadata": gcm_metadata_dict,}))
+        # use luts dicts to add metadata to the dataset; for serialization during file writing, each item needs to be a string or list, can't be a dict
+        ds = ds.assign_attrs({"Statistics Metadata": str(stat_vars_dict),
+                         "Encodings": str(reverse_encodings_lookup),
+                         "Data Source": str(data_source_dict),
+                         "CMIP5 GCM Metadata": str(gcm_metadata_dict),})
 
     return ds
 
