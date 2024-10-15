@@ -86,6 +86,7 @@ def create_empty_dataset(dict, geom_ids):
         data_dict[stat] = (["lc", "model", "scenario", "era", "geom_id"], 
                            np.zeros((len(lcs), len(models), len(scenarios), len(eras), len(geom_ids))) * np.nan)
 
+    # encode the coords based on the encodings lookup table
     ds = xr.Dataset(data_dict, 
                     coords={
             "lc": (["lc"], encode(lcs, "lc")),
@@ -94,7 +95,7 @@ def create_empty_dataset(dict, geom_ids):
             "era": (["era"], encode(eras, "era")),
             "geom_id": (["geom_id"], geom_ids),
         },
-    )
+    )        
 
     return ds
 
@@ -122,13 +123,6 @@ def populate_dataset(ds, files):
         try:
             parts = file.name.split('_')
             lc, model, scenario, era = parts[0], parts[1], parts[2], "_".join([parts[5], parts[6].split(".")[0]])
-            # confirm that the parsed coords all actually exist in the xarray dataset
-            if lc in list(ds["lc"].values) and model in list(ds["model"].values) and scenario in list(ds["scenario"].values) and era in list(ds["era"].values):
-                pass
-            else:
-                print(f"Error: one of {lc}, {model}, {scenario}, {era} could not be found in the dataset.")
-                print(f"Data will not be written to netCDF.")
-                continue
         except:
             print(f"Error parsing file: {file.name}")
             print(f"Data will not be written to netCDF.")
@@ -151,10 +145,16 @@ def populate_dataset(ds, files):
             continue
 
         # replace the dimension strings with integers based on encodings lookup table
-        lc_encoded = encodings_lookup["lc"][lc]
-        model_encoded = encodings_lookup["model"][model]
-        scenario_encoded = encodings_lookup["scenario"][scenario]
-        era_encoded = encodings_lookup["era"][era]
+        # this will also confirm that the parsed coords are valid and actually exist in encodings lookup table
+        try:
+            lc_encoded = encodings_lookup["lc"][lc]
+            model_encoded = encodings_lookup["model"][model]
+            scenario_encoded = encodings_lookup["scenario"][scenario]
+            era_encoded = encodings_lookup["era"][era]
+        except:
+            print(f"Error: one of {lc}, {model}, {scenario}, {era} are invalid.")
+            print(f"Data will not be written to netCDF.")
+            continue
 
         for stat in df.columns:
             try:
@@ -166,7 +166,7 @@ def populate_dataset(ds, files):
                 print(f"Indexing error for {stat} in {file.name}: one of {lc}, {model}, {scenario}, {era} could not be found in the dataset.")
                 print(f"Data will not be written to netCDF.")
                 continue
-            
+
             # drop column after use (improves performance)
             df.drop(columns=[stat], inplace=True)
         
