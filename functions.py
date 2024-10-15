@@ -212,15 +212,17 @@ def build_injest_json(ds, type):
         band_list.append(stat_dict)
     # axes part
     axes_dict = {}
+    grid_order = 0
     for dim in nc_encoding_dict.keys():
         axes_dict[dim] = {
             "min": "${netcdf:variable:era:min}",
             "max": "${netcdf:variable:era:max}",
             "directPositions": "${netcdf:variable:era}",
             "crsOrder": 0,
-            "gridOrder": 0,
+            "gridOrder": grid_order,
             "irregular": "true"
         }
+        grid_order = grid_order + 1
     # assemble the parts into the ingest JSON
     ingest_dict = {
                 "config": {
