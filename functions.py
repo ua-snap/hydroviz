@@ -218,7 +218,6 @@ def build_injest_json(ds, type):
             "min": "${netcdf:variable:era:min}",
             "max": "${netcdf:variable:era:max}",
             "directPositions": "${netcdf:variable:era}",
-            "crsOrder": 0,
             "gridOrder": grid_order,
             "irregular": "true"
         }
