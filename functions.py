@@ -225,7 +225,7 @@ def build_injest_json(ds, type):
     # assemble the parts into the ingest JSON
     ingest_dict = {
                 "config": {
-                    "service_url": "http://localhost:8080/rasdaman/ows",
+                    "service_url": "https://localhost/rasdaman/ows",
                     "tmp_directory": "/tmp/",
                     "crs_resolver": "http://localhost:8080/def/",
                     "default_crs": "http://localhost:8080/def/crs/EPSG/0/3338",
