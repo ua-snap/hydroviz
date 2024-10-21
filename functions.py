@@ -248,7 +248,7 @@ def build_injest_json(ds, type):
                     "wms_import": "false",
                     "import_order": "ascending",
                     "coverage": {
-                        "crs": "OGC/0/Index1D?axis-label=\"era\"@OGC/0/Index1D?axis-label=\"model\"@OGC/0/Index1D?axis-label=\"scenario\"@EPSG/0/3338",
+                        "crs": "OGC/0/Index1D?axis-label=\"lc\"@OGC/0/Index1D?axis-label=\"era\"@OGC/0/Index1D?axis-label=\"model\"@OGC/0/Index1D?axis-label=\"scenario\"",
                         "metadata": {
                         "type": "xml",
                         "global": {
