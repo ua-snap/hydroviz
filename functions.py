@@ -215,9 +215,9 @@ def build_injest_json(ds, type):
     grid_order = 0
     for dim in nc_encoding_dict.keys():
         axes_dict[dim] = {
-            "min": "${netcdf:variable:era:min}",
-            "max": "${netcdf:variable:era:max}",
-            "directPositions": "${netcdf:variable:era}",
+            "min": f"${{netcdf:variable:{dim}:min}}",
+            "max": f"${{netcdf:variable:{dim}:max}}",
+            "directPositions": f"${{netcdf:variable:{dim}}",
             "gridOrder": grid_order,
             "irregular": "true"
         }
