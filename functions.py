@@ -234,6 +234,7 @@ def build_injest_json(ds, type):
                     ],
                     "mock": "false",
                     "automated": "true"
+                    "insitu": "true"
                 },
                 "input": {
                     "coverage_id": f"{coverage_id}",
