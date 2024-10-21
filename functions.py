@@ -192,7 +192,7 @@ def build_injest_json(ds, type):
         nc_path = 'hru.nc'
 
     # read encodings from the dataset
-    nc_encoding_dict = eval(ds.attrs['Encodings'])
+    nc_encoding_dict = eval(ds.attrs['Rasdaman Encodings'])
     stats_metadata = eval(ds.attrs['Statistics Metadata'])
 
     # build the ingest JSON parts
