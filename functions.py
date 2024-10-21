@@ -244,6 +244,7 @@ def build_injest_json(ds, type):
                 "recipe": {
                     "name": "general_coverage",
                     "options": {
+                    "tiling": "ALIGNED [0:*, 0:*, 0:*, 0:*, 0:*] tile size 4194304"
                     "wms_import": "false",
                     "import_order": "ascending",
                     "coverage": {
