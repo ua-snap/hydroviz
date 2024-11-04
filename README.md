@@ -17,7 +17,7 @@ According to the Regan paper above, the PRMS uses the original geospatial fabric
 - To coerce the data into a netCDF format, run the following command to submit an `sbatch` script. Change the script locations to match your repo location, and change the `--output_dir` argument to save the netCDF files to a different location and avoid overwriting previous outputs. The script should only take ~5 minutes to run once compute resources are allocated.
 
 ```
-python run_build_nc.py --data_dir /beegfs/CMIP6/jdpaul3/hydroviz_data/stats --gis_dir /beegfs/CMIP6/jdpaul3/hydroviz_data/gis --output_dir /beegfs/CMIP6/jdpaul3/hydroviz_data/nc --conda_init_script /beegfs/CMIP6/jdpaul3/hydroviz/conda_init.sh --conda_env_name snap-geo --build_nc_script /beegfs/CMIP6/jdpaul3/hydroviz/build_nc.py
+python run_build_nc.py --data_dir /beegfs/CMIP6/jdpaul3/hydroviz_data/stats --gis_dir /beegfs/CMIP6/jdpaul3/hydroviz_data/gis --output_dir /beegfs/CMIP6/jdpaul3/hydroviz_data/nc --conda_init_script /beegfs/CMIP6/jdpaul3/hydroviz/conda_init.sh --conda_env_name snap-geo --build_nc_script /beegfs/CMIP6/jdpaul3/hydroviz/build_nc.py --build_json_script /beegfs/CMIP6/jdpaul3/hydroviz/build_ingest_json.py
 ```
 
 - Use the `qc.ipynb` notebook to compare values in the netCDFs to source values.
