@@ -5,6 +5,8 @@ Read a project description [here](https://secasc.ncsu.edu/2023/08/28/modeling-hy
 
 According to the Regan paper above, the PRMS uses the original geospatial fabric of the National Hydrologic Model (Vigel & Bock, 2014; found [here](https://www.sciencebase.gov/catalog/item/535eda80e4b08e65d60fc834)) and **NOT** the updated v1.1 geospatial fabric (Santiago et al, 2020; found [here](https://www.sciencebase.gov/catalog/item/5e29d1a0e4b0a79317cf7f63)).
 
+Read about the dataset's statistics in the `streamflow_statistics_description_table.csv` file in this repo.
+
 
 ### How to use this codebase
 
