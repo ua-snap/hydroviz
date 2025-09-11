@@ -7,7 +7,7 @@ import argparse
 import sys
 import os
 from datetime import datetime
-from functions import *
+from data.preprocess.functions import *
 
 
 def arguments(argv):

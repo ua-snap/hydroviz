@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import json
-from luts import *
+from data.preprocess.luts import *
 
 
 def filter_files(files, type):
@@ -111,7 +111,7 @@ def create_empty_dataset(dict, geom_ids):
             "era": (["era"], encode(eras, "era")),
             "geom_id": (["geom_id"], geom_ids),
         },
-    )        
+    )
 
     return ds
 
@@ -151,7 +151,7 @@ def populate_dataset(ds, files):
 
         # only read in the columns we want, and use actual NaNs
         # this allows for missing columns in the CSV
-        df = pd.read_csv(file, usecols = lambda c: c in stat_vars)
+        df = pd.read_csv(file, usecols=lambda c: c in stat_vars)
         df.replace(-99999, np.nan, inplace=True)
 
         # test for missing columns and add them (filled with NaNs) if they are missing
@@ -160,8 +160,10 @@ def populate_dataset(ds, files):
                 df[stat] = np.nan
 
         # test that the dataframe length matches the length of the geom_ids in the dataset
-        if len(df) != len(ds['geom_id']):
-            print(f"Error: length of CSV does not match length of geom_ids in dataset for {file.name}.")
+        if len(df) != len(ds["geom_id"]):
+            print(
+                f"Error: length of CSV does not match length of geom_ids in dataset for {file.name}."
+            )
             print(f"Data will not be written to netCDF.")
             continue
 
@@ -188,7 +190,9 @@ def populate_dataset(ds, files):
                     }
                 ] = df[stat]
             except:
-                print(f"Indexing error for {stat} in {file.name}: one of {lc}, {model}, {scenario}, {era} could not be found in the dataset.")
+                print(
+                    f"Indexing error for {stat} in {file.name}: one of {lc}, {model}, {scenario}, {era} could not be found in the dataset."
+                )
                 print(f"Data will not be written to netCDF.")
                 continue
 

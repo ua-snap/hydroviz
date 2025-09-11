@@ -5,16 +5,31 @@ from pathlib import Path
 import pandas as pd
 import geopandas as gpd
 from datetime import datetime
-from functions import *
+from data.preprocess.functions import *
 
 
 def arguments(argv):
     """Parse some args"""
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_dir", type=str, help="directory where hydrologic stats CSVs are located", required=True)
-    parser.add_argument("--gis_dir", type=str, help="directory where GIS files are located", required=True)
-    parser.add_argument("--output_dir", type=str, help="directory where hydrologic stats netCDFs will be saved", required=True)
-   
+    parser.add_argument(
+        "--data_dir",
+        type=str,
+        help="directory where hydrologic stats CSVs are located",
+        required=True,
+    )
+    parser.add_argument(
+        "--gis_dir",
+        type=str,
+        help="directory where GIS files are located",
+        required=True,
+    )
+    parser.add_argument(
+        "--output_dir",
+        type=str,
+        help="directory where hydrologic stats netCDFs will be saved",
+        required=True,
+    )
+
     args = parser.parse_args()
     data_dir = args.data_dir
     gis_dir = args.gis_dir
@@ -48,7 +63,10 @@ if __name__ == "__main__":
     hru_shp_path = os.path.join(gis_dir, "HRU_subset.shp")
     hru_shp = gpd.read_file(hru_shp_path)
     # get crosswalk to fix HRU IDs
-    hru_xwalk = pd.read_csv(os.path.join(gis_dir, "nhm_hru_id_crosswalk.csv"), dtype={'hru_id':int, 'hru_id_nat':int})
+    hru_xwalk = pd.read_csv(
+        os.path.join(gis_dir, "nhm_hru_id_crosswalk.csv"),
+        dtype={"hru_id": int, "hru_id_nat": int},
+    )
 
     print(f"Parsing geometry IDs and model / scenario / era coordinates...\n")
 
@@ -65,7 +83,9 @@ if __name__ == "__main__":
 
     print("Creating empty netCDF dataset to hold stream segment statistics...\n")
     seg_ds = create_empty_dataset(geom_coords_dict["seg"], seg_ids)
-    print(f"Populating dataset from {len(seg_files)} stream segment statistic CSVs...\n")
+    print(
+        f"Populating dataset from {len(seg_files)} stream segment statistic CSVs...\n"
+    )
     seg_ds = populate_dataset(seg_ds, seg_files)
     print(f"Clipping dataset to the extent of {seg_shp_path} ...\n")
     seg_ds = clip_dataset(seg_ds, seg_shp, "seg")
@@ -87,4 +107,3 @@ if __name__ == "__main__":
     del hru_ds
 
     print("Processing finished at ", datetime.now(), "\n")
-
