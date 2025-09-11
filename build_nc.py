@@ -52,7 +52,7 @@ if __name__ == "__main__":
 
     print(f"Parsing geometry IDs and model / scenario / era coordinates...\n")
 
-    # get geometry IDs
+    # get geometry IDs from first file (assumes first file has complete geometry)
     seg_ids = pd.read_csv(seg_files[0]).seg_id.astype(int).tolist()
     hru_ids = pd.read_csv(hru_files[0]).hru_id.astype(int).tolist()
 
