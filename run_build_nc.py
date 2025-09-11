@@ -13,6 +13,7 @@ def arguments(argv):
     parser.add_argument("--conda_init_script", type=str, help="location of conda initialization script", required=True)
     parser.add_argument("--conda_env_name", type=str, help="conda environment to use", required=True)
     parser.add_argument("--build_nc_script", type=str, help="location of build_nc.py", required=True)
+    parser.add_argument("--build_json_script", type=str, help="location of build_ingest_json.py", required=True)
     
     args = parser.parse_args()
     data_dir = args.data_dir
@@ -21,8 +22,9 @@ def arguments(argv):
     conda_init_script = args.conda_init_script
     conda_env_name = args.conda_env_name
     build_nc_script = args.build_nc_script
+    build_json_script = args.build_json_script
 
-    return data_dir, gis_dir, output_dir, conda_init_script, conda_env_name, build_nc_script
+    return data_dir, gis_dir, output_dir, conda_init_script, conda_env_name, build_nc_script, build_json_script
 
 
 def write_sbatch_head(sbatch_out_fp, conda_init_script, conda_env_name):
@@ -57,6 +59,7 @@ def write_sbatch(
     sbatch_out_fp,
     sbatch_head,
     build_nc_script,
+    build_json_script,
     data_dir,
     gis_dir,
     output_dir,
@@ -76,6 +79,10 @@ def write_sbatch(
         f"python {build_nc_script} "
         f"--data_dir {data_dir} "
         f"--gis_dir {gis_dir} "
+        f"--output_dir {output_dir};"
+    )
+    pycommands += (
+        f"python {build_json_script} "
         f"--output_dir {output_dir} "
     )
     pycommands += "\n\n"
@@ -105,7 +112,7 @@ def submit_sbatch(sbatch_fp):
 
 if __name__ == "__main__":
 
-    data_dir, gis_dir, output_dir, conda_init_script, conda_env_name, build_nc_script = arguments(sys.argv)
+    data_dir, gis_dir, output_dir, conda_init_script, conda_env_name, build_nc_script, build_json_script = arguments(sys.argv)
 
     # create the output directory if it doesn't exist
     Path(output_dir).mkdir(exist_ok=True, parents=True)
@@ -116,5 +123,5 @@ if __name__ == "__main__":
 
     # write sbatch head + commands, then submit job
     sbatch_head = write_sbatch_head(sbatch_out_fp, conda_init_script, conda_env_name)
-    write_sbatch(sbatch_fp, sbatch_out_fp, sbatch_head, build_nc_script, data_dir, gis_dir, output_dir)
+    write_sbatch(sbatch_fp, sbatch_out_fp, sbatch_head, build_nc_script, build_json_script, data_dir, gis_dir, output_dir)
     submit_sbatch(sbatch_fp)
