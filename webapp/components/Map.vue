@@ -45,31 +45,33 @@ const eras: Record<string, string> = {
   '2071_2100': '2071-2100',
 }
 
-const stats: string[] = [
-  'dh3',
-  'dh15',
-  'dl3',
-  'dl16',
-  'fh1',
-  'fl1',
-  'fl3',
-  'ma12',
-  'ma13',
-  'ma14',
-  'ma15',
-  'ma16',
-  'ma17',
-  'ma18',
-  'ma19',
-  'ma20',
-  'ma21',
-  'ma22',
-  'ma23',
-  'ra1',
-  'ra3',
-  'th1',
-  'tl1',
-]
+const statsUnits: Record<string, string> = {
+  dh3: 'cfs',
+  dh15: 'days/year',
+  dl3: 'cfs',
+  dl16: 'days/year',
+  fh1: 'events/year',
+  fl1: 'events/year',
+  fl3: 'events/year',
+  ma12: 'cfs',
+  ma13: 'cfs',
+  ma14: 'cfs',
+  ma15: 'cfs',
+  ma16: 'cfs',
+  ma17: 'cfs',
+  ma18: 'cfs',
+  ma19: 'cfs',
+  ma20: 'cfs',
+  ma21: 'cfs',
+  ma22: 'cfs',
+  ma23: 'cfs',
+  ra1: 'cfs/day',
+  ra3: 'cfs/day',
+  th1: 'day',
+  tl1: 'day',
+}
+
+const stats = Object.keys(statsUnits)
 
 onMounted(() => {
   var map = $L.map('map').setView([37.8, -96], 4)
@@ -178,16 +180,25 @@ onMounted(() => {
             }
             selectedSeg.value = e.sourceTarget
             segName.value = selectedSeg.value?.feature.properties.GNIS_NAME
-            console.log(selectedSeg.value?.feature.properties.seg_id_nat)
+            console.log(
+              'geom_id: ' + selectedSeg.value?.feature.properties.seg_id_nat
+            )
             let seg_id = selectedSeg.value?.feature.properties.seg_id_nat
-            let url = 'http://localhost:5000/conus_hydrology/' + seg_id
+            let url =
+              'http://127.0.0.1:5000/conus_hydrology/' +
+              seg_id
             selectedSeg.value?.setStyle({
               color: 'red',
             })
+            const startTime = performance.now()
             fetch(url)
               .then(response => response.json())
               .then(data => {
                 statsData.value = data[seg_id]['stats']
+                const endTime = performance.now()
+                console.log(
+                  `Fetch took ${((endTime - startTime) / 1000).toFixed(1)} seconds`
+                )
               })
           })
         zoomAddGeoJson = false
@@ -266,11 +277,19 @@ onMounted(() => {
           <th class="p-5">{{ stat }}</th>
           <td class="p-5">
             {{
-              statsData[lcInput][modelInput]['historical']['1976_2005'][stat]
+              Number(
+                statsData[lcInput][modelInput]['historical']['1976_2005'][stat]
+              ).toFixed(2)
             }}
+            <span style="color: #888">{{ statsUnits[stat] }}</span>
           </td>
           <td v-for="era in Object.keys(eras)" class="p-5">
-            {{ statsData[lcInput][modelInput][scenarioInput][era][stat] }}
+            {{
+              Number(
+                statsData[lcInput][modelInput][scenarioInput][era][stat]
+              ).toFixed(2)
+            }}
+            <span style="color: #888">{{ statsUnits[stat] }}</span>
           </td>
         </tr>
       </table>
