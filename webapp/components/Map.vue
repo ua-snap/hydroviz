@@ -45,33 +45,213 @@ const eras: Record<string, string> = {
   '2071_2100': '2071-2100',
 }
 
-const statsUnits: Record<string, string> = {
-  dh3: 'cfs',
-  dh15: 'days/year',
-  dl3: 'cfs',
-  dl16: 'days/year',
-  fh1: 'events/year',
-  fl1: 'events/year',
-  fl3: 'events/year',
-  ma12: 'cfs',
-  ma13: 'cfs',
-  ma14: 'cfs',
-  ma15: 'cfs',
-  ma16: 'cfs',
-  ma17: 'cfs',
-  ma18: 'cfs',
-  ma19: 'cfs',
-  ma20: 'cfs',
-  ma21: 'cfs',
-  ma22: 'cfs',
-  ma23: 'cfs',
-  ra1: 'cfs/day',
-  ra3: 'cfs/day',
-  th1: 'day',
-  tl1: 'day',
+const statVars: Record<
+  string,
+  {
+    category: string
+    code_base: string
+    difference_method: string
+    title: string
+    description: string
+    units: string
+  }
+> = {
+  dh3: {
+    category: 'duration',
+    code_base: 'mhit',
+    difference_method: 'ratio',
+    title: 'Annual maximum of 7-day moving average flows',
+    description:
+      'Compute the maximum of a 7-day moving average flow for each year. DH3 is the median of these values (cubic feet per second).',
+    units: 'cfs',
+  },
+  dh15: {
+    category: 'duration',
+    code_base: 'mhit',
+    difference_method: 'ratio',
+    title: 'High flow pulse duration',
+    description:
+      'Compute the average duration for flow events with flows above a threshold equal to the 75th percentile value for each year in the flow record. DH15 is the median of these values (days/year).',
+    units: 'days/year',
+  },
+  dl3: {
+    category: 'duration',
+    code_base: 'mhit',
+    difference_method: 'ratio',
+    title: 'Annual minimum of 7-day moving average flow',
+    description:
+      'Compute the minimum of a 7-day moving average flow for each year. DL3 is the median of these values (cubic feet per second).',
+    units: 'cfs',
+  },
+  dl16: {
+    category: 'duration',
+    code_base: 'mhit',
+    difference_method: 'ratio',
+    title: 'Low flow pulse duration',
+    description:
+      'Compute the average pulse duration for each year for flow events below a threshold equal to the 25th percentile value for the entire flow record. DL16 is the median of these values (days/year).',
+    units: 'days/year',
+  },
+  fh1: {
+    category: 'frequency',
+    code_base: 'mhit',
+    difference_method: 'absolute',
+    title: 'High flood pulse count',
+    description:
+      'Compute the average number of flow events with flows above a threshold equal to the 75th percentile value for the entire flow record. FH1 is the median of these values (events/year).',
+    units: 'events/year',
+  },
+  fl1: {
+    category: 'frequency',
+    code_base: 'mhit',
+    difference_method: 'absolute',
+    title: 'Low flood pulse count',
+    description:
+      'Compute the average number of flow events with flows below a threshold equal to the 25th percentile value for the entire flow record. FL1 is the median of these values (events/year).',
+    units: 'events/year',
+  },
+  fl3: {
+    category: 'frequency',
+    code_base: 'mhit',
+    difference_method: 'absolute',
+    title: 'Frequency of low pulse spells',
+    description:
+      'Compute the average number of flow events with flows below a threshold equal to 5 percent of the mean flow value for the entire flow record. FL3 is the median of these values (events/year).',
+    units: 'events/year',
+  },
+  ma12: {
+    category: 'magnitude',
+    code_base: 'mhit',
+    difference_method: 'ratio',
+    title: 'Mean of monthly flow values for January',
+    description: '',
+    units: 'cfs',
+  },
+  ma13: {
+    category: 'magnitude',
+    code_base: 'mhit',
+    difference_method: 'ratio',
+    title: 'Mean of monthly flow values for February',
+    description: '',
+    units: 'cfs',
+  },
+  ma14: {
+    category: 'magnitude',
+    code_base: 'mhit',
+    difference_method: 'ratio',
+    title: 'Mean of monthly flow values for March',
+    description: '',
+    units: 'cfs',
+  },
+  ma15: {
+    category: 'magnitude',
+    code_base: 'mhit',
+    difference_method: 'ratio',
+    title: 'Mean of monthly flow values for April',
+    description: '',
+    units: 'cfs',
+  },
+  ma16: {
+    category: 'magnitude',
+    code_base: 'mhit',
+    difference_method: 'ratio',
+    title: 'Mean of monthly flow values for May',
+    description: '',
+    units: 'cfs',
+  },
+  ma17: {
+    category: 'magnitude',
+    code_base: 'mhit',
+    difference_method: 'ratio',
+    title: 'Mean of monthly flow values for June',
+    description: '',
+    units: 'cfs',
+  },
+  ma18: {
+    category: 'magnitude',
+    code_base: 'mhit',
+    difference_method: 'ratio',
+    title: 'Mean of monthly flow values for July',
+    description: '',
+    units: 'cfs',
+  },
+  ma19: {
+    category: 'magnitude',
+    code_base: 'mhit',
+    difference_method: 'ratio',
+    title: 'Mean of monthly flow values for August',
+    description: '',
+    units: 'cfs',
+  },
+  ma20: {
+    category: 'magnitude',
+    code_base: 'mhit',
+    difference_method: 'ratio',
+    title: 'Mean of monthly flow values for September',
+    description: '',
+    units: 'cfs',
+  },
+  ma21: {
+    category: 'magnitude',
+    code_base: 'mhit',
+    difference_method: 'ratio',
+    title: 'Mean of monthly flow values for October',
+    description: '',
+    units: 'cfs',
+  },
+  ma22: {
+    category: 'magnitude',
+    code_base: 'mhit',
+    difference_method: 'ratio',
+    title: 'Mean of monthly flow values for November',
+    description: '',
+    units: 'cfs',
+  },
+  ma23: {
+    category: 'magnitude',
+    code_base: 'mhit',
+    difference_method: 'ratio',
+    title: 'Mean of monthly flow values for December',
+    description: '',
+    units: 'cfs',
+  },
+  ra1: {
+    category: 'rate_of_change',
+    code_base: 'mhit',
+    difference_method: 'ratio',
+    title: 'Rise rate',
+    description:
+      'Compute the change in flow for days in which the change is positive for the entire flow record. RA1 is the median of these values (cubic feet per second/day).',
+    units: 'cfs/day',
+  },
+  ra3: {
+    category: 'rate_of_change',
+    code_base: 'mhit',
+    difference_method: 'ratio',
+    title: 'Fall rate',
+    description:
+      'Compute the change in flow for days in which the change is negative for the entire flow record. RA3 is the median of these values (cubic feet per second/day).',
+    units: 'cfs/day',
+  },
+  th1: {
+    category: 'timing',
+    code_base: 'mhit',
+    difference_method: 'absolute',
+    title: 'Julian date of annual maximum',
+    description:
+      'Determine the Julian date that the maximum flow occurs for each year. TH1 is the median of these values (Julian day - temporal).',
+    units: 'day',
+  },
+  tl1: {
+    category: 'timing',
+    code_base: 'mhit',
+    difference_method: 'absolute',
+    title: 'Julian date of annual minimum',
+    description:
+      'Determine the Julian date that the minimum flow occurs for each water year. TL1 is the median of these values (Julian day - temporal).',
+    units: 'day',
+  },
 }
-
-const stats = Object.keys(statsUnits)
 
 onMounted(() => {
   var map = $L.map('map').setView([37.8, -96], 4)
@@ -184,9 +364,7 @@ onMounted(() => {
               'geom_id: ' + selectedSeg.value?.feature.properties.seg_id_nat
             )
             let seg_id = selectedSeg.value?.feature.properties.seg_id_nat
-            let url =
-              'http://127.0.0.1:5000/conus_hydrology/' +
-              seg_id
+            let url = 'http://127.0.0.1:5000/conus_hydrology/' + seg_id
             selectedSeg.value?.setStyle({
               color: 'red',
             })
@@ -267,21 +445,23 @@ onMounted(() => {
         <thead>
           <tr>
             <th class="p-5">Statistic</th>
+            <th class="p-5">Description</th>
             <th class="p-5">1976-2005</th>
             <th v-for="era in Object.keys(eras)" class="p-5">
               {{ eras[era] }}
             </th>
           </tr>
         </thead>
-        <tr v-for="stat in stats">
-          <th class="p-5">{{ stat }}</th>
+        <tr v-for="stat in Object.keys(statVars)">
+          <th class="p-5" scope="row">{{ stat }}</th>
+          <td class="p-5" v-html="statVars[stat].title"></td>
           <td class="p-5">
             {{
               Number(
                 statsData[lcInput][modelInput]['historical']['1976_2005'][stat]
               ).toFixed(2)
             }}
-            <span style="color: #888">{{ statsUnits[stat] }}</span>
+            <span style="color: #888">{{ statVars[stat].units }}</span>
           </td>
           <td v-for="era in Object.keys(eras)" class="p-5">
             {{
@@ -289,7 +469,7 @@ onMounted(() => {
                 statsData[lcInput][modelInput][scenarioInput][era][stat]
               ).toFixed(2)
             }}
-            <span style="color: #888">{{ statsUnits[stat] }}</span>
+            <span style="color: #888">{{ statVars[stat].units }}</span>
           </td>
         </tr>
       </table>
@@ -297,7 +477,12 @@ onMounted(() => {
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
+table {
+  th[scope='row'] {
+    text-transform: uppercase;
+  }
+}
 .parameter {
   display: inline-block;
   select {
