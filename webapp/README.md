@@ -11,7 +11,7 @@ npm install
 
 ```
 cd data-api
-git checkout hydroviz_v2
+git checkout hydroviz_prototype_api
 export FLASK_APP=application.py
 export API_RAS_BASE_URL=https://zeus.snap.uaf.edu/rasdaman/
 pipenv run flask run
