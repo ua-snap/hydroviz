@@ -12,7 +12,7 @@ Read about the dataset's statistics in the `data/streamflow_statistics_descripti
 
 - This codebase uses the `snap-geo` conda environment, details found [here](https://github.com/ua-snap/snap-geo/tree/add_conda_env). 
 
-- Use `data/eda/download.ipynb` if you want to download a copy of the data (requires install of [sciencebasepy](https://github.com/DOI-USGS/sciencebasepy/tree/master) into `snap-geo`). Be warned, there are problems with downloading the data via the `sciencebasepy` API, and therefore some of this process is manual point-and-click tedium. For testing, it's recommended to just access the data from this directory instead: `/import/beegfs/CMIP6/jdpaul3/hydroviz_data`
+- Use `data/eda/download_stats.ipynb` and `data/eda/download_daily.ipynb` if you want to download a copy of the data (requires install of [sciencebasepy](https://github.com/DOI-USGS/sciencebasepy/tree/master) into `snap-geo`). Be warned, there are problems with downloading the data via the `sciencebasepy` API, and therefore some of this process is manual point-and-click tedium. For testing, it's recommended to just access the data from this directory instead: `/import/beegfs/CMIP6/jdpaul3/hydroviz_data`
 
 - Use the `data/eda/eda.ipynb` notebook to familiarize yourself with the dataset's original tabular structure.
 
