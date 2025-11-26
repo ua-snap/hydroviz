@@ -154,7 +154,7 @@ python generate_combine_job.py \
     scripts_dir
 
 # Step 4: Submit combining job
-sbatch scripts_dir/combine_job.sh
+sbatch scripts_dir/combine_netcdf.slurm
 ```
 
 The combining job uses the **analysis** partition with high-memory nodes (up to 1.5TB) for efficient processing of large datasets.
