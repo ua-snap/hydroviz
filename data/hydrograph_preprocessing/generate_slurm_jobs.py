@@ -157,11 +157,39 @@ def generate_slurm_script(csv_file, output_file, temp_dir, args, scripts_dir):
 #SBATCH --time={args.time_limit}
 #SBATCH --output={scripts_dir}/logs/%x_%j.out
 
+
+echo "Starting streamflow daily climatology processing at $(date)"
+echo "Job running on node: $HOSTNAME"
+
+# First, deactivate any existing virtual environments
+echo "Deactivating any existing virtual environments..."
+if [[ -n "$VIRTUAL_ENV" ]]; then
+    echo "Found active virtual environment: $VIRTUAL_ENV"
+    unset VIRTUAL_ENV
+fi
+if [[ -n "$PIPENV_ACTIVE" ]]; then
+    echo "Found active pipenv environment"
+    unset PIPENV_ACTIVE
+fi
+
+# Reset PATH to remove any virtual environment modifications
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
 # Activate conda environment
+echo "Activating conda environment: {args.conda_env}"
 source $HOME/miniconda3/etc/profile.d/conda.sh
 conda activate {args.conda_env}
 
-echo "Starting processing at $(date)"
+# Verify conda environment activation
+if [[ "$CONDA_DEFAULT_ENV" != "{args.conda_env}" ]]; then
+    echo "ERROR: Failed to activate conda environment {args.conda_env}"
+    echo "Current environment: $CONDA_DEFAULT_ENV"
+    exit 1
+fi
+
+echo "Successfully activated conda environment: $CONDA_DEFAULT_ENV"
+echo "Python location: $(which python)"
+echo "Python version: $(python --version)"
 
 # Run the script
 {processing_cmd_str}
