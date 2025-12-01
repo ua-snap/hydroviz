@@ -105,7 +105,10 @@ def csv_to_parquet(csv_path, parquet_path):
 def get_landcover_model_rcp_from_filename(filename):
     """Extract landcover and model information from filename.
     Filename is in format: <landcover>_<model>_<rcp>_...csv"""
-    lower_name = filename.lower()
+    
+    # Extract just the filename from the full path
+    filename_only = Path(filename).name
+    lower_name = filename_only.lower()
 
     landcover = "unknown"
     model = "unknown"

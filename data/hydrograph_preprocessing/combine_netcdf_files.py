@@ -9,6 +9,7 @@ indexing conflicts, then merging them together.
 
 import sys
 import argparse
+import traceback
 from pathlib import Path
 from datetime import datetime
 import xarray as xr
@@ -88,33 +89,77 @@ def open_and_combine(file_paths, n_workers=4, threads_per_worker=6):
     print(f"Combining {len(file_paths)} files ... started at: {datetime.now().isoformat()}")
     
     # Use Dask distributed client
-    with Client(n_workers=n_workers, threads_per_worker=threads_per_worker) as client:
-        
-        datasets = []
-        
-        # Open each file individually
-        for file_path in file_paths:
-            print(f"Opening {file_path.name}...")
-            ds = xr.open_dataset(file_path)
-            ds = ds.load()
-            datasets.append(ds)
-            print(f"  Loaded: dims: {ds.dims}")
+    try:
+        with Client(n_workers=n_workers, threads_per_worker=threads_per_worker) as client:
+            print(f"Dask client started: {client}")
+            sys.stdout.flush()
+            
+            datasets = []
+            
+            # Open each file individually
+            for i, file_path in enumerate(file_paths):
+                try:
+                    print(f"Opening file {i+1}/{len(file_paths)}: {file_path.name}...")
+                    sys.stdout.flush()
+                    
+                    ds = xr.open_dataset(file_path)
+                    ds = ds.load()
+                    datasets.append(ds)
+                    print(f"  Loaded successfully: dims: {ds.dims}")
+                    sys.stdout.flush()
+                    
+                except Exception as e:
+                    print(f"ERROR: Failed to open file {file_path}: {e}", file=sys.stderr)
+                    print(f"Full traceback:", file=sys.stderr)
+                    traceback.print_exc(file=sys.stderr)
+                    sys.stderr.flush()
+                    raise
+                    
+    except Exception as e:
+        print(f"ERROR: Failed to initialize Dask client or process files: {e}", file=sys.stderr)
+        print(f"Full traceback:", file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
+        sys.stderr.flush()
+        raise
     
     # Combine datasets by merging (not concatenating) to handle overlapping coordinates
     print("Merging datasets...")
-    combined_ds = xr.merge(datasets, combine_attrs="drop_conflicts")
-    
+    sys.stdout.flush()
+    try:
+        combined_ds = xr.merge(datasets, combine_attrs="drop_conflicts")
+        print("Merge completed successfully")
+        sys.stdout.flush()
+    except Exception as e:
+        print(f"ERROR: Failed to merge datasets: {e}", file=sys.stderr)
+        print(f"Full traceback:", file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
+        sys.stderr.flush()
+        # Print dataset information for debugging
+        print(f"Dataset information for debugging:", file=sys.stderr)
+        for i, ds in enumerate(datasets):
+            print(f"  Dataset {i+1}: coords={list(ds.coords)}, dims={ds.dims}", file=sys.stderr)
+        sys.stderr.flush()
+        sys.exit(1)
+
     # Fix string coordinate dtypes to prevent truncation
-    string_coords = ['model', 'scenario', 'landcover', 'era']
-    for coord_name in string_coords:
-        if coord_name in combined_ds.coords:
-            # Convert to object dtype to allow variable-length strings
-            coord_values = combined_ds[coord_name].values
-            # Ensure all values are strings and find max length
-            str_values = [str(val) for val in coord_values]
-            combined_ds = combined_ds.assign_coords({coord_name: str_values})
-            print(f"Fixed {coord_name} coordinate: {combined_ds[coord_name].values}")
-    
+    try:
+        string_coords = ['model', 'scenario', 'landcover', 'era']
+        for coord_name in string_coords:
+            if coord_name in combined_ds.coords:
+                # Convert to object dtype to allow variable-length strings
+                coord_values = combined_ds[coord_name].values
+                # Ensure all values are strings and find max length
+                str_values = [str(val) for val in coord_values]
+                combined_ds = combined_ds.assign_coords({coord_name: str_values})
+                print(f"Fixed {coord_name} coordinate: {combined_ds[coord_name].values}")
+                sys.stdout.flush()
+    except Exception as e:
+        print(f"ERROR: Failed to fix string coordinate dtypes: {e}", file=sys.stderr)
+        print(f"Full traceback:", file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
+        sys.stderr.flush()
+        sys.exit(1)
+
     print(f"Combining completed at: {datetime.now().isoformat()}")
     print(f"Final dataset dimensions: {combined_ds.dims}")
     
@@ -144,12 +189,16 @@ def main():
     print(f"Found {len(nc_files)} NetCDF files to combine")
     for file in sorted(nc_files):
         print(f"  {file.name}")
+    sys.stdout.flush()
     
     # Create output directory if it doesn't exist
     output_file.parent.mkdir(parents=True, exist_ok=True)
     
     try:
         # Combine files
+        print(f"Starting file combination with {args.workers} workers and {args.threads_per_worker} threads per worker")
+        sys.stdout.flush()
+        
         combined_ds = open_and_combine(
             nc_files, 
             args.workers, 
@@ -157,6 +206,8 @@ def main():
         )
         
         # Add global attributes
+        print("Adding global attributes...")
+        sys.stdout.flush()
         combined_ds.attrs.update({
             'title': 'Combined Streamflow Daily Climatologies',
             'description': 'Daily climatology statistics (min, mean, max) by era and model',
@@ -166,6 +217,7 @@ def main():
         
         # Save combined dataset with proper string encoding
         print(f"Saving combined dataset to: {output_file}")
+        sys.stdout.flush()
         
         # Create encoding dict to ensure string coordinates use variable-length strings
         encoding = {}
@@ -174,15 +226,28 @@ def main():
             if coord_name in combined_ds.coords:
                 encoding[coord_name] = {'dtype': 'S1'}  # Use variable-length strings
         
-        combined_ds.to_netcdf(output_file, format='NETCDF4', encoding=encoding)
+        try:
+            combined_ds.to_netcdf(output_file, format='NETCDF4', encoding=encoding)
+            print("NetCDF file saved successfully")
+            sys.stdout.flush()
+        except Exception as save_error:
+            print(f"ERROR: Failed to save NetCDF file: {save_error}", file=sys.stderr)
+            print(f"Full traceback:", file=sys.stderr)
+            traceback.print_exc(file=sys.stderr)
+            sys.stderr.flush()
+            raise
         
         # Clean up
         combined_ds.close()
         
         print(f"Successfully combined {len(nc_files)} files into {output_file}")
+        sys.stdout.flush()
         
     except Exception as e:
-        print(f"Error combining files: {e}", file=sys.stderr)
+        print(f"ERROR: Failed to combine files: {e}", file=sys.stderr)
+        print(f"Full traceback:", file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
+        sys.stderr.flush()
         sys.exit(1)
 
 
