@@ -46,7 +46,7 @@ def parse_arguments():
     parser.add_argument(
         "--memory",
         type=str,
-        default="500G",
+        default="750G",
         help="Memory allocation for job"
     )
     
@@ -60,7 +60,7 @@ def parse_arguments():
     parser.add_argument(
         "--time-limit",
         type=str,
-        default="04:00:00",
+        default="06:00:00",
         help="Time limit for job (HH:MM:SS)"
     )
     
@@ -74,14 +74,14 @@ def parse_arguments():
     parser.add_argument(
         "--workers",
         type=int,
-        default=4,
+        default=6,
         help="Number of Dask workers"
     )
     
     parser.add_argument(
         "--threads-per-worker",
         type=int,
-        default=6,
+        default=4,
         help="Number of threads per Dask worker"
     )
     
@@ -152,8 +152,18 @@ echo "Dask workers: {args.workers}"
 echo "Threads per worker: {args.threads_per_worker}"
 echo "Working directory: $(pwd)"
 
+# Set Dask configuration for memory management
+export DASK_DISTRIBUTED__WORKER__MEMORY__TARGET=0.75
+export DASK_DISTRIBUTED__WORKER__MEMORY__SPILL=0.85
+export DASK_DISTRIBUTED__WORKER__MEMORY__PAUSE=0.90
+export DASK_DISTRIBUTED__WORKER__MEMORY__TERMINATE=0.95
+
 # Ensure unbuffered output for real-time logging
 export PYTHONUNBUFFERED=1
+
+# Monitor memory usage
+echo "Initial memory usage:"
+free -h
 
 # Run the combining script
 echo "Running combine_netcdf_files.py..."
@@ -166,6 +176,7 @@ python -u combine_netcdf_files.py \\
 
 # Check exit status
 EXIT_CODE=$?
+
 if [ $EXIT_CODE -eq 0 ]; then
     echo "NetCDF combining completed successfully at $(date)"
     
@@ -179,6 +190,7 @@ else
     echo "NetCDF combining failed with exit code $EXIT_CODE at $(date)"
     if [ $EXIT_CODE -eq 137 ] || [ $EXIT_CODE -eq 9 ]; then
         echo "This appears to be a memory-related failure. Consider increasing memory allocation."
+        echo "Try using more memory (e.g., --memory 1000G) or fewer/smaller workers."
     fi
     exit $EXIT_CODE
 fi

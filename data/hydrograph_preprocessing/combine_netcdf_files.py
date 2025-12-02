@@ -68,8 +68,8 @@ def open_and_combine(file_paths, n_workers=4, threads_per_worker=6):
     """
     Open and combine a list of file paths into a single xarray dataset.
     
-    To avoid indexing errors with the time dimension, we separate historical 
-    and projected data, open them separately, and then combine them.
+    Uses chunked operations and avoids loading all data into memory
+    to handle large datasets efficiently.
     
     Parameters:
     -----------
@@ -90,23 +90,44 @@ def open_and_combine(file_paths, n_workers=4, threads_per_worker=6):
     
     # Use Dask distributed client
     try:
-        with Client(n_workers=n_workers, threads_per_worker=threads_per_worker) as client:
+        with Client(n_workers=n_workers, threads_per_worker=threads_per_worker, 
+                   memory_limit='16GB') as client:
             print(f"Dask client started: {client}")
             sys.stdout.flush()
             
+            # Define optimal chunk sizes for memory efficiency
+            # Target chunks of ~100MB each
+            chunk_sizes = {
+                'doy': 50,  # Chunk day-of-year dimension
+                'stat': -1,  # Keep stat dimension intact (small)
+                'model': 1,  # Process one model at a time
+                'scenario': 1,  # Process one scenario at a time
+                'era': -1,  # Keep era dimension intact (small)
+                'stream_id': 1000  # Chunk station dimension
+            }
+            
             datasets = []
             
-            # Open each file individually
+            # Open each file individually with chunking
             for i, file_path in enumerate(file_paths):
                 try:
                     print(f"Opening file {i+1}/{len(file_paths)}: {file_path.name}...")
                     sys.stdout.flush()
                     
-                    ds = xr.open_dataset(file_path)
-                    ds = ds.load()
-                    datasets.append(ds)
-                    print(f"  Loaded successfully: dims: {ds.dims}")
+                    # Open with chunking, don't load into memory
+                    ds = xr.open_dataset(file_path, chunks=chunk_sizes)
+                    
+                    # Print dataset info without loading data
+                    print(f"  Opened successfully: dims: {ds.dims}")
+                    print(f"  Data variables: {list(ds.data_vars)}")
+                    print(f"  Coordinates: {list(ds.coords)}")
+                    
+                    # Check memory usage estimate
+                    total_size = sum(var.nbytes for var in ds.data_vars.values())
+                    print(f"  Estimated size: {total_size / 1e9:.2f} GB")
                     sys.stdout.flush()
+                    
+                    datasets.append(ds)
                     
                 except Exception as e:
                     print(f"ERROR: Failed to open file {file_path}: {e}", file=sys.stderr)
@@ -122,13 +143,37 @@ def open_and_combine(file_paths, n_workers=4, threads_per_worker=6):
         sys.stderr.flush()
         raise
     
-    # Combine datasets by merging (not concatenating) to handle overlapping coordinates
-    print("Merging datasets...")
+    # Combine datasets incrementally to avoid memory issues
+    print("Combining datasets incrementally...")
     sys.stdout.flush()
     try:
-        combined_ds = xr.merge(datasets, combine_attrs="drop_conflicts")
-        print("Merge completed successfully")
+        # Start with the first dataset
+        combined_ds = datasets[0]
+        print(f"Starting with dataset 1: {datasets[0].dims}")
+        
+        # Merge datasets one by one to avoid large memory allocations
+        for i, ds in enumerate(datasets[1:], 2):
+            print(f"Merging dataset {i}/{len(datasets)}...")
+            sys.stdout.flush()
+            
+            try:
+                # Use merge with chunked data - this keeps data on disk
+                combined_ds = xr.merge([combined_ds, ds], 
+                                     combine_attrs="drop_conflicts",
+                                     compat='override')
+                print(f"  Successfully merged dataset {i}")
+                sys.stdout.flush()
+                
+            except Exception as merge_error:
+                print(f"ERROR: Failed to merge dataset {i}: {merge_error}", file=sys.stderr)
+                print(f"Dataset {i} info: coords={list(ds.coords)}, dims={ds.dims}", file=sys.stderr)
+                print(f"Combined so far: coords={list(combined_ds.coords)}, dims={combined_ds.dims}", file=sys.stderr)
+                sys.stderr.flush()
+                raise
+        
+        print("Incremental merge completed successfully")
         sys.stdout.flush()
+        
     except Exception as e:
         print(f"ERROR: Failed to merge datasets: {e}", file=sys.stderr)
         print(f"Full traceback:", file=sys.stderr)
@@ -211,25 +256,38 @@ def main():
         combined_ds.attrs.update({
             'title': 'Combined Streamflow Daily Climatologies',
             'description': 'Daily climatology statistics (min, mean, max) by era and model',
-            'created': datetime.now().isoformat(),
-            'source_files': [f.name for f in nc_files]
+            'created': datetime.now().isoformat()
         })
         
-        # Save combined dataset with proper string encoding
+        # Save combined dataset with proper string encoding and chunking
         print(f"Saving combined dataset to: {output_file}")
+        print(f"Final dataset dimensions: {combined_ds.dims}")
+        
+        # Print memory usage estimate before saving
+        try:
+            total_size = sum(var.nbytes for var in combined_ds.data_vars.values())
+            print(f"Total dataset size estimate: {total_size / 1e9:.2f} GB")
+        except:
+            print("Could not estimate dataset size")
         sys.stdout.flush()
         
-        # Create encoding dict to ensure string coordinates use variable-length strings
+        # Create encoding dict for string coordinates only (no compression)
         encoding = {}
         string_coords = ['model', 'scenario', 'landcover', 'era']
+        
+        # Encoding for string coordinates only
         for coord_name in string_coords:
             if coord_name in combined_ds.coords:
                 encoding[coord_name] = {'dtype': 'S1'}  # Use variable-length strings
         
         try:
+            print("Starting to write NetCDF file (this may take some time for large datasets)...")
+            sys.stdout.flush()
+            
             combined_ds.to_netcdf(output_file, format='NETCDF4', encoding=encoding)
             print("NetCDF file saved successfully")
             sys.stdout.flush()
+            
         except Exception as save_error:
             print(f"ERROR: Failed to save NetCDF file: {save_error}", file=sys.stderr)
             print(f"Full traceback:", file=sys.stderr)
