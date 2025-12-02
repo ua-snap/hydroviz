@@ -14,6 +14,9 @@ from pathlib import Path
 from datetime import datetime
 import xarray as xr
 from dask.distributed import Client
+from dask.callbacks import Callback
+import threading
+import time
 import warnings
 
 # Suppress some common warnings from xarray/dask
@@ -87,7 +90,6 @@ def open_and_combine(file_paths, n_workers=4, threads_per_worker=6):
     
     print(f"Combining {len(file_paths)} files ... started at: {datetime.now().isoformat()}")
     
-    # Use Dask distributed client with more reasonable memory limits
     try:
         with Client(n_workers=n_workers, threads_per_worker=threads_per_worker) as client:
             print(f"Dask client started: {client}")
@@ -101,11 +103,11 @@ def open_and_combine(file_paths, n_workers=4, threads_per_worker=6):
             try:
                 combined_ds = xr.open_mfdataset(
                     file_paths,
-                    combine='by_coords',  # Automatically combine by coordinate values
-                    concat_dim=None,      # Let xarray figure out the dimensions
-                    combine_attrs='drop_conflicts',  # Handle attribute conflicts
-                    parallel=True,       # Use dask for parallel processing
-                    engine='netcdf4'     # Use netcdf4 engine
+                    combine='by_coords',  # automatically combine by coordinate values
+                    concat_dim=None,      # let xarray figure out the dimensions
+                    combine_attrs='drop_conflicts',
+                    parallel=True,
+                    engine='netcdf4'
                 )
                 
                 print("Successfully opened and combined all files")
@@ -115,7 +117,7 @@ def open_and_combine(file_paths, n_workers=4, threads_per_worker=6):
                 print(f"open_mfdataset failed, falling back to manual merge: {open_error}")
                 sys.stderr.flush()
                 
-                # Fallback to simple merge approach
+                # Fallback to simple merge approach if open_mfdataset fails
                 datasets = []
                 for i, file_path in enumerate(file_paths):
                     print(f"Opening file {i+1}/{len(file_paths)}: {file_path.name}...")
@@ -123,7 +125,8 @@ def open_and_combine(file_paths, n_workers=4, threads_per_worker=6):
                         sys.stdout.flush()
                     ds = xr.open_dataset(file_path)
                     
-                    # Fix string coordinates immediately for this file only
+                    # Fix string coordinates immediately on opening
+                    # xr.open_mfdataset should handle this, but we need it here on manual merge to avoid string truncation
                     string_coords = ['model', 'scenario', 'landcover', 'era']
                     for coord_name in string_coords:
                         if coord_name in ds.coords:
@@ -143,10 +146,6 @@ def open_and_combine(file_paths, n_workers=4, threads_per_worker=6):
         traceback.print_exc(file=sys.stderr)
         sys.stderr.flush()
         raise
-
-    # String coordinates are already fixed during file opening, no need to fix them again
-    print("String coordinates were fixed during individual file processing")
-    sys.stdout.flush()
 
     print(f"Combining completed at: {datetime.now().isoformat()}")
     print(f"Final dataset dimensions: {combined_ds.dims}")
@@ -263,9 +262,42 @@ def main():
         
         try:
             print("Starting to write NetCDF file (this may take some time for large datasets)...")
+            print("Progress updates will appear below...")
             sys.stdout.flush()
+                        
+            # Progress tracking variables
+            start_time = time.time()
+            progress_info = {'completed': 0, 'total': 0, 'start_time': start_time}
             
-            combined_ds.to_netcdf(output_file, format='NETCDF4', encoding=encoding)
+            class ProgressCallback(Callback):
+                def _start(self, dsk):
+                    progress_info['total'] = len(dsk)
+                    progress_info['completed'] = 0
+                    progress_info['start_time'] = time.time()
+                    print(f"Starting computation with {progress_info['total']} tasks...")
+                    sys.stdout.flush()
+                    
+                def _finish(self, dsk, state, errored):
+                    elapsed = time.time() - progress_info['start_time']
+                    print(f"✓ Computation completed: {progress_info['total']}/{progress_info['total']} tasks in {elapsed/60:.1f} minutes")
+                    sys.stdout.flush()
+                    
+                def _posttask(self, key, result, dsk, state, id):
+                    progress_info['completed'] += 1
+                    
+                    # Print update every 50 tasks with timing
+                    if progress_info['completed'] % 50 == 0 or progress_info['completed'] == progress_info['total']:
+                        elapsed = time.time() - progress_info['start_time']
+                        percent = (progress_info['completed'] / progress_info['total']) * 100
+                        
+                        print(f"Writing progress: {progress_info['completed']}/{progress_info['total']} tasks ({percent:.1f}%) | "
+                              f"Elapsed: {elapsed/60:.1f}min")
+                        sys.stdout.flush()
+            
+            # Write with progress monitoring
+            with ProgressCallback():
+                combined_ds.to_netcdf(output_file, format='NETCDF4', encoding=encoding)
+                
             print("NetCDF file saved successfully")
             
             # Check the actual file size on disk
