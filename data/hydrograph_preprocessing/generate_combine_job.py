@@ -60,7 +60,7 @@ def parse_arguments():
     parser.add_argument(
         "--time-limit",
         type=str,
-        default="01:00:00",
+        default="04:00:00",
         help="Time limit for job (HH:MM:SS)"
     )
     
