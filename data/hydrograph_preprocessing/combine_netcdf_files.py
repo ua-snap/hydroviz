@@ -18,10 +18,57 @@ from dask.callbacks import Callback
 import threading
 import time
 import warnings
+import psutil
+import os
 
 # Suppress some common warnings from xarray/dask
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=UserWarning)
+
+
+def get_system_resources():
+    """Get current system resource usage."""
+    try:
+        # Memory info
+        memory = psutil.virtual_memory()
+        mem_used_gb = memory.used / (1024**3)
+        
+        # Try to get SLURM memory limit from environment
+        slurm_mem_limit = os.environ.get('SLURM_MEM_LIMIT', '750G')
+        # Simple parsing - just strip any letters and assume GB
+        mem_limit_gb = float(''.join(c for c in slurm_mem_limit if c.isdigit() or c == '.'))
+        
+        mem_percent = (mem_used_gb / mem_limit_gb) * 100
+        
+        # CPU info
+        cpu_percent = psutil.cpu_percent(interval=0.1)
+        load_avg = os.getloadavg()[0]  # 1-minute load average
+        
+        # I/O stats (if available)
+        try:
+            io_stats = psutil.disk_io_counters()
+            io_wait = psutil.cpu_times_percent(interval=0.1).iowait if hasattr(psutil.cpu_times_percent(interval=0.1), 'iowait') else 0
+        except:
+            io_wait = 0
+            
+        return {
+            'mem_used_gb': mem_used_gb,
+            'mem_limit_gb': mem_limit_gb, 
+            'mem_percent': mem_percent,
+            'cpu_percent': cpu_percent,
+            'load_avg': load_avg,
+            'io_wait': io_wait
+        }
+    except Exception as e:
+        # Fallback if psutil fails
+        return {
+            'mem_used_gb': 0,
+            'mem_limit_gb': 750.0,
+            'mem_percent': 0,
+            'cpu_percent': 0,
+            'load_avg': 0,
+            'io_wait': 0
+        }
 
 
 def parse_arguments():
@@ -285,13 +332,27 @@ def main():
                 def _posttask(self, key, result, dsk, state, id):
                     progress_info['completed'] += 1
                     
-                    # Print update every 50 tasks with timing
+                    # Print update every 50 tasks with timing and resource info
                     if progress_info['completed'] % 50 == 0 or progress_info['completed'] == progress_info['total']:
                         elapsed = time.time() - progress_info['start_time']
                         percent = (progress_info['completed'] / progress_info['total']) * 100
                         
+                        # Get system resources
+                        resources = get_system_resources()
+                        
+                        # Check output file size if it exists
+                        file_size_gb = 0
+                        try:
+                            if output_file.exists():
+                                file_size_gb = output_file.stat().st_size / (1024**3)
+                        except:
+                            pass
+                        
                         print(f"Writing progress: {progress_info['completed']}/{progress_info['total']} tasks ({percent:.1f}%) | "
                               f"Elapsed: {elapsed/60:.1f}min")
+                        print(f"  Resources: RAM {resources['mem_used_gb']:.1f}/{resources['mem_limit_gb']:.1f}GB ({resources['mem_percent']:.1f}%) | "
+                              f"CPU {resources['cpu_percent']:.1f}% | Load {resources['load_avg']:.1f} | "
+                              f"IOWait {resources['io_wait']:.1f}% | File {file_size_gb:.1f}GB")
                         sys.stdout.flush()
             
             # Write with progress monitoring

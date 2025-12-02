@@ -47,7 +47,7 @@ def parse_arguments():
         "--memory",
         type=str,
         default="750G",
-        help="Memory allocation for job"
+        help="Memory allocation for job in GB"
     )
     
     parser.add_argument(
@@ -158,12 +158,11 @@ export DASK_DISTRIBUTED__WORKER__MEMORY__SPILL=0.85
 export DASK_DISTRIBUTED__WORKER__MEMORY__PAUSE=0.90
 export DASK_DISTRIBUTED__WORKER__MEMORY__TERMINATE=0.95
 
+# Pass SLURM memory allocation to the Python script
+export SLURM_MEM_LIMIT="{args.memory}"
+
 # Ensure unbuffered output for real-time logging
 export PYTHONUNBUFFERED=1
-
-# Monitor memory usage
-echo "Initial memory usage:"
-free -h
 
 # Run the combining script
 echo "Running combine_netcdf_files.py..."
