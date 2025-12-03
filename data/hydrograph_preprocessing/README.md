@@ -293,3 +293,4 @@ The scripts include comprehensive error handling and monitoring:
 - All error messages appear in SLURM *.err files for debugging
 - Intermediate parquet files are automatically cleaned up unless `--keep-intermediate` is specified
 - Temp directories may persist after cleanup but will be empty
+- Be aware that the combined file output is compressed, and will be uncompressed when ingesting into Rasdaman; the Rasdaman coverage will likely be much larger size than the combined file!
