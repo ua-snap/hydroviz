@@ -21,7 +21,7 @@ Required Python packages:
 - `psutil` - For system resource monitoring
 - `random` - For QC sampling (built-in)
 
-All packages should be available in the `snap-geo` conda environment.
+All packages should be available in the standard `snap-geo` conda environment.
 
 ## Usage
 
@@ -101,6 +101,8 @@ python submit_jobs.py /path/to/slurm/scripts
 
 ### Complete Workflow
 
+The processing time here really depends on the compute resources available, and the number of jobs that are allowed to run concurrently. Each individual job should take 5-7 minutes.
+
 ```bash
 # Generate scripts for all CSV files
 python generate_slurm_jobs.py input_dir output_dir temp_dir scripts_dir
@@ -128,7 +130,7 @@ python combine_netcdf_files.py \
 
 ### generate_combine_job.py
 
-Generates a SLURM job script for the combining task using the high-memory analysis partition.
+Generates a SLURM job script for the combining task. By default, this uses a high-RAM compute node on the analysis partition. This job should take 1-2 hours to run. Read about how to monitor slurm job progress in the Complete Workflow with All Steps section below.
 
 ```bash
 python generate_combine_job.py \
@@ -148,7 +150,7 @@ After combining files, you can verify the data integrity using the quality contr
 
 ### qc_combined_netcdf.py
 
-Randomly samples coordinate combinations from the combined file and verifies that values match the corresponding source files. Handles cases where data is missing (NaN values) for certain model/scenario combinations.
+Randomly samples coordinate combinations from the combined file and verifies that values match the corresponding source files. Handles cases where data is missing (NaN values) for certain model/scenario combinations. This script is safe to run from the login node.
 
 ```bash
 python qc_combined_netcdf.py \
@@ -163,15 +165,15 @@ The script will:
 - Verify that missing combinations properly result in NaN values
 - Provide a summary of passed/failed checks
 
-## Rasdaman Database Preparation
+## Rasdaman Preparation
 
-For ingestion into Rasdaman databases, string dimensions must be converted to integers.
+For ingestion into Rasdaman, string dimensions must be converted to integers, and we need encoding information added to the dimension attributes.
 
 ### convert_strings_for_rasdaman.py
 
 Converts string dimensions (landcover, model, scenario, era) to integer indices while preserving the original mappings in coordinate attributes.
 
-**Note:** This script should be run on a high-RAM compute node, not the login node, due to memory requirements for large files. Be sure to activate a conda environment that has `xarray` installed.
+**Note:** This script should be run on a high-RAM compute node, not the login node, due to memory requirements for large files. Be sure to activate a conda environment that has `xarray` installed. This may take over >1 hour to run.
 
 ```bash
 srun --partition=analysis --mem=750G --pty /bin/bash
@@ -205,12 +207,13 @@ python generate_combine_job.py \
 # Step 4: Submit combining job
 sbatch scripts_dir/combine_netcdf.slurm
 
-# Monitor combining job progress (in separate terminal)
-# First get the job ID from squeue, then monitor the log file
+# Monitor combining job progress
+# First get the job ID from squeue or the terminal message after submitting the job, then monitor the log file
 squeue -u $USER  # Note the job ID
 watch tail -n 20 scripts_dir/logs/combine_netcdf_<job_id>.out
 
 # Step 5: Quality control verification (after combining completes)
+# this can be run from the login node
 python qc_combined_netcdf.py \
     output_dir/combined.nc \
     output_dir \
@@ -224,7 +227,6 @@ python convert_strings_for_rasdaman.py \
     /path/to/rasdaman_ready_output.nc \
 ```
 
-The combining job uses the **analysis** partition with high-memory nodes (up to 1.5TB) for efficient processing of large datasets.
 
 ## Input File Format
 
@@ -256,7 +258,7 @@ The combined file merges all individual files along the model, scenario, and lan
 - Expanded dimensions with multiple values:
   - `landcover`: All land cover types (e.g., 'dynamic', 'static')
   - `model`: All climate models (e.g., 'cesm2', 'miroc-esm-chem', etc.)
-  - `scenario`: All scenarios (e.g., 'historical', 'rcp26', 'ssp245', etc.)
+  - `scenario`: All scenarios (e.g., 'historical', 'rcp26', 'rcp45', etc.)
 
 ### Rasdaman-Ready File
 The Rasdaman conversion creates an integer-indexed version:
@@ -266,30 +268,31 @@ The Rasdaman conversion creates an integer-indexed version:
 
 ## Memory Considerations
 
-The script processes data in chunks to manage memory usage:
-- CSV data is first converted to Parquet format for efficient processing
+The `process_streamflow_climatology.py` script tries to manage memory usage by:
+- First converting CSV data to Parquet format for efficient processing
 - Streamflow columns are processed in configurable chunks
 - Climatology calculations are done in stream chunks
-- Combining step is performed on high-memory analysis partition (up to 1.5TB available)
+- Automatic cleanup of intermediate files
+The combining step tries to manage memory usage by:
+- Using a high-memory analysis partition (up to 1.5TB RAM available on these nodes)
 - Real-time memory, CPU, and I/O monitoring during combining operations
 - Progress tracking with elapsed time and completion estimates
 
 ## Error Handling and Monitoring
 
 The scripts include comprehensive error handling and monitoring:
-- Detailed error messages sent to stderr and SLURM output files
+- Detailed error messages sent to stderr and SLURM output files (*.out and *.err)
 - Environment conflict detection (conda vs pipenv)
 - Resource usage monitoring (RAM, CPU load, I/O wait)
-- Progress tracking for long-running operations
-- Automatic cleanup of intermediate files
+- Progress tracking for long-running operations (via watching output files)
 - Validation of coordinate combinations in QC checks
 
 ## Notes
 
-- All error messages appear in SLURM output files for debugging
-- Intermediate parquet files are automatically cleaned up unless `--keep-intermediate` is specified
 - Scripts create output and temp directories automatically if they don't exist
+- All error messages appear in SLURM *.err files for debugging
+- Intermediate parquet files are automatically cleaned up unless `--keep-intermediate` is specified
 - Temp directories may persist after cleanup but will be empty
 - The combining operation includes progress monitoring with resource usage statistics
 - QC script handles mixed-case model names and validates missing data combinations
-- Rasdaman conversion preserves all data while making dimensions database-compatible
+- Rasdaman conversion preserves all data while making dimensions ingest-compatible
