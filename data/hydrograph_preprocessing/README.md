@@ -171,15 +171,14 @@ For ingestion into Rasdaman databases, string dimensions must be converted to in
 
 Converts string dimensions (landcover, model, scenario, era) to integer indices while preserving the original mappings in coordinate attributes.
 
-**Note:** This script should be run on a compute node, not the login node, due to memory requirements for large files.
+**Note:** This script should be run on a high-RAM compute node, not the login node, due to memory requirements for large files. Be sure to activate a conda environment that has `xarray` installed.
 
 ```bash
-# Run on compute node (via srun or sbatch)
-srun --partition=analysis --mem=500G --time=02:00:00 \
-    python convert_strings_for_rasdaman.py \
+srun --partition=analysis --mem=750G --pty /bin/bash
+conda activate snap-geo
+python convert_strings_for_rasdaman.py \
     /path/to/combined_output.nc \
     /path/to/rasdaman_ready_output.nc \
-    --string-dims landcover model scenario era
 ```
 
 The script will:
@@ -217,11 +216,12 @@ python qc_combined_netcdf.py \
     output_dir \
     --samples 20
 
-# Step 6: Convert for Rasdaman ingestion (run on compute node)
-srun --partition=analysis --mem=500G --time=02:00:00 \
-    python convert_strings_for_rasdaman.py \
-    output_dir/combined.nc \
-    output_dir/combined_for_rasdaman.nc
+# Step 6: Convert for Rasdaman ingestion (run on high-RAM compute node)
+srun --partition=analysis --mem=750G --pty /bin/bash
+conda activate snap-geo
+python convert_strings_for_rasdaman.py \
+    /path/to/combined_output.nc \
+    /path/to/rasdaman_ready_output.nc \
 ```
 
 The combining job uses the **analysis** partition with high-memory nodes (up to 1.5TB) for efficient processing of large datasets.
