@@ -206,6 +206,11 @@ python generate_combine_job.py \
 # Step 4: Submit combining job
 sbatch scripts_dir/combine_netcdf.slurm
 
+# Monitor combining job progress (in separate terminal)
+# First get the job ID from squeue, then monitor the log file
+squeue -u $USER  # Note the job ID
+watch tail -n 20 scripts_dir/logs/combine_netcdf_<job_id>.out
+
 # Step 5: Quality control verification (after combining completes)
 python qc_combined_netcdf.py \
     output_dir/combined.nc \
