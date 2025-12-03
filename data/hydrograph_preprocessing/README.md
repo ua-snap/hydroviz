@@ -13,11 +13,15 @@ The script converts CSV streamflow data to NetCDF format and computes daily clim
 ## Dependencies
 
 Required Python packages:
-- `pyarrow`
-- `xarray`
-- `pandas`
-- `numpy`
-- `dask`
+- `pyarrow` - For efficient CSV to Parquet conversion
+- `xarray` - For NetCDF data manipulation
+- `pandas` - For data processing
+- `numpy` - For numerical operations  
+- `dask` - For distributed computing (combining step)
+- `psutil` - For system resource monitoring
+- `random` - For QC sampling (built-in)
+
+All packages should be available in the `snap-geo` conda environment.
 
 ## Usage
 
@@ -130,15 +134,61 @@ Generates a SLURM job script for the combining task using the high-memory analys
 python generate_combine_job.py \
     /path/to/netcdf/files \
     /path/to/combined_output.nc \
-    /path/to/slurm_script.sh \
-    --job-name "combine_climatology" \
-    --memory "500G" \
+    /path/to/slurm/scripts \
+    --job-name "combine_netcdf" \
+    --memory "750G" \
     --cpus 28 \
-    --workers 4 \
-    --threads-per-worker 6
+    --workers 6 \
+    --threads-per-worker 4
 ```
 
-### Complete Workflow with Combining
+## Quality Control and Verification
+
+After combining files, you can verify the data integrity using the quality control script.
+
+### qc_combined_netcdf.py
+
+Randomly samples coordinate combinations from the combined file and verifies that values match the corresponding source files. Handles cases where data is missing (NaN values) for certain model/scenario combinations.
+
+```bash
+python qc_combined_netcdf.py \
+    /path/to/combined_output.nc \
+    /path/to/source/netcdf/files \
+    --samples 10
+```
+
+The script will:
+- Generate random coordinate combinations respecting scenario-era constraints (historical only with 1976-2005, future scenarios only with future eras)
+- Handle case mismatches between combined file (lowercase) and source filenames (mixed case)
+- Verify that missing combinations properly result in NaN values
+- Provide a summary of passed/failed checks
+
+## Rasdaman Database Preparation
+
+For ingestion into Rasdaman databases, string dimensions must be converted to integers.
+
+### convert_strings_for_rasdaman.py
+
+Converts string dimensions (landcover, model, scenario, era) to integer indices while preserving the original mappings in coordinate attributes.
+
+**Note:** This script should be run on a compute node, not the login node, due to memory requirements for large files.
+
+```bash
+# Run on compute node (via srun or sbatch)
+srun --partition=analysis --mem=100G --time=01:00:00 \
+    python convert_strings_for_rasdaman.py \
+    /path/to/combined_output.nc \
+    /path/to/rasdaman_ready_output.nc \
+    --string-dims landcover model scenario era
+```
+
+The script will:
+- Convert specified string dimensions to integer indices (0, 1, 2, ...)
+- Store original string mappings in coordinate attributes as 'encoding'
+- Preserve all data variables and other coordinates unchanged
+- Add compression to reduce file size
+
+### Complete Workflow with All Steps
 
 ```bash
 # Step 1: Generate processing scripts for all CSV files
@@ -155,6 +205,18 @@ python generate_combine_job.py \
 
 # Step 4: Submit combining job
 sbatch scripts_dir/combine_netcdf.slurm
+
+# Step 5: Quality control verification (after combining completes)
+python qc_combined_netcdf.py \
+    output_dir/combined.nc \
+    output_dir \
+    --samples 20
+
+# Step 6: Convert for Rasdaman ingestion (run on compute node)
+srun --partition=analysis --mem=100G --time=01:00:00 \
+    python convert_strings_for_rasdaman.py \
+    output_dir/combined.nc \
+    output_dir/combined_for_rasdaman.nc
 ```
 
 The combining job uses the **analysis** partition with high-memory nodes (up to 1.5TB) for efficient processing of large datasets.
@@ -168,15 +230,34 @@ The input CSV file should have:
 
 ## Output File Format
 
-The output NetCDF file contains:
+### Individual NetCDF Files
+Each processed CSV file produces a NetCDF file with:
 - `doy_min`: Daily minimum streamflow by day-of-year and era
 - `doy_mean`: Daily mean streamflow by day-of-year and era  
 - `doy_max`: Daily maximum streamflow by day-of-year and era
 
 Dimensions:
-- `era`: One historical and three projection periods (1976-2005, 2016-2045, 2046-2075, 2071-2100)
+- `era`: Time periods (historical: 1976-2005; projections: 2016-2045, 2046-2075, 2071-2100)
 - `doy`: Day of year (1-366)
 - `stream_id`: Stream identifiers
+- `landcover`: Land cover type (single value per file)
+- `model`: Climate model (single value per file)
+- `scenario`: Climate scenario (single value per file)
+
+### Combined NetCDF File
+The combined file merges all individual files along the model, scenario, and landcover dimensions:
+- Same data variables: `doy_min`, `doy_mean`, `doy_max`
+- Same `era`, `doy`, `stream_id` dimensions
+- Expanded dimensions with multiple values:
+  - `landcover`: All land cover types (e.g., 'dynamic', 'static')
+  - `model`: All climate models (e.g., 'cesm2', 'miroc-esm-chem', etc.)
+  - `scenario`: All scenarios (e.g., 'historical', 'rcp26', 'ssp245', etc.)
+
+### Rasdaman-Ready File
+The Rasdaman conversion creates an integer-indexed version:
+- Same data structure as combined file
+- String dimensions converted to integers (0, 1, 2, ...)
+- Original string mappings stored in coordinate attributes as 'encoding'
 
 ## Memory Considerations
 
@@ -184,11 +265,26 @@ The script processes data in chunks to manage memory usage:
 - CSV data is first converted to Parquet format for efficient processing
 - Streamflow columns are processed in configurable chunks
 - Climatology calculations are done in stream chunks
-- Combining step is performed on high-memory partition
+- Combining step is performed on high-memory analysis partition (up to 1.5TB available)
+- Real-time memory, CPU, and I/O monitoring during combining operations
+- Progress tracking with elapsed time and completion estimates
+
+## Error Handling and Monitoring
+
+The scripts include comprehensive error handling and monitoring:
+- Detailed error messages sent to stderr and SLURM output files
+- Environment conflict detection (conda vs pipenv)
+- Resource usage monitoring (RAM, CPU load, I/O wait)
+- Progress tracking for long-running operations
+- Automatic cleanup of intermediate files
+- Validation of coordinate combinations in QC checks
 
 ## Notes
 
-- Error messages are sent to stderr, and should appear in SLURM output files
+- All error messages appear in SLURM output files for debugging
 - Intermediate parquet files are automatically cleaned up unless `--keep-intermediate` is specified
-- The script creates output and temp directories if they don't exist
-- Temp directory / subdirectories may persist after cleanup, but they will be empty
+- Scripts create output and temp directories automatically if they don't exist
+- Temp directories may persist after cleanup but will be empty
+- The combining operation includes progress monitoring with resource usage statistics
+- QC script handles mixed-case model names and validates missing data combinations
+- Rasdaman conversion preserves all data while making dimensions database-compatible

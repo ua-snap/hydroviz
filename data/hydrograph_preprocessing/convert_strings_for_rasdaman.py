@@ -93,7 +93,8 @@ def convert_string_dimensions(ds, string_dims):
         })
         
         # Store the encoding mapping in the coordinate's attributes
-        ds_converted[dim_name].attrs['encoding'] = encoding_map
+        # Convert dict to string for NetCDF serialization
+        ds_converted[dim_name].attrs['encoding'] = str(encoding_map)
         ds_converted[dim_name].attrs['original_dtype'] = str(ds[dim_name].dtype)
         ds_converted[dim_name].attrs['description'] = f'Integer-encoded {dim_name} dimension (0-{len(encoding_map)-1})'
         
@@ -117,7 +118,13 @@ def verify_conversion(original_ds, converted_ds, string_dims):
             print(f"  ❌ ERROR: No encoding found in attributes")
             continue
             
-        encoding_map = converted_ds[dim_name].attrs['encoding']
+        # Get encoding string and evaluate it back to dict
+        encoding_str = converted_ds[dim_name].attrs['encoding']
+        try:
+            encoding_map = eval(encoding_str)
+        except Exception as e:
+            print(f"  ❌ ERROR: Could not parse encoding string: {e}")
+            continue
         
         # Check that dimensions match
         orig_size = original_ds.sizes[dim_name]
@@ -243,8 +250,8 @@ def main():
         for dim_name in args.string_dims:
             if dim_name in test_ds.coords:
                 if 'encoding' in test_ds[dim_name].attrs:
-                    encoding_map = test_ds[dim_name].attrs['encoding']
-                    print(f"  {dim_name}: {encoding_map}")
+                    encoding_str = test_ds[dim_name].attrs['encoding']
+                    print(f"  {dim_name}: {encoding_str}")
                 else:
                     print(f"  {dim_name}: ❌ No encoding attribute found")
         
