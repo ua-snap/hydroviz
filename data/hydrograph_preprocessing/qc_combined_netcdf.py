@@ -48,15 +48,35 @@ def parse_arguments():
 
 def find_source_file(landcover, model, scenario, variant, source_dir):
     """Find the source NetCDF file for given parameters."""
-    # Construct expected filename
+    # The combined file has lowercase model names, but source files may have mixed case
+    # Try different case variations to find the actual file
+    
+    pattern_base = f"{landcover}_*_{scenario}_{variant}_doy_mmm_by_era.nc"
+    
+    # First try exact match (lowercase)
     filename = f"{landcover}_{model}_{scenario}_{variant}_doy_mmm_by_era.nc"
     source_path = source_dir / filename
     
     if source_path.exists():
         return source_path
-    else:
-        print(f"WARNING: Source file not found: {filename}")
-        return None
+    
+    # If not found, search for files matching the pattern but with different model case
+    matching_files = list(source_dir.glob(pattern_base))
+    
+    for file_path in matching_files:
+        # Extract model name from the actual filename
+        parts = file_path.stem.split('_')
+        if len(parts) >= 4:
+            file_model = parts[1]  # Second part should be the model
+            # Check if this matches our model (case insensitive)
+            if file_model.lower() == model.lower():
+                print(f"Found file with different case: {file_path.name} (expected: {filename})")
+                return file_path
+    
+    print(f"WARNING: Source file not found for {landcover}_{model}_{scenario}_{variant}")
+    print(f"  Tried: {filename}")
+    print(f"  Available files matching pattern: {[f.name for f in matching_files]}")
+    return None
 
 
 def get_random_sample(combined_ds, n_samples=10):
@@ -73,19 +93,51 @@ def get_random_sample(combined_ds, n_samples=10):
     
     print(f"Available coordinates:")
     print(f"  Landcovers: {landcovers}")
-    print(f"  Models: {len(models)} total: {models[:3]}...")
+    print(f"  Models: {len(models)} total")
     print(f"  Scenarios: {scenarios}")
     print(f"  Eras: {eras}")
-    print(f"  DOYs: {len(doys)} (range: {min(doys)}-{max(doys)})")
+    print(f"  DOYs: {len(doys)} total")
     print(f"  Stream IDs: {len(stream_ids)} total")
     print()
     
+    # Find valid scenario-era combinations by checking what actually exists in the data
+    # Also apply logical constraints: historical only with 1976-2005, future scenarios only with future eras
+    valid_scenario_era_combos = []
+    for scenario in scenarios:
+        for era in eras:
+            # Apply logical constraints
+            is_historical = scenario.lower() == 'historical'
+            is_historical_era = '1976-2005' in str(era)
+            
+            # Skip invalid combinations
+            if is_historical and not is_historical_era:
+                continue  # Historical only goes with 1976-2005
+            if not is_historical and is_historical_era:
+                continue  # Future scenarios don't go with historical era
+            
+            # Check if this combination exists in the dataset
+            try:
+                subset = combined_ds.sel(scenario=scenario, era=era)
+                if subset.sizes['model'] > 0:  # Has at least one model for this combo
+                    valid_scenario_era_combos.append((scenario, era))
+            except:
+                continue
+    
+    print(f"Valid scenario-era combinations: {valid_scenario_era_combos}")
+    print()
+    
+    if not valid_scenario_era_combos:
+        raise ValueError("No valid scenario-era combinations found!")
+    
     for i in range(n_samples):
+        # Pick a valid scenario-era combination
+        scenario, era = random.choice(valid_scenario_era_combos)
+        
         sample = {
             'landcover': random.choice(landcovers),
             'model': random.choice(models),
-            'scenario': random.choice(scenarios),
-            'era': random.choice(eras),
+            'scenario': scenario,
+            'era': era,
             'doy': random.choice(doys),
             'stream_id': random.choice(stream_ids)
         }
@@ -101,6 +153,22 @@ def compare_values(combined_ds, source_ds, sample):
         combined_min = combined_ds['doy_min'].sel(**sample).values
         combined_mean = combined_ds['doy_mean'].sel(**sample).values
         combined_max = combined_ds['doy_max'].sel(**sample).values
+        
+        # Check if all combined values are NaN (indicating no source data)
+        all_nan = np.isnan(combined_min) and np.isnan(combined_mean) and np.isnan(combined_max)
+        
+        if all_nan:
+            # If combined values are all NaN, there should be no source file
+            # This is expected for missing scenario/model combinations
+            return {
+                'all_match': True,
+                'min_match': True,
+                'mean_match': True, 
+                'max_match': True,
+                'combined_values': (combined_min, combined_mean, combined_max),
+                'source_values': None,
+                'note': 'Combined values all NaN - no source data expected (PASS)'
+            }
         
         # Get values from source dataset
         # Note: source dataset has single values for model, scenario, landcover
@@ -137,6 +205,12 @@ def compare_values(combined_ds, source_ds, sample):
         
     except Exception as e:
         print(f"ERROR comparing values: {e}")
+        print(f"DIAGNOSTIC INFO:")
+        print(f"  Combined dataset dimensions: {combined_ds.dims}")
+        print(f"  Source dataset dimensions: {source_ds.dims}")
+        print(f"  Combined eras: {list(combined_ds.era.values)}")
+        print(f"  Source eras: {list(source_ds.era.values)}")
+        print(f"  Trying to select from source with: {source_sample}")
         return None
 
 
@@ -188,6 +262,16 @@ def main():
         print(f"--- Sample {i}/{n_samples} ---")
         print(f"Coordinates: {sample}")
         
+        # First check if this sample should have all NaN values
+        # Get a quick peek at the combined data to see if it's all NaN
+        try:
+            combined_min_peek = combined_ds['doy_min'].sel(**sample).values
+            combined_mean_peek = combined_ds['doy_mean'].sel(**sample).values
+            combined_max_peek = combined_ds['doy_max'].sel(**sample).values
+            all_nan = np.isnan(combined_min_peek) and np.isnan(combined_mean_peek) and np.isnan(combined_max_peek)
+        except:
+            all_nan = False
+        
         # Find source file
         # Use fixed variant for now (all files seem to use r1i1p1)
         variant = "r1i1p1"
@@ -200,7 +284,17 @@ def main():
         )
         
         if source_file is None:
-            print("FAILED: Source file not found\n")
+            if all_nan:
+                print("PASSED: Combined values all NaN and no source file exists (expected - scenario is likely missing for this model)\n")
+                passed += 1
+                continue
+            else:
+                print("FAILED: Source file not found but combined values are not NaN\n")
+                failed += 1
+                continue
+        
+        if all_nan:
+            print("FAILED: Source file exists but combined values are all NaN\n") 
             failed += 1
             continue
             
