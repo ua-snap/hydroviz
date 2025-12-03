@@ -175,7 +175,7 @@ Converts string dimensions (landcover, model, scenario, era) to integer indices 
 
 ```bash
 # Run on compute node (via srun or sbatch)
-srun --partition=analysis --mem=100G --time=01:00:00 \
+srun --partition=analysis --mem=500G --time=02:00:00 \
     python convert_strings_for_rasdaman.py \
     /path/to/combined_output.nc \
     /path/to/rasdaman_ready_output.nc \
@@ -213,7 +213,7 @@ python qc_combined_netcdf.py \
     --samples 20
 
 # Step 6: Convert for Rasdaman ingestion (run on compute node)
-srun --partition=analysis --mem=100G --time=01:00:00 \
+srun --partition=analysis --mem=500G --time=02:00:00 \
     python convert_strings_for_rasdaman.py \
     output_dir/combined.nc \
     output_dir/combined_for_rasdaman.nc
