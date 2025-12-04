@@ -11,15 +11,15 @@
     "insitu": true
   },
   "input": {
-    "coverage_id": "conus_hydro_segments_doy_mmm",
+    "coverage_id": "conus_hydro_segments_doy_mmm_maurer",
     "paths": [
-      "combined_for_rasdaman.nc"
+      "combined_maurer_for_rasdaman.nc"
     ]
   },
   "recipe": {
     "name": "general_coverage",
     "options": {
-      "tiling": "ALIGNED [0:3, 0:365, 0:1, 0:12, 0:4, 0:0] tile size 761280",
+      "tiling": "ALIGNED [0:3, 0:365, 0:1, 0:13, 0:4, 0:4] tile size 4099200",
       "wms_import": false,
       "import_order": "ascending",
       "coverage": {
