@@ -214,10 +214,10 @@ watch tail -n 20 scripts_dir/logs/combine_netcdf_<job_id>.out
 
 # Step 5: Quality control verification (after combining completes)
 # this can be run from the login node
+conda activate snap-geo
 python qc_combined_netcdf.py \
     output_dir/combined.nc \
     output_dir \
-    --samples 20
 
 # Step 6: Convert for Rasdaman ingestion
 # run on high-RAM compute node
