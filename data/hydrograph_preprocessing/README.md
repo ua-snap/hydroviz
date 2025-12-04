@@ -237,6 +237,8 @@ The input CSV files (from [here](https://www.sciencebase.gov/catalog/item/638901
 - Additional columns named with stream IDs (numeric)
 - Streamflow values in the data columns
 
+Note that the `static_Maurer_nsegment_summary_seg_outflow.csv` and `dynamic_Maurer_nsegment_summary_seg_outflow.csv` input filenames were changed to `static_Maurer_historical_r1i1p1_nsegment_summary_seg_outflow.csv` and `dynamic_Maurer_historical_r1i1p1_nsegment_summary_seg_outflow.csv` to match the naming convention of the rest of the files, and make parsing filenames easier. The `r1i1p1` variant doesn't really mean anything here.
+
 ## Output Files
 
 ### Individual NetCDF Files
@@ -274,6 +276,7 @@ The `process_streamflow_climatology.py` script tries to manage memory usage by:
 - First converting CSV data to Parquet format for efficient processing
 - Streamflow columns are processed in configurable chunks
 - Climatology calculations are done in stream chunks
+- Values saved as integers with -9999 nodata value
 - Automatic cleanup of intermediate files
 The combining step tries to manage memory usage by:
 - Using a high-memory analysis partition (up to 1.5TB RAM available on these nodes)
