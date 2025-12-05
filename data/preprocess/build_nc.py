@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 import geopandas as gpd
 from datetime import datetime
-from data.preprocess.functions import *
+from functions import *
 
 
 def arguments(argv):
