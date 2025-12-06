@@ -193,15 +193,15 @@ The script will:
 
 ```bash
 # Step 1: Generate processing scripts for all CSV files
-python generate_slurm_jobs.py input_dir output_dir temp_dir scripts_dir
+python generate_slurm_jobs.py input_dir netcdf_dir temp_dir scripts_dir
 
 # Step 2: Submit processing jobs
 python submit_jobs.py scripts_dir
 
 # Step 3: Wait for jobs to complete, then generate combining job
 python generate_combine_job.py \
-    output_dir \
-    output_dir/combined.nc \
+    netcdf_dir \
+    netcdf_dir/combined.nc \
     scripts_dir
 
 # Step 4: Submit combining job
@@ -216,16 +216,16 @@ watch tail -n 20 scripts_dir/logs/combine_netcdf_<job_id>.out
 # this can be run from the login node
 conda activate snap-geo
 python qc_combined_netcdf.py \
-    output_dir/combined.nc \
-    output_dir \
+    netcdf_dir/combined.nc \
+    netcdf_dir \
 
 # Step 6: Convert for Rasdaman ingestion
 # run on high-RAM compute node
 srun --partition=analysis --mem=750G --pty /bin/bash
 conda activate snap-geo
 python convert_strings_for_rasdaman.py \
-    /path/to/combined_output.nc \
-    /path/to/rasdaman_ready_output.nc \
+    netcdf_dir/combined.nc \
+    netcdf_dir/rasdaman_ready_output.nc \
 ```
 
 # Notes
@@ -276,7 +276,6 @@ The `process_streamflow_climatology.py` script tries to manage memory usage by:
 - First converting CSV data to Parquet format for efficient processing
 - Streamflow columns are processed in configurable chunks
 - Climatology calculations are done in stream chunks
-- Values saved as integers with -9999 nodata value
 - Automatic cleanup of intermediate files
 The combining step tries to manage memory usage by:
 - Using a high-memory analysis partition (up to 1.5TB RAM available on these nodes)
