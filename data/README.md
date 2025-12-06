@@ -12,20 +12,22 @@ Read about the dataset's statistics in the `data/streamflow_statistics_descripti
 
 - This codebase uses the `snap-geo` conda environment, details found [here](https://github.com/ua-snap/snap-geo/tree/add_conda_env). 
 
-- Use `data/eda/download.ipynb` if you want to download a copy of the data (requires install of [sciencebasepy](https://github.com/DOI-USGS/sciencebasepy/tree/master) into `snap-geo`). Be warned, there are problems with downloading the data via the `sciencebasepy` API, and therefore some of this process is manual point-and-click tedium. For testing, it's recommended to just access the data from this directory instead: `/import/beegfs/CMIP6/jdpaul3/hydroviz_data`
+- Use `data/eda/download_stats.ipynb` and `data/eda/download_daily.ipynb` if you want to download a copy of the data (requires install of [sciencebasepy](https://github.com/DOI-USGS/sciencebasepy/tree/master) into `snap-geo`, and login.gov credentials). Be warned, there are sometimes problems with downloading the data via the `sciencebasepy` API, this process can be more hands-on that it appears! For testing, it's recommended to just access the data from this directory instead: `/import/beegfs/CMIP6/jdpaul3/hydroviz_data`
 
-- Use the `data/eda/eda.ipynb` notebook to familiarize yourself with the dataset's original tabular structure.
+- Use the `data/eda/eda.ipynb` notebook to familiarize yourself with the stats dataset's original tabular structure.
 
-- To coerce the tabular data into a netCDF format, use the code in the `data/preprocess` directory. 
+- To coerce the stats tabular data into a netCDF format, use the code in the `data/preprocess` directory. 
     - Run the following command to submit an `sbatch` script, changing the script locations to match your repo location, and changing the `--output_dir` argument to save the netCDF files to a different location and avoid overwriting previous outputs. The script should only take ~5 minutes to run once compute resources are allocated. The script also creates an `ingest.json` file to ingest the netCDF _output as a Rasdaman coverage (_not yet implemented!_)
 
 ```
 python run_build_nc.py --data_dir /beegfs/CMIP6/jdpaul3/hydroviz_data/stats --gis_dir /beegfs/CMIP6/jdpaul3/hydroviz_data/gis --output_dir /beegfs/CMIP6/jdpaul3/hydroviz_data/nc --conda_init_script /beegfs/CMIP6/jdpaul3/hydroviz/data/preprocess/conda_init.sh --conda_env_name snap-geo --build_nc_script /beegfs/CMIP6/jdpaul3/hydroviz/data/preprocess/build_nc.py --build_json_script /beegfs/CMIP6/jdpaul3/hydroviz/data/rasdaman/build_ingest_json.py
 ```
 
- -  Use the `data/preprocess/qc.ipynb` notebook to compare values in the netCDFs to the original tabular values.
+ -  Use the `data/preprocess/qc.ipynb` notebook to compare stats values in the netCDFs to the original tabular values.
 
 - Run the `data/preprocess/xwalk.ipynb` notebook to crosswalk stream segment IDs and watershed IDs from the geospatial data (`Segments_subset.shp` and `HRU_subset.shp`) to the GNIS name attributes in the NHM geospatial fabric. This notebook exports new shapefiles with the added GNIS common names for hosting in GeoServer ([gs.earthmaps.io](http://gs.earthmaps.io/)) and eventually enabling search by stream name in the web app.
+
+- To coerce the daily tabular data into netCDF format for generating hydrographs, follow the README instructions in the `data/hydrograph_preprocessing` directory.
 
 ### Note about the CRS
 
