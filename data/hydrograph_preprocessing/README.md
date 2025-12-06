@@ -180,7 +180,7 @@ srun --partition=analysis --mem=750G --pty /bin/bash
 conda activate snap-geo
 python convert_strings_for_rasdaman.py \
     /path/to/combined_output.nc \
-    /path/to/rasdaman_ready_output.nc \
+    /path/to/rasdaman_ready_output.nc
 ```
 
 The script will:
