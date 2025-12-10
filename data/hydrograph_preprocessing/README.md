@@ -1,6 +1,6 @@
 # Daily Streamflow Climatology Processing Pipeline
 
-These scripts process streamflow CSV data to generate daily climatology statistics by era, and coerce them to netCDF format. The netCDFs are then combined into one file for easy ingestion into Rasdaman. 
+These scripts process streamflow CSV data to generate daily climatology statistics by era, and coerce them to netCDF format. The netCDFs are then combined into one file for easy ingestion into Rasdaman. All streamflow values are in units of cubic feet per second (cfs).
 
 ## Description
 
