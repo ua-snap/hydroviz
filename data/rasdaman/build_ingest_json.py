@@ -33,42 +33,29 @@ def build_ingest_json(ds, type):
 
     # geometry specific titles
     if type == "seg":
-        title_string = "'Hydrological Summary Statistics for CONUS Stream Segments'"
         coverage_id = "conus_hydro_segments"
         nc_path = "seg.nc"
     elif type == "hru":
-        title_string = "'Hydrological Summary Statistics for CONUS Watersheds'"
         coverage_id = "conus_hydro_hrus"
         nc_path = "hru.nc"
 
     # read encodings from the dataset
-    nc_encoding_dict = eval(ds.attrs["Rasdaman Encodings"])
-    stats_metadata = eval(ds.attrs["Statistics Metadata"])
+    # nc_encoding_dict = eval(ds.attrs["Rasdaman Encodings"])
+    # stats_metadata = eval(ds.attrs["Statistics Metadata"])
 
     # build the ingest JSON parts
-    # encodings part
-    encoding_dict = {}
-    for stat in stats_metadata.keys():
-        encoding_dict[stat] = stats_metadata[stat]["units"]
-    for dim in nc_encoding_dict.keys():
-        encoding_dict[dim] = {}
-        # reverse the encoding dictionary
-        for dim_val in nc_encoding_dict[dim].keys():
-            encoding_dict[dim][nc_encoding_dict[dim][dim_val]] = dim_val
-    # convert the encodings dictionary into a string
-    encoding_dict = json.dumps(encoding_dict)
-    # bands part
+    # bands metadata
     band_list = []
-    for stat in stats_metadata.keys():
-        stat_dict = {"name": stat, "identifier": stat, "nilValue": "-9999.0"}
+    for stat in ds.data_vars:
+        stat_dict = {"name": stat, "identifier": stat, "nilValue": "nan"}
         band_list.append(stat_dict)
     # axes part
     axes_dict = {}
     grid_order = 0
-    # list all dims including geom_id
-    all_dims = list(nc_encoding_dict.keys())
-    # move geom_id to the end of the list
-    all_dims.append(all_dims.pop(all_dims.index("geom_id")))
+    # list all dims including stream_id
+    all_dims = list(ds.coords.keys())
+    # move stream_id to the end of the list
+    all_dims.append(all_dims.pop(all_dims.index("stream_id")))
 
     for dim in all_dims:
         axes_dict[dim] = {
@@ -86,7 +73,7 @@ def build_ingest_json(ds, type):
             "tmp_directory": "/tmp/",
             "crs_resolver": "http://localhost:8080/def/",
             "default_crs": "http://localhost:8080/def/crs/EPSG/0/3338",
-            "default_null_values": ["-9999"],
+            "default_null_values": ["nan"],
             "mock": "false",
             "automated": "true",
             "insitu": "true",
@@ -98,15 +85,14 @@ def build_ingest_json(ds, type):
         "recipe": {
             "name": "general_coverage",
             "options": {
-                "tiling": "ALIGNED [0:*, 0:*, 0:*, 0:*, 0:*] tile size 4194304",
+                "tiling": "ALIGNED [0:1, 0:13, 0:4, 0:3, 0:0] tile size 1048576",
                 "wms_import": "false",
                 "import_order": "ascending",
                 "coverage": {
-                    "crs": 'OGC/0/Index1D?axis-label="lc"@OGC/0/Index1D?axis-label="model"@OGC/0/Index1D?axis-label="scenario"@OGC/0/Index1D?axis-label="era"@OGC/0/Index1D?axis-label="geom_id"',
+                    "crs": 'OGC/0/Index1D?axis-label="lc"@OGC/0/Index1D?axis-label="model"@OGC/0/Index1D?axis-label="scenario"@OGC/0/Index1D?axis-label="era"@OGC/0/Index1D?axis-label="stream_id"',
                     "metadata": {
                         "type": "xml",
-                        "global": {"Title": f"{title_string}"},
-                        "local": {"Encoding": encoding_dict},
+                        "global": "auto"
                     },
                     "slicer": {
                         "type": "netcdf",

@@ -77,7 +77,7 @@ def get_unique_coords(files):
     return dict
 
 
-def create_empty_dataset(dict, geom_ids):
+def create_empty_dataset(dict, stream_ids):
 
     stat_vars = list(stat_vars_dict.keys())
 
@@ -94,8 +94,8 @@ def create_empty_dataset(dict, geom_ids):
     data_dict = {}
     for stat in stat_vars:
         data_dict[stat] = (
-            ["lc", "model", "scenario", "era", "geom_id"],
-            np.zeros((len(lcs), len(models), len(scenarios), len(eras), len(geom_ids)))
+            ["lc", "model", "scenario", "era", "stream_id"],
+            np.zeros((len(lcs), len(models), len(scenarios), len(eras), len(stream_ids)))
             * np.nan,
         )
 
@@ -106,7 +106,7 @@ def create_empty_dataset(dict, geom_ids):
             "model": (["model"], encode(models, "model")),
             "scenario": (["scenario"], encode(scenarios, "scenario")),
             "era": (["era"], encode(eras, "era")),
-            "geom_id": (["geom_id"], geom_ids),
+            "stream_id": (["stream_id"], stream_ids),
         },
     )
 
@@ -156,10 +156,10 @@ def populate_dataset(ds, files):
             if stat not in df.columns:
                 df[stat] = np.nan
 
-        # test that the dataframe length matches the length of the geom_ids in the dataset
-        if len(df) != len(ds["geom_id"]):
+        # test that the dataframe length matches the length of the stream_ids in the dataset
+        if len(df) != len(ds["stream_id"]):
             print(
-                f"Error: length of CSV does not match length of geom_ids in dataset for {file.name}."
+                f"Error: length of CSV does not match length of stream_ids in dataset for {file.name}."
             )
             print(f"Data will not be written to netCDF.")
             continue
@@ -196,11 +196,9 @@ def populate_dataset(ds, files):
             # drop column after use (improves performance)
             df.drop(columns=[stat], inplace=True)
 
-        # use luts dicts to add metadata to the dataset; for serialization during file writing, each item needs to be a string or list, can't be a dict
+        # use luts dicts to add global metadata to the dataset; for serialization during file writing, each item needs to be a string or list, can't be a dict
         ds = ds.assign_attrs(
             {
-                "Statistics Metadata": str(stat_vars_dict),
-                "Rasdaman Encodings": str(reverse_encodings_lookup),
                 "Data Source": str(data_source_dict),
                 "CMIP5 GCM Metadata": str(gcm_metadata_dict),
             }
@@ -209,10 +207,24 @@ def populate_dataset(ds, files):
     return ds
 
 
+def populate_encodings_metadata(ds):
+    # for each dimension, add the encoding lookup dict from reverse_encodings_lookup
+    # e.g., for "model", add reverse_encodings_lookup["model"] as metadata under the "encodings" attribute for that dimension
+    for dim in ["lc", "model", "scenario", "era"]:
+        ds[dim].attrs["encodings"] = str(reverse_encodings_lookup[dim])
+    
+    # for each variable, add the statistic metadata from stat_vars_dict
+    for var in stat_vars_dict.keys():
+        ds[var].attrs["description"] = stat_vars_dict[var]["statistic_description"]
+        ds[var].attrs["units"] = stat_vars_dict[var]["units"]
+
+    return ds
+
+
 def crosswalk_hrus(ds, df):
     xwalk_dict = {k: v for k, v in zip(df["hru_id"], df["hru_id_nat"])}
-    new_ids = [xwalk_dict.get(k) for k in ds["geom_id"].values.tolist()]
-    ds["geom_id"] = new_ids
+    new_ids = [xwalk_dict.get(k) for k in ds["stream_id"].values.tolist()]
+    ds["stream_id"] = new_ids
     return ds
 
 
@@ -220,8 +232,8 @@ def clip_dataset(ds, shp, type):
     # clip the dataset to the actual data extent using geometry IDs
 
     if type == "seg":
-        ds = ds.sel(geom_id=ds.geom_id.isin(shp.seg_id_nat.astype(str).tolist()))
+        ds = ds.sel(stream_id=ds.stream_id.isin(shp.seg_id_nat.astype(str).tolist()))
         return ds
     elif type == "hru":
-        ds = ds.sel(geom_id=ds.geom_id.isin(shp.hru_id_nat.astype(str).tolist()))
+        ds = ds.sel(stream_id=ds.stream_id.isin(shp.hru_id_nat.astype(str).tolist()))
         return ds
