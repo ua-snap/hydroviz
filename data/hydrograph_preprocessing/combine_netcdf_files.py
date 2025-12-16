@@ -20,6 +20,7 @@ import time
 import warnings
 import psutil
 import os
+from luts import gcm_metadata_dict, data_source_dict
 
 # Suppress some common warnings from xarray/dask
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -242,11 +243,12 @@ def main():
         # Add global attributes
         print("Adding global attributes...")
         sys.stdout.flush()
-        combined_ds.attrs.update({
-            'title': 'Combined Streamflow Daily Climatologies',
-            'description': 'Daily climatology statistics (min, mean, max) by era and model',
-            'created': datetime.now().isoformat()
-        })
+        combined_ds = combined_ds.assign_attrs(
+            {
+                "Data Source": str(data_source_dict),
+                "CMIP5 GCM Metadata": str(gcm_metadata_dict),
+            }
+        )
         
         # Print detailed dataset information before saving
         print("=== DATASET DIAGNOSTICS BEFORE SAVING ===")
