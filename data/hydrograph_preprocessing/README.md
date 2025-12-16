@@ -167,7 +167,7 @@ The script will:
 
 ## Rasdaman Prep
 
-For ingestion into Rasdaman, string dimensions must be converted to integers, and we need encoding information added to the dimension attributes. This is done in a separate step here to increase granularity and allow for easier source dataset revisions if problems arise during the ingestion process.
+For ingestion into Rasdaman, string dimensions must be converted to integers, and we need encoding information added to the dimension attributes. We also need to split the combined dataset into smaller pieces so that we aren't ingesting a file that is too large or complex to be performant. These tasks are done in a separate steps here to increase granularity and allow for easier source dataset revisions if problems arise during the ingestion process.
 
 ### convert_strings_for_rasdaman.py
 
@@ -188,6 +188,20 @@ The script will:
 - Store original string mappings in coordinate attributes as 'encoding'
 - Preserve all data variables and other coordinates unchanged
 - Add compression to reduce file size
+
+### split_combined_netcdf_file.py
+
+Splits the combined file into four separate files for ingestion. Files are split by time period (historical vs projected) and by landcover (static vs dynamic).
+
+```bash
+srun --partition=analysis --mem=750G --pty /bin/bash
+conda activate snap-geo
+python split_combined_netcdf_file.py \
+    /path/to/rasdaman_ready_output.nc \
+    /path/to/split/coverage/directory
+```
+
+**Note:** This script should also be run on a high-RAM compute node, not the login node, due to memory requirements for large files. Be sure to activate a conda environment that has `xarray` installed. This should take about 1 hour to run.
 
 # Complete Workflow with All Steps
 
@@ -226,6 +240,15 @@ conda activate snap-geo
 python convert_strings_for_rasdaman.py \
     netcdf_dir/combined.nc \
     netcdf_dir/rasdaman_ready_output.nc \
+
+# Step 7: Split into multiple coverages
+# run on high-RAM compute node
+srun --partition=analysis --mem=750G --pty /bin/bash
+conda activate snap-geo
+python split_combined_netcdf_file.py \
+    netcdf_dir/rasdaman_ready_output.nc \
+    netcdf_dir/coverages_to_export
+
 ```
 
 # Notes
