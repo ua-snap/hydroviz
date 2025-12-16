@@ -372,7 +372,7 @@ stat_vars_dict = {
 
 # encodings for netCDF, integers required for rasdaman ingest
 encodings_lookup = {
-    "lc": {
+    "landcover": {
         "dynamic": 0,
         "static": 1,
     },
@@ -410,7 +410,7 @@ encodings_lookup = {
 
 # reverse encodings for netCDF attributes
 reverse_encodings_lookup = {
-    "lc": {
+    "landcover": {
         0: "dynamic",
         1: "static",
     },

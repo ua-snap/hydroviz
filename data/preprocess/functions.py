@@ -34,7 +34,7 @@ def filter_files(files, type):
 def get_unique_coords(files):
     # get unique coordinates from the file names
 
-    lcs = []
+    landcovers = []
     models = []
     scenarios = []
     variants = []
@@ -43,7 +43,7 @@ def get_unique_coords(files):
     for file in files:
         parts = file.name.split("_")
         try:
-            lc, model, scenario, variant, era = (
+            landcover, model, scenario, variant, era = (
                 parts[0],
                 parts[1],
                 parts[2],
@@ -54,20 +54,20 @@ def get_unique_coords(files):
             print(f"Error parsing file: {file.name}")
             continue
 
-        lcs.append(lc)
+        landcovers.append(landcover)
         models.append(model)
         scenarios.append(scenario)
         variants.append(variant)
         eras.append(era)
 
-    lcs = sorted(list(set(lcs)))
+    landcovers = sorted(list(set(landcovers)))
     models = sorted(list(set(models)))
     scenarios = sorted(list(set(scenarios)))
     variants = sorted(list(set(variants)))
     eras = sorted(list(set(eras)))
 
     dict = {
-        "lcs": lcs,
+        "landcovers": landcovers,
         "models": models,
         "scenarios": scenarios,
         "variants": variants,
@@ -81,8 +81,8 @@ def create_empty_dataset(dict, stream_ids):
 
     stat_vars = list(stat_vars_dict.keys())
 
-    lcs, models, scenarios, eras = (
-        dict["lcs"],
+    landcovers, models, scenarios, eras = (
+        dict["landcovers"],
         dict["models"],
         dict["scenarios"],
         dict["eras"],
@@ -94,15 +94,15 @@ def create_empty_dataset(dict, stream_ids):
     data_dict = {}
     for stat in stat_vars:
         data_dict[stat] = (
-            ["lc", "model", "scenario", "era", "stream_id"],
-            np.zeros((len(lcs), len(models), len(scenarios), len(eras), len(stream_ids)))
+            ["landcover", "model", "scenario", "era", "stream_id"],
+            np.zeros((len(landcovers), len(models), len(scenarios), len(eras), len(stream_ids)))
             * np.nan,
         )
 
     ds = xr.Dataset(
         data_dict,
         coords={
-            "lc": (["lc"], encode(lcs, "lc")),
+            "landcover": (["landcover"], encode(landcovers, "landcover")),
             "model": (["model"], encode(models, "model")),
             "scenario": (["scenario"], encode(scenarios, "scenario")),
             "era": (["era"], encode(eras, "era")),
@@ -115,10 +115,10 @@ def create_empty_dataset(dict, stream_ids):
 
 def encode(list, type):
     # encode the list of strings based on the encodings lookup table
-    # type is the type of encoding to use, e.g. "lc", "model", "scenario", "era"
+    # type is the type of encoding to use, e.g. "landcover", "model", "scenario", "era"
 
-    if type == "lc":
-        return [encodings_lookup["lc"][x] for x in list]
+    if type == "landcover":
+        return [encodings_lookup["landcover"][x] for x in list]
     elif type == "model":
         return [encodings_lookup["model"][x] for x in list]
     elif type == "scenario":
@@ -135,7 +135,7 @@ def populate_dataset(ds, files):
         # parse filename to find coords where data should go
         try:
             parts = file.name.split("_")
-            lc, model, scenario, era = (
+            landcover, model, scenario, era = (
                 parts[0],
                 parts[1],
                 parts[2],
@@ -167,12 +167,12 @@ def populate_dataset(ds, files):
         # replace the dimension strings with integers based on encodings lookup table
         # this will also confirm that the parsed coords are valid and actually exist in encodings lookup table
         try:
-            lc_encoded = encodings_lookup["lc"][lc]
+            landcover_encoded = encodings_lookup["landcover"][landcover]
             model_encoded = encodings_lookup["model"][model]
             scenario_encoded = encodings_lookup["scenario"][scenario]
             era_encoded = encodings_lookup["era"][era]
         except:
-            print(f"Error: one of {lc}, {model}, {scenario}, {era} are invalid.")
+            print(f"Error: one of {landcover}, {model}, {scenario}, {era} are invalid.")
             print(f"Data will not be written to netCDF.")
             continue
 
@@ -180,7 +180,7 @@ def populate_dataset(ds, files):
             try:
                 ds[stat].loc[
                     {
-                        "lc": lc_encoded,
+                        "landcover": landcover_encoded,
                         "model": model_encoded,
                         "scenario": scenario_encoded,
                         "era": era_encoded,
@@ -188,7 +188,7 @@ def populate_dataset(ds, files):
                 ] = df[stat]
             except:
                 print(
-                    f"Indexing error for {stat} in {file.name}: one of {lc}, {model}, {scenario}, {era} could not be found in the dataset."
+                    f"Indexing error for {stat} in {file.name}: one of {landcover}, {model}, {scenario}, {era} could not be found in the dataset."
                 )
                 print(f"Data will not be written to netCDF.")
                 continue
@@ -210,7 +210,7 @@ def populate_dataset(ds, files):
 def populate_encodings_metadata(ds):
     # for each dimension, add the encoding lookup dict from reverse_encodings_lookup
     # e.g., for "model", add reverse_encodings_lookup["model"] as metadata under the "encodings" attribute for that dimension
-    for dim in ["lc", "model", "scenario", "era"]:
+    for dim in ["landcover", "model", "scenario", "era"]:
         ds[dim].attrs["encoding"] = str(reverse_encodings_lookup[dim])
     
     # for each variable, add the statistic metadata from stat_vars_dict
@@ -224,7 +224,7 @@ def convert_to_float32(ds):
     # convert all data variables and dimensions to float32 to save space
     for var in ds.data_vars:
         ds[var] = ds[var].astype(np.float32)
-    for dim in ["lc", "model", "scenario", "era"]:
+    for dim in ["landcover", "model", "scenario", "era"]:
         ds[dim] = ds[dim].astype(np.float32)
     # assert stream_id is int32
     ds["stream_id"] = ds["stream_id"].astype(np.int32)

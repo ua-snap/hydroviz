@@ -89,7 +89,7 @@ def build_ingest_json(ds, type):
                 "wms_import": "false",
                 "import_order": "ascending",
                 "coverage": {
-                    "crs": 'OGC/0/Index1D?axis-label="lc"@OGC/0/Index1D?axis-label="model"@OGC/0/Index1D?axis-label="scenario"@OGC/0/Index1D?axis-label="era"@OGC/0/Index1D?axis-label="stream_id"',
+                    "crs": 'OGC/0/Index1D?axis-label="landcover"@OGC/0/Index1D?axis-label="model"@OGC/0/Index1D?axis-label="scenario"@OGC/0/Index1D?axis-label="era"@OGC/0/Index1D?axis-label="stream_id"',
                     "metadata": {
                         "type": "xml",
                         "global": "auto"
