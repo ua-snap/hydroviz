@@ -211,13 +211,23 @@ def populate_encodings_metadata(ds):
     # for each dimension, add the encoding lookup dict from reverse_encodings_lookup
     # e.g., for "model", add reverse_encodings_lookup["model"] as metadata under the "encodings" attribute for that dimension
     for dim in ["lc", "model", "scenario", "era"]:
-        ds[dim].attrs["encodings"] = str(reverse_encodings_lookup[dim])
+        ds[dim].attrs["encoding"] = str(reverse_encodings_lookup[dim])
     
     # for each variable, add the statistic metadata from stat_vars_dict
     for var in stat_vars_dict.keys():
         ds[var].attrs["description"] = stat_vars_dict[var]["statistic_description"]
         ds[var].attrs["units"] = stat_vars_dict[var]["units"]
 
+    return ds
+
+def convert_to_float32(ds):
+    # convert all data variables and dimensions to float32 to save space
+    for var in ds.data_vars:
+        ds[var] = ds[var].astype(np.float32)
+    for dim in ["lc", "model", "scenario", "era"]:
+        ds[dim] = ds[dim].astype(np.float32)
+    # assert stream_id is int32
+    ds["stream_id"] = ds["stream_id"].astype(np.int32)
     return ds
 
 
