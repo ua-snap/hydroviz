@@ -55,7 +55,7 @@ encodings_lookup = {
 
 # reverse encodings for netCDF attributes
 reverse_encodings_lookup = {
-    "lc": {
+    "landcover": {
         0: "dynamic",
         1: "static",
     },
