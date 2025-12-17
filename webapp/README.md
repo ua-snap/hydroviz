@@ -7,17 +7,9 @@ nvm use lts/jod
 npm install
 ```
 
-## Run
+## Running for development
 
-Running the local data API:
-
-```
-cd data-api
-git checkout hydroviz_prototype_api
-export FLASK_APP=application.py
-export API_RAS_BASE_URL=https://zeus.snap.uaf.edu/rasdaman/
-pipenv run flask run
-```
+Run the [local data API](https://github.com/ua-snap/data-api/) from the `hydroviz_prototype_api` branch.
 
 Running the webapp:
 
