@@ -201,7 +201,7 @@ python split_combined_netcdf_file.py \
     /path/to/split/coverage/directory
 ```
 
-**Note:** This script should also be run on a high-RAM compute node, not the login node, due to memory requirements for large files. Be sure to activate a conda environment that has `xarray` installed. This should take about 1 hour to run.
+**Note:** This script should also be run on a high-RAM compute node, not the login node, due to memory requirements for large files. Be sure to activate a conda environment that has `xarray` installed. This should take about 30 minutes to run.
 
 # Complete Workflow with All Steps
 
