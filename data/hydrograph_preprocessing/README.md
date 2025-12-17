@@ -293,6 +293,12 @@ The Rasdaman conversion creates an integer-indexed version:
 - String dimensions converted to integers (0, 1, 2, ...)
 - Original string mappings stored in coordinate attributes as 'encoding'
 
+### Split coverage files
+The combined Rasdaman-ready file is split by time period and by landcover.
+- Reduces coverage size 
+- Split method can be easily adjusted for future optimization
+- No need to run the whole pipeline again to experiment with split method
+
 ## Memory Considerations
 
 The `process_streamflow_climatology.py` script tries to manage memory usage by:
