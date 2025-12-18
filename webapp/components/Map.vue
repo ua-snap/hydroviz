@@ -122,11 +122,9 @@ onMounted(() => {
             // "assign data for use by the map"
             // "assign stream segment selected/highlighted state"
             selectedSeg = e.sourceTarget
-            console.log(selectedSeg)
 
             // Reactive & bound to store: sets properties in the store
             segmentName.value = selectedSeg.feature.properties.GNIS_NAME
-            console.log('segmentName', segmentName)
             segmentId.value = selectedSeg.feature.properties.seg_id_nat
 
             selectedSeg.setStyle({
@@ -141,10 +139,6 @@ onMounted(() => {
         map.removeLayer(wmsLayer)
       })
   }
-
-  map.on('zoomend', function () {
-    console.log('Current Zoom: ' + map.getZoom())
-  })
 })
 </script>
 
