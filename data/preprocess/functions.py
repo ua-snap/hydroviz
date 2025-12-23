@@ -1,28 +1,25 @@
 import numpy as np
 import pandas as pd
 import xarray as xr
-import json
-from data.preprocess.luts import *
+from luts import *
 
 
 def filter_files(files, type):
-    # ignore Maurer files and the "diff" files
-    # also ignore the files with full historical range (1952-2005); this overlaps the
+    # ignore the files with long historical range (1952-2005 and 1952-2010); this overlaps the
     # normal historical range (1976-2005) and is confusing
-
     # type is either "seg" or "hru": use possible filtering based on type in the future
 
     filtered_files = []
     starting_len = len(files)
     count = 0
     for f in files:
-        if "Maurer" in f.name:
-            count = count + 1
-            pass
-        elif "diff" in f.name:
+        if "diff" in f.name:
             count = count + 1
             pass
         elif "1952_2005" in f.name:
+            count = count + 1
+            pass
+        elif "1952_2010" in f.name:
             count = count + 1
             pass
         else:
@@ -37,7 +34,7 @@ def filter_files(files, type):
 def get_unique_coords(files):
     # get unique coordinates from the file names
 
-    lcs = []
+    landcovers = []
     models = []
     scenarios = []
     variants = []
@@ -46,7 +43,7 @@ def get_unique_coords(files):
     for file in files:
         parts = file.name.split("_")
         try:
-            lc, model, scenario, variant, era = (
+            landcover, model, scenario, variant, era = (
                 parts[0],
                 parts[1],
                 parts[2],
@@ -57,20 +54,20 @@ def get_unique_coords(files):
             print(f"Error parsing file: {file.name}")
             continue
 
-        lcs.append(lc)
+        landcovers.append(landcover)
         models.append(model)
         scenarios.append(scenario)
         variants.append(variant)
         eras.append(era)
 
-    lcs = sorted(list(set(lcs)))
+    landcovers = sorted(list(set(landcovers)))
     models = sorted(list(set(models)))
     scenarios = sorted(list(set(scenarios)))
     variants = sorted(list(set(variants)))
     eras = sorted(list(set(eras)))
 
     dict = {
-        "lcs": lcs,
+        "landcovers": landcovers,
         "models": models,
         "scenarios": scenarios,
         "variants": variants,
@@ -80,12 +77,12 @@ def get_unique_coords(files):
     return dict
 
 
-def create_empty_dataset(dict, geom_ids):
+def create_empty_dataset(dict, stream_ids):
 
     stat_vars = list(stat_vars_dict.keys())
 
-    lcs, models, scenarios, eras = (
-        dict["lcs"],
+    landcovers, models, scenarios, eras = (
+        dict["landcovers"],
         dict["models"],
         dict["scenarios"],
         dict["eras"],
@@ -97,19 +94,19 @@ def create_empty_dataset(dict, geom_ids):
     data_dict = {}
     for stat in stat_vars:
         data_dict[stat] = (
-            ["lc", "model", "scenario", "era", "geom_id"],
-            np.zeros((len(lcs), len(models), len(scenarios), len(eras), len(geom_ids)))
+            ["landcover", "model", "scenario", "era", "stream_id"],
+            np.zeros((len(landcovers), len(models), len(scenarios), len(eras), len(stream_ids)))
             * np.nan,
         )
 
     ds = xr.Dataset(
         data_dict,
         coords={
-            "lc": (["lc"], encode(lcs, "lc")),
+            "landcover": (["landcover"], encode(landcovers, "landcover")),
             "model": (["model"], encode(models, "model")),
             "scenario": (["scenario"], encode(scenarios, "scenario")),
             "era": (["era"], encode(eras, "era")),
-            "geom_id": (["geom_id"], geom_ids),
+            "stream_id": (["stream_id"], stream_ids),
         },
     )
 
@@ -118,10 +115,10 @@ def create_empty_dataset(dict, geom_ids):
 
 def encode(list, type):
     # encode the list of strings based on the encodings lookup table
-    # type is the type of encoding to use, e.g. "lc", "model", "scenario", "era"
+    # type is the type of encoding to use, e.g. "landcover", "model", "scenario", "era"
 
-    if type == "lc":
-        return [encodings_lookup["lc"][x] for x in list]
+    if type == "landcover":
+        return [encodings_lookup["landcover"][x] for x in list]
     elif type == "model":
         return [encodings_lookup["model"][x] for x in list]
     elif type == "scenario":
@@ -138,7 +135,7 @@ def populate_dataset(ds, files):
         # parse filename to find coords where data should go
         try:
             parts = file.name.split("_")
-            lc, model, scenario, era = (
+            landcover, model, scenario, era = (
                 parts[0],
                 parts[1],
                 parts[2],
@@ -159,10 +156,10 @@ def populate_dataset(ds, files):
             if stat not in df.columns:
                 df[stat] = np.nan
 
-        # test that the dataframe length matches the length of the geom_ids in the dataset
-        if len(df) != len(ds["geom_id"]):
+        # test that the dataframe length matches the length of the stream_ids in the dataset
+        if len(df) != len(ds["stream_id"]):
             print(
-                f"Error: length of CSV does not match length of geom_ids in dataset for {file.name}."
+                f"Error: length of CSV does not match length of stream_ids in dataset for {file.name}."
             )
             print(f"Data will not be written to netCDF.")
             continue
@@ -170,12 +167,12 @@ def populate_dataset(ds, files):
         # replace the dimension strings with integers based on encodings lookup table
         # this will also confirm that the parsed coords are valid and actually exist in encodings lookup table
         try:
-            lc_encoded = encodings_lookup["lc"][lc]
+            landcover_encoded = encodings_lookup["landcover"][landcover]
             model_encoded = encodings_lookup["model"][model]
             scenario_encoded = encodings_lookup["scenario"][scenario]
             era_encoded = encodings_lookup["era"][era]
         except:
-            print(f"Error: one of {lc}, {model}, {scenario}, {era} are invalid.")
+            print(f"Error: one of {landcover}, {model}, {scenario}, {era} are invalid.")
             print(f"Data will not be written to netCDF.")
             continue
 
@@ -183,7 +180,7 @@ def populate_dataset(ds, files):
             try:
                 ds[stat].loc[
                     {
-                        "lc": lc_encoded,
+                        "landcover": landcover_encoded,
                         "model": model_encoded,
                         "scenario": scenario_encoded,
                         "era": era_encoded,
@@ -191,7 +188,7 @@ def populate_dataset(ds, files):
                 ] = df[stat]
             except:
                 print(
-                    f"Indexing error for {stat} in {file.name}: one of {lc}, {model}, {scenario}, {era} could not be found in the dataset."
+                    f"Indexing error for {stat} in {file.name}: one of {landcover}, {model}, {scenario}, {era} could not be found in the dataset."
                 )
                 print(f"Data will not be written to netCDF.")
                 continue
@@ -199,11 +196,9 @@ def populate_dataset(ds, files):
             # drop column after use (improves performance)
             df.drop(columns=[stat], inplace=True)
 
-        # use luts dicts to add metadata to the dataset; for serialization during file writing, each item needs to be a string or list, can't be a dict
+        # use luts dicts to add global metadata to the dataset; for serialization during file writing, each item needs to be a string or list, can't be a dict
         ds = ds.assign_attrs(
             {
-                "Statistics Metadata": str(stat_vars_dict),
-                "Rasdaman Encodings": str(reverse_encodings_lookup),
                 "Data Source": str(data_source_dict),
                 "CMIP5 GCM Metadata": str(gcm_metadata_dict),
             }
@@ -212,10 +207,34 @@ def populate_dataset(ds, files):
     return ds
 
 
+def populate_encodings_metadata(ds):
+    # for each dimension, add the encoding lookup dict from reverse_encodings_lookup
+    # e.g., for "model", add reverse_encodings_lookup["model"] as metadata under the "encodings" attribute for that dimension
+    for dim in ["landcover", "model", "scenario", "era"]:
+        ds[dim].attrs["encoding"] = str(reverse_encodings_lookup[dim])
+    
+    # for each variable, add the statistic metadata from stat_vars_dict
+    for var in stat_vars_dict.keys():
+        ds[var].attrs["description"] = stat_vars_dict[var]["statistic_description"]
+        ds[var].attrs["units"] = stat_vars_dict[var]["units"]
+
+    return ds
+
+def convert_to_float32(ds):
+    # convert all data variables and dimensions to float32 to save space
+    for var in ds.data_vars:
+        ds[var] = ds[var].astype(np.float32)
+    for dim in ["landcover", "model", "scenario", "era"]:
+        ds[dim] = ds[dim].astype(np.float32)
+    # assert stream_id is int32
+    ds["stream_id"] = ds["stream_id"].astype(np.int32)
+    return ds
+
+
 def crosswalk_hrus(ds, df):
     xwalk_dict = {k: v for k, v in zip(df["hru_id"], df["hru_id_nat"])}
-    new_ids = [xwalk_dict.get(k) for k in ds["geom_id"].values.tolist()]
-    ds["geom_id"] = new_ids
+    new_ids = [xwalk_dict.get(k) for k in ds["stream_id"].values.tolist()]
+    ds["stream_id"] = new_ids
     return ds
 
 
@@ -223,102 +242,8 @@ def clip_dataset(ds, shp, type):
     # clip the dataset to the actual data extent using geometry IDs
 
     if type == "seg":
-        ds = ds.sel(geom_id=ds.geom_id.isin(shp.seg_id_nat.astype(str).tolist()))
+        ds = ds.sel(stream_id=ds.stream_id.isin(shp.seg_id_nat.astype(str).tolist()))
         return ds
     elif type == "hru":
-        ds = ds.sel(geom_id=ds.geom_id.isin(shp.hru_id_nat.astype(str).tolist()))
+        ds = ds.sel(stream_id=ds.stream_id.isin(shp.hru_id_nat.astype(str).tolist()))
         return ds
-
-
-def build_ingest_json(ds, type):
-    # build the ingest JSON file for Rasdaman
-
-    # geometry specific titles
-    if type == "seg":
-        title_string = "'Hydrological Summary Statistics for CONUS Stream Segments'"
-        coverage_id = "conus_hydro_segments"
-        nc_path = "seg.nc"
-    elif type == "hru":
-        title_string = "'Hydrological Summary Statistics for CONUS Watersheds'"
-        coverage_id = "conus_hydro_hrus"
-        nc_path = "hru.nc"
-
-    # read encodings from the dataset
-    nc_encoding_dict = eval(ds.attrs["Rasdaman Encodings"])
-    stats_metadata = eval(ds.attrs["Statistics Metadata"])
-
-    # build the ingest JSON parts
-    # encodings part
-    encoding_dict = {}
-    for stat in stats_metadata.keys():
-        encoding_dict[stat] = stats_metadata[stat]["units"]
-    for dim in nc_encoding_dict.keys():
-        encoding_dict[dim] = {}
-        # reverse the encoding dictionary
-        for dim_val in nc_encoding_dict[dim].keys():
-            encoding_dict[dim][nc_encoding_dict[dim][dim_val]] = dim_val
-    # bands part
-    band_list = []
-    for stat in stats_metadata.keys():
-        stat_dict = {"name": stat, "identifier": stat, "nilValue": "-9999.0"}
-        band_list.append(stat_dict)
-    # axes part
-    axes_dict = {}
-    grid_order = 0
-    for dim in nc_encoding_dict.keys():
-        axes_dict[dim] = {
-            "min": f"${{netcdf:variable:{dim}:min}}",
-            "max": f"${{netcdf:variable:{dim}:max}}",
-            "directPositions": f"${{netcdf:variable:{dim}}}",
-            "gridOrder": grid_order,
-            "irregular": "true",
-        }
-        grid_order = grid_order + 1
-    # assemble the parts into the ingest JSON
-    ingest_dict = {
-        "config": {
-            "service_url": "https://localhost/rasdaman/ows",
-            "tmp_directory": "/tmp/",
-            "crs_resolver": "http://localhost:8080/def/",
-            "default_crs": "http://localhost:8080/def/crs/EPSG/0/3338",
-            "default_null_values": ["-9999"],
-            "mock": "false",
-            "automated": "true",
-            "insitu": "true",
-        },
-        "input": {
-            "coverage_id": f"{coverage_id}",
-            "paths": [f"{nc_path}"],
-        },
-        "recipe": {
-            "name": "general_coverage",
-            "options": {
-                "tiling": "ALIGNED [0:*, 0:*, 0:*, 0:*, 0:*] tile size 4194304",
-                "wms_import": "false",
-                "import_order": "ascending",
-                "coverage": {
-                    "crs": 'OGC/0/Index1D?axis-label="lc"@OGC/0/Index1D?axis-label="era"@OGC/0/Index1D?axis-label="model"@OGC/0/Index1D?axis-label="scenario"',
-                    "metadata": {
-                        "type": "xml",
-                        "global": {"Title": f"{title_string}"},
-                        "local": {"Encoding": encoding_dict},
-                    },
-                    "slicer": {
-                        "type": "netcdf",
-                        "pixelIsPoint": "true",
-                        "bands": band_list,
-                        "axes": axes_dict,
-                    },
-                },
-            },
-        },
-    }
-
-    ingest_json = json.dumps(ingest_dict, indent=2)
-
-    # replace "true" and "false" quoted strings with non-quoted strings
-    # not sure if this is necessary, but this matches the formatting I see in the example injest JSON
-    ingest_json = ingest_json.replace('"false"', "false")
-    ingest_json = ingest_json.replace('"true"', "true")
-
-    return ingest_json
