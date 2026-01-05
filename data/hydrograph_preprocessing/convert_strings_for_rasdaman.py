@@ -162,20 +162,21 @@ def verify_conversion(original_ds, converted_ds, string_dims):
             continue
             
         # Check that all original values can be recovered
+
         
-        # Check model dimension separately since we modified capitalization
-        # Use the model_capitalization_dict to reverse the changes
-        if dim_name == 'model':
-            reversed_encoding_map = {
-                idx: model_capitalization_dict.get(val, val) 
-                for idx, val in encoding_map.items()
-            }
-            encoding_map = reversed_encoding_map
             
         original_values = [str(val) for val in original_ds[dim_name].values]
         converted_indices = converted_ds[dim_name].values
         recovered_values = [encoding_map[int(idx)] for idx in converted_indices]
-        
+
+        # Check model dimension separately since we modified capitalization
+        # convert the recovered values back to lowercase for comparison
+        if dim_name == 'model':
+            recovered_values = [
+                next((orig for orig in original_values if orig.lower() == rec.lower()), rec)
+                for rec in recovered_values
+            ]
+
         if original_values == recovered_values:
             print(f"  ✓ Conversion successful - all values recoverable")
             print(f"    Original: {original_values}")
