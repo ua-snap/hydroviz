@@ -416,7 +416,7 @@ reverse_encodings_lookup = {
     },
     "model": {
         0: "ACCESS1-0",
-        1: "bcc-csm1-1",
+        1: "BCC-CSM1-1", # captialized in metadata for consistency with other names: this value is not used in filenames
         2: "BNU-ESM",
         3: "CCSM4",
         4: "GFDL-ESM2G",
@@ -438,10 +438,10 @@ reverse_encodings_lookup = {
         4: "rcp85",
     },
     "era": {
-        0: "1976_2005", # historical
-        1: "2016_2045", # early century
-        2: "2046_2075", # mid century
-        3: "2071_2100", # late century
+        0: "1976-2005", # historical, hyphenated in metadata for consistency: this value is not used in filenames
+        1: "2016-2045", # early century, hyphenated in metadata for consistency: this value is not used in filenames
+        2: "2046-2075", # mid century, hyphenated in metadata for consistency: this value is not used in filenames
+        3: "2071-2100", # late century, hyphenated in metadata for consistency: this value is not used in filenames
     },
 }
 
@@ -459,7 +459,7 @@ data_source_dict = {"Title":"Model Input and Output for Hydrologic Simulations f
 gcm_metadata_dict = {"ACCESS1-0":
                      {"Modeling Center": "Commonwealth Scientific and Industrial Research Organization and Bureau of Meteorology, Australia",
                       "Representative Concentration Pathways": ["historical", "rcp4.5", "rcp8.5"]},
-                    "bcc-csm1-1":
+                    "BCC-CSM1-1": # capitalized in metadata for consistency with other names: this value is not used in filenames
                         {"Modeling Center": "Beijing Climate Center, China Meteorological Adminstration, China",
                         "Representative Concentration Pathways": ["historical", "rcp2.6", "rcp4.5", "rcp6.0", "rcp8.5"]},
                     "BNU-ESM":
