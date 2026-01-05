@@ -82,15 +82,6 @@ def convert_string_dimensions(ds, string_dims):
         # Create encoding mapping
         encoding_map, reverse_map = create_encoding_mapping(original_values)
         print(f"  Encoding mapping: {encoding_map}")
-        
-        # Convert string values to integer indices
-        integer_indices = [reverse_map[str(val)] for val in original_values]
-        print(f"  Integer indices: {integer_indices}")
-        
-        # Update the coordinate with integer values
-        ds_converted = ds_converted.assign_coords({
-            dim_name: integer_indices
-        })
 
         if dim_name == 'model':
             # deal with model capitalization using an explicit conversion dict:
@@ -115,6 +106,18 @@ def convert_string_dimensions(ds, string_dims):
                 if key in model_capitalization_dict:
                     index = list(encoding_map.keys())[list(encoding_map.values()).index(key)]
                     encoding_map[index] = model_capitalization_dict[key]
+            print(f"  Updated encoding mapping: {encoding_map}")
+            
+        # Convert string values to integer indices
+        integer_indices = [reverse_map[str(val)] for val in original_values]
+        print(f"  Integer indices: {integer_indices}")
+        
+        # Update the coordinate with integer values
+        ds_converted = ds_converted.assign_coords({
+            dim_name: integer_indices
+        })
+
+        
 
         # Store the encoding mapping in the coordinate's attributes
         # Convert dict to string for NetCDF serialization
