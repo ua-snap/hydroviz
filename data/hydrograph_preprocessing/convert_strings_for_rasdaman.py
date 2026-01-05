@@ -16,6 +16,23 @@ from pathlib import Path
 import xarray as xr
 import numpy as np
 
+# deal with model capitalization using an explicit conversion dict:
+model_capitalization_dict = {
+    'access1-0': "ACCESS1-0",
+    'bcc-csm1-1': "BCC-CSM1-1",
+    'bnu-esm': "BNU-ESM",
+    'ccsm4': "CCSM4",
+    'gfdl-esm2g': "GFDL-ESM2G",
+    'gfdl-esm2m': "GFDL-ESM2M",
+    'ipsl-cm5a-lr': "IPSL-CM5A-LR",
+    'ipsl-cm5a-mr': "IPSL-CM5A-MR",
+    'maurer': "Maurer",
+    'miroc5': "MIROC5",
+    'miroc-esm': "MIROC-ESM",
+    'miroc-esm-chem': "MIROC-ESM-CHEM",
+    'mri-cgcm3': "MRI-CGCM3",
+    'noresm1-m': "NorESM1-M",
+}
 
 def parse_arguments():
     """Parse command line arguments."""
@@ -84,30 +101,13 @@ def convert_string_dimensions(ds, string_dims):
         print(f"  Encoding mapping: {encoding_map}")
 
         if dim_name == 'model':
-            # deal with model capitalization using an explicit conversion dict:
-            model_capitalization_dict = {
-                'access1-0': "ACCESS1-0",
-                'bcc-csm1-1': "BCC-CSM1-1",
-                'bnu-esm': "BNU-ESM",
-                'ccsm4': "CCSM4",
-                'gfdl-esm2g': "GFDL-ESM2G",
-                'gfdl-esm2m': "GFDL-ESM2M",
-                'ipsl-cm5a-lr': "IPSL-CM5A-LR",
-                'ipsl-cm5a-mr': "IPSL-CM5A-MR",
-                'maurer': "Maurer",
-                'miroc5': "MIROC5",
-                'miroc-esm': "MIROC-ESM",
-                'miroc-esm-chem': "MIROC-ESM-CHEM",
-                'mri-cgcm3': "MRI-CGCM3",
-                'noresm1-m': "NorESM1-M",
-            }
             # Update the encoding map to use correct capitalization
             for key in list(encoding_map.values()):
                 if key in model_capitalization_dict:
                     index = list(encoding_map.keys())[list(encoding_map.values()).index(key)]
                     encoding_map[index] = model_capitalization_dict[key]
             print(f"  Updated encoding mapping: {encoding_map}")
-            
+
         # Convert string values to integer indices
         integer_indices = [reverse_map[str(val)] for val in original_values]
         print(f"  Integer indices: {integer_indices}")
@@ -162,6 +162,16 @@ def verify_conversion(original_ds, converted_ds, string_dims):
             continue
             
         # Check that all original values can be recovered
+        
+        # Check model dimension separately since we modified capitalization
+        # Use the model_capitalization_dict to reverse the changes
+        if dim_name == 'model':
+            reversed_encoding_map = {
+                idx: model_capitalization_dict.get(val, val) 
+                for idx, val in encoding_map.items()
+            }
+            encoding_map = reversed_encoding_map
+            
         original_values = [str(val) for val in original_ds[dim_name].values]
         converted_indices = converted_ds[dim_name].values
         recovered_values = [encoding_map[int(idx)] for idx in converted_indices]
