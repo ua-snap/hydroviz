@@ -7,35 +7,35 @@ stat_vars_dict = {
         "category": "duration",
         "code_base": "mhit",
         "difference_method": "ratio",
-        "statistic_description": "Annual maximum daily flow. Compute the maximum of a 1-day moving average flow for each year. DH1 is the median of these values (cubic feet per second - temporal).",
+        "statistic_description": "Annual maximum daily flow. Compute the maximum of a 1-day moving average flow for each year. DH1 is the mean of these values (cubic feet per second - temporal).",
         "units": "cfs",
     },
     "dh2": {
         "category": "duration",
         "code_base": "mhit",
         "difference_method": "ratio",
-        "statistic_description": "Annual maximum of 3-day moving average flows. Compute the maximum of a 3-day moving average flow for each year. DH2 is the median of these values (cubic feet per second - temporal).",
+        "statistic_description": "Annual maximum of 3-day moving average flows. Compute the maximum of a 3-day moving average flow for each year. DH2 is the mean of these values (cubic feet per second - temporal).",
         "units": "cfs",
     },
     "dh3": {
         "category": "duration",
         "code_base": "mhit",
         "difference_method": "ratio",
-        "statistic_description": "Annual maximum of 7-day moving average flows. Compute the maximum of a 7-day moving average flow for each year. DH3 is the median of these values (cubic feet per second - temporal).",
+        "statistic_description": "Annual maximum of 7-day moving average flows. Compute the maximum of a 7-day moving average flow for each year. DH3 is the mean of these values (cubic feet per second - temporal).",
         "units": "cfs",
     },
     "dh4": {
         "category": "duration",
         "code_base": "mhit",
         "difference_method": "ratio",
-        "statistic_description": "Annual maximum of 30-day moving average flows. Compute the maximum of 30-day moving average flows. Compute the maximum of a 30-day moving average flow for each year. DH4 is the median of these values (cubic feet per second - temporal).",
+        "statistic_description": "Annual maximum of 30-day moving average flows. Compute the maximum of 30-day moving average flows. Compute the maximum of a 30-day moving average flow for each year. DH4 is the mean of these values (cubic feet per second - temporal).",
         "units": "cfs",
     },
     "dh5": {
         "category": "duration",
         "code_base": "mhit",
         "difference_method": "ratio",
-        "statistic_description": "Annual maximum of 90-day moving average flows. Compute the maximum of a 90-day moving average flow for each year. DH5 is the median of these values (cubic feet per second - temporal).",
+        "statistic_description": "Annual maximum of 90-day moving average flows. Compute the maximum of a 90-day moving average flow for each year. DH5 is the mean of these values (cubic feet per second - temporal).",
         "units": "cfs",
     },
     "dh15": {
@@ -49,35 +49,35 @@ stat_vars_dict = {
         "category": "duration",
         "code_base": "mhit",
         "difference_method": "ratio",
-        "statistic_description": "Annual minimum daily flow. Compute the minimum 1-day average flow for each year. DL1 is the median of these values (cubic feet per second - temporal).",
+        "statistic_description": "Annual minimum daily flow. Compute the minimum 1-day average flow for each year. DL1 is the mean of these values (cubic feet per second - temporal).",
         "units": "cfs",
     },
     "dl2": {
         "category": "duration",
         "code_base": "mhit",
         "difference_method": "ratio",
-        "statistic_description": "Annual minimum of 3-day moving average flow. Compute the minimum of a 3-day moving average flow for each year. DL2 is the median of these values (cubic feet per second - temporal).",
+        "statistic_description": "Annual minimum of 3-day moving average flow. Compute the minimum of a 3-day moving average flow for each year. DL2 is the mean of these values (cubic feet per second - temporal).",
         "units": "cfs",
     },
     "dl3": {
         "category": "duration",
         "code_base": "mhit",
         "difference_method": "ratio",
-        "statistic_description": "Annual minimum of 7-day moving average flow. Compute the minimum of a 7-day moving average flow for each year. DL3 is the median of these values (cubic feet per second - temporal).",
+        "statistic_description": "Annual minimum of 7-day moving average flow. Compute the minimum of a 7-day moving average flow for each year. DL3 is the mean of these values (cubic feet per second - temporal).",
         "units": "cfs",
     },
     "dl4": {
         "category": "duration",
         "code_base": "mhit",
         "difference_method": "ratio",
-        "statistic_description": "Annual minimum of 30-day moving average flow. Compute the minimum of a 30-day moving average flow for each year. DL4 is the median of these values (cubic feet per second - temporal).",
+        "statistic_description": "Annual minimum of 30-day moving average flow. Compute the minimum of a 30-day moving average flow for each year. DL4 is the mean of these values (cubic feet per second - temporal).",
         "units": "cfs",
     },
     "dl5": {
         "category": "duration",
         "code_base": "mhit",
         "difference_method": "ratio",
-        "statistic_description": "Annual minimum of 90-day moving average flow. Compute the minimum of a 90-day moving average flow for each year. DL5 is the median of these values (cubic feet per second - temporal).",
+        "statistic_description": "Annual minimum of 90-day moving average flow. Compute the minimum of a 90-day moving average flow for each year. DL5 is the mean of these values (cubic feet per second - temporal).",
         "units": "cfs",
     },
     "dl16": {
@@ -126,42 +126,42 @@ stat_vars_dict = {
         "category": "frequency",
         "code_base": "mhit",
         "difference_method": "absolute",
-        "statistic_description": "High flood pulse count. Compute the average number of flow events with flows above a threshold equal to the 75th percentile value for the entire flow record. FH1 is the median number of events (number of events/year - temporal).",
+        "statistic_description": "High flood pulse count. Compute the average number of flow events with flows above a threshold equal to the 75th percentile value for the entire flow record. FH1 is the mean number of events (number of events/year - temporal).",
         "units": "events/year",
     },
     "fh5": {
         "category": "frequency",
         "code_base": "mhit",
         "difference_method": "absolute",
-        "statistic_description": "Flood frequency. Compute the average number of flow events with flows above a threshold equal to the median flow value for the entire flow record. FH5 is the median number of events (number of events/year - temporal).",
+        "statistic_description": "Flood frequency. Compute the average number of flow events with flows above a threshold equal to the median flow value for the entire flow record. FH5 is the mean number of events (number of events/year - temporal).",
         "units": "events/year",
     },
     "fh6": {
         "category": "frequency",
         "code_base": "mhit",
         "difference_method": "absolute",
-        "statistic_description": "Flood frequency. Compute the average number of flow events with flows above a threshold equal to three times the median flow value for the entire flow record. FH6 is the median number of events (number of events/year - temporal).",
+        "statistic_description": "Flood frequency. Compute the average number of flow events with flows above a threshold equal to three times the median flow value for the entire flow record. FH6 is the mean number of events (number of events/year - temporal).",
         "units": "events/year",
     },
     "fh7": {
         "category": "frequency",
         "code_base": "mhit",
         "difference_method": "absolute",
-        "statistic_description": "Flood frequency. Compute the average number of flow events with flows above a threshold equal to seven times the median flow value for the entire flow record. FH7 is the median number of events (number of events/year - temporal).",
+        "statistic_description": "Flood frequency. Compute the average number of flow events with flows above a threshold equal to seven times the median flow value for the entire flow record. FH7 is the mean number of events (number of events/year - temporal).",
         "units": "events/year",
     },
     "fl1": {
         "category": "frequency",
         "code_base": "mhit",
         "difference_method": "absolute",
-        "statistic_description": "Low flood pulse count. Compute the average number of flow events with flows below a threshold equal to the 25th percentile value for the entire flow record. FL1 is the median number of events (number of events/year - temporal).",
+        "statistic_description": "Low flood pulse count. Compute the average number of flow events with flows below a threshold equal to the 25th percentile value for the entire flow record. FL1 is the mean number of events (number of events/year - temporal).",
         "units": "events/year",
     },
     "fl3": {
         "category": "frequency",
         "code_base": "mhit",
         "difference_method": "absolute",
-        "statistic_description": "Frequency of low pulse spells. Compute the average number of flow events with flows below a threshold equal to 5 percent of the mean flow value for the entire flow record. FL3 is the median number of events (number of events/year - temporal).",
+        "statistic_description": "Frequency of low pulse spells. Compute the average number of flow events with flows below a threshold equal to 5 percent of the mean flow value for the entire flow record. FL3 is the mean number of events (number of events/year - temporal).",
         "units": "events/year",
     },
     "spr_freq": {
@@ -182,7 +182,7 @@ stat_vars_dict = {
         "category": "magnitude",
         "code_base": "mhit",
         "difference_method": "ratio",
-        "statistic_description": "Coefficient of variation (standard deviation/mean) for each year. Compute the coefficient of variation for each year of daily flows. Compute the median of the annual coefficients of variation (percent - temporal).",
+        "statistic_description": "Coefficient of variation (standard deviation/mean) for each year. Compute the coefficient of variation for each year of daily flows. Compute the mean of the annual coefficients of variation (percent - temporal).",
         "units": "percent",
     },
     "ma4": {
@@ -287,7 +287,7 @@ stat_vars_dict = {
         "category": "magnitude",
         "code_base": "mhit",
         "difference_method": "ratio",
-        "statistic_description": "Specific mean annual maximum flow. MH20 is the median of the annual maximum flows divided by the drainage area (cubic feet per second/square mile - temporal).",
+        "statistic_description": "Specific mean annual maximum flow. MH20 is the mean of the annual maximum flows divided by the drainage area (cubic feet per second/square mile - temporal).",
         "units": "cfs/square_mile",
     },
     "ml17": {
@@ -314,7 +314,7 @@ stat_vars_dict = {
     "sum_mag": {
         "category": "magnitude",
         "code_base": "matlab",
-        "difference_method": "ratio",
+        "difference_method": "absolute",
         "statistic_description": "Minimum of the summer (July-September) flows divided by the drainage area (cubic feet per second/square mile - temporal).",
         "units": "cfs/square_mile",
     },
@@ -322,21 +322,21 @@ stat_vars_dict = {
         "category": "rate_of_change",
         "code_base": "mhit",
         "difference_method": "ratio",
-        "statistic_description": "Rise rate. Compute the change in flow for days in which the change is positive for the entire flow record. RA1 is the median of these values (cubic feet per second/day - temporal).",
+        "statistic_description": "Rise rate. Compute the change in flow for days in which the change is positive for the entire flow record. RA1 is the mean of these values (cubic feet per second/day - temporal).",
         "units": "cfs/day",
     },
     "ra3": {
         "category": "rate_of_change",
         "code_base": "mhit",
         "difference_method": "ratio",
-        "statistic_description": "Fall rate. Compute the change in flow for days in which the change is negative for the entire flow record. RA3 is the median of these values (cubic feet per second/day - temporal).",
+        "statistic_description": "Fall rate. Compute the change in flow for days in which the change is negative for the entire flow record. RA3 is the mean of these values (cubic feet per second/day - temporal).",
         "units": "cfs/day",
     },
-    "ra9": {
+    "ra8": {
         "category": "rate_of_change",
         "code_base": "mhit",
         "difference_method": "ratio",
-        "statistic_description": "Number of reversals. Compute the number of days in each year when the change in flow from one day to the next changes direction. RA8 is the median of the yearly values (days - temporal).",
+        "statistic_description": "Number of reversals. Compute the number of days in each year when the change in flow from one day to the next changes direction. RA8 is the mean of the yearly values (days - temporal).",
         "units": "days/year",
     },
     "spr_ord": {
@@ -416,7 +416,7 @@ reverse_encodings_lookup = {
     },
     "model": {
         0: "ACCESS1-0",
-        1: "bcc-csm1-1",
+        1: "BCC-CSM1-1", # captialized in metadata for consistency with other names: this value is not used in filenames
         2: "BNU-ESM",
         3: "CCSM4",
         4: "GFDL-ESM2G",
@@ -438,10 +438,10 @@ reverse_encodings_lookup = {
         4: "rcp85",
     },
     "era": {
-        0: "1976_2005", # historical
-        1: "2016_2045", # early century
-        2: "2046_2075", # mid century
-        3: "2071_2100", # late century
+        0: "1976-2005", # historical, hyphenated in metadata for consistency: this value is not used in filenames
+        1: "2016-2045", # early century, hyphenated in metadata for consistency: this value is not used in filenames
+        2: "2046-2075", # mid century, hyphenated in metadata for consistency: this value is not used in filenames
+        3: "2071-2100", # late century, hyphenated in metadata for consistency: this value is not used in filenames
     },
 }
 
@@ -459,7 +459,7 @@ data_source_dict = {"Title":"Model Input and Output for Hydrologic Simulations f
 gcm_metadata_dict = {"ACCESS1-0":
                      {"Modeling Center": "Commonwealth Scientific and Industrial Research Organization and Bureau of Meteorology, Australia",
                       "Representative Concentration Pathways": ["historical", "rcp4.5", "rcp8.5"]},
-                    "bcc-csm1-1":
+                    "BCC-CSM1-1": # capitalized in metadata for consistency with other names: this value is not used in filenames
                         {"Modeling Center": "Beijing Climate Center, China Meteorological Adminstration, China",
                         "Representative Concentration Pathways": ["historical", "rcp2.6", "rcp4.5", "rcp6.0", "rcp8.5"]},
                     "BNU-ESM":
