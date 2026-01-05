@@ -210,6 +210,8 @@ def populate_dataset(ds, files):
 def populate_encodings_metadata(ds):
     # for each dimension, add the encoding lookup dict from reverse_encodings_lookup
     # e.g., for "model", add reverse_encodings_lookup["model"] as metadata under the "encodings" attribute for that dimension
+    # NOTE: some model names were capitalized in the metadata for consistency; see luts.py for details
+    # NOTE: era names were hyphenated in the metadata for consistency; see luts.py for details
     for dim in ["landcover", "model", "scenario", "era"]:
         ds[dim].attrs["encoding"] = str(reverse_encodings_lookup[dim])
     
