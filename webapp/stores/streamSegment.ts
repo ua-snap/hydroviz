@@ -9,14 +9,14 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const { $config } = useNuxtApp()
 
   const fetchStreamStats = async (): Promise<void> => {
-    let requestUrl = `${$config.public.snapApiUrl}/conus_hydrology/${segmentId.value}`
+    let requestUrl = `${$config.public.snapApiUrl}/conus_hydrology/stats/${segmentId.value}`
     streamStats.value = null
 
     // Needs error checking, etc.
     isLoading.value = true
     try {
       const res = await $fetch(requestUrl)
-      streamStats.value = res[segmentId.value]['stats']
+      streamStats.value = res
     } finally {
       isLoading.value = false
     }
