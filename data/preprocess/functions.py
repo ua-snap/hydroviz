@@ -219,7 +219,12 @@ def populate_encodings_metadata(ds):
     for var in stat_vars_dict.keys():
         ds[var].attrs["description"] = stat_vars_dict[var]["statistic_description"]
         ds[var].attrs["units"] = stat_vars_dict[var]["units"]
+    return ds
 
+def sort_by_model_dimension(ds):
+    # sort the model dimension: they are all integer values, but we need to ensure they are in order before writing to netCDF
+    sorted_models = sorted(ds["model"].values.tolist())
+    ds = ds.sel(model=sorted_models)
     return ds
 
 def convert_to_float32(ds):
