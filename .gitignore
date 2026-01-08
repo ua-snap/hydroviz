@@ -1,0 +1,15 @@
+.ipynb_checkpoints
+
+__pycache__/
+.vscode/
+
+# local folder can be created from tests
+tmp/
+
+.env
+.vscode
+
+_build/
+
+*.out
+*.err
