@@ -6,8 +6,8 @@ const streamSegmentStore = useStreamSegmentStore()
 let { streamStats, segmentName, isLoading } = storeToRefs(streamSegmentStore)
 
 const lcInput = defineModel('lc', { default: 'dynamic' })
-const modelInput = defineModel('model', { default: 'ACCESS1-0' })
-const scenarioInput = defineModel('scenario', { default: 'rcp85' })
+const modelInput = defineModel('model', { default: 'CCSM4' })
+const scenarioInput = defineModel('scenario', { default: 'rcp60' })
 </script>
 
 <template>
@@ -77,9 +77,9 @@ const scenarioInput = defineModel('scenario', { default: 'rcp85' })
               <td class="p-5">
                 {{
                   Number(
-                    streamStats[lcInput][modelInput]['historical']['1976_2005'][
-                      stat
-                    ]
+                    streamStats.data[lcInput][modelInput]['historical'][
+                      '1976-2005'
+                    ][stat]
                   ).toFixed(2)
                 }}
                 <span style="color: #888">{{ statVars[stat].units }}</span>
@@ -87,7 +87,9 @@ const scenarioInput = defineModel('scenario', { default: 'rcp85' })
               <td v-for="era in Object.keys(eras)" class="p-5">
                 {{
                   Number(
-                    streamStats[lcInput][modelInput][scenarioInput][era][stat]
+                    streamStats.data[lcInput][modelInput][scenarioInput][era][
+                      stat
+                    ]
                   ).toFixed(2)
                 }}
                 <span style="color: #888">{{ statVars[stat].units }}</span>
