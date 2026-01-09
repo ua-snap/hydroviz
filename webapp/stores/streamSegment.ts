@@ -6,17 +6,24 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const segmentId = ref(null)
   const segmentName = ref(null)
   const streamStats = ref(null)
+  const streamHydrograph = ref(null)
   const { $config } = useNuxtApp()
 
   const fetchStreamStats = async (): Promise<void> => {
-    let requestUrl = `${$config.public.snapApiUrl}/conus_hydrology/stats/${segmentId.value}`
+    let statsRequestUrl = `${$config.public.snapApiUrl}/conus_hydrology/stats/${segmentId.value}`
+    let hydrographRequestUrl = `${$config.public.snapApiUrl}/conus_hydrology/hydrograph/${segmentId.value}`
+
     streamStats.value = null
+    streamHydrograph.value = null
 
     // Needs error checking, etc.
     isLoading.value = true
     try {
-      const res = await $fetch(requestUrl)
-      streamStats.value = res
+      const statsResponse = await $fetch(statsRequestUrl)
+      streamStats.value = statsResponse
+
+      const hydrographResponse = await $fetch(hydrographRequestUrl)
+      streamHydrograph.value = hydrographResponse
     } finally {
       isLoading.value = false
     }
@@ -24,6 +31,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
 
   return {
     streamStats: streamStats,
+    streamHydrograph: streamHydrograph,
     fetchStreamStats,
     segmentName,
     segmentId,
