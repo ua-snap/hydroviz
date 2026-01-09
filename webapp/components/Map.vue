@@ -10,7 +10,11 @@ let selectedSeg = null // will have a reference to a stream segment Leaflet obje
 let { segmentName, segmentId } = storeToRefs(streamSegmentStore)
 
 onMounted(() => {
-  var map = $L.map('map').setView([37.8, -96], 8)
+  var map = $L
+    .map('map', {
+      scrollWheelZoom: false,
+    })
+    .setView([37.8, -96], 8)
   var geoJsonlayer: any = null
 
   $L.tileLayer(
@@ -108,7 +112,11 @@ onMounted(() => {
       .then(response => response.json())
       .then(data => {
         geoJsonlayer = $L
-          .geoJSON(data)
+          .geoJSON(data, {
+            style: {
+              weight: 5,
+            },
+          })
           .addTo(map)
           .on('click', function (e) {
             // "clear data"

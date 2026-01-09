@@ -11,6 +11,7 @@ const scenarioInput = defineModel('scenario', { default: 'rcp60' })
 </script>
 
 <template>
+  <VizHydrograph />
   <section class="section report">
     <div class="container">
       <div v-if="isLoading == true" class="loading content is-size-4">
