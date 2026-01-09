@@ -3,6 +3,10 @@
 // import { statVars } from '~/types/statsVars'
 import { watch, toRaw } from 'vue'
 import { useStreamSegmentStore } from '~/stores/streamSegment'
+import { getLayout, getConfig } from '~/utils/chart'
+const { $Plotly, $_ } = useNuxtApp()
+import type { Data } from 'plotly.js-dist-min'
+
 const streamSegmentStore = useStreamSegmentStore()
 let { streamHydrograph, segmentName, isLoading } =
   storeToRefs(streamSegmentStore)
@@ -10,6 +14,11 @@ let { streamHydrograph, segmentName, isLoading } =
 // const lcInput = defineModel('lc', { default: 'dynamic' })
 // const modelInput = defineModel('model', { default: 'CCSM4' })
 // const scenarioInput = defineModel('scenario', { default: 'rcp60' })
+
+// Round to significant digits.  Stub.
+function roundTo(num, sig = 3) {
+  return Number(num.toPrecision(sig))
+}
 
 // We want a data structure that we can feed into Plotly.
 // Three traces:
@@ -63,18 +72,100 @@ function buildHydrographData(hydrographData) {
           hydrographData[model]['historical']['1976-2005'][i]['doy_mean']
       }
     })
-    console.log(dayMin, dayMax, dayMean)
 
-    min[i] = dayMin
-    mean[i] = dayMean / 14
-    max[i] = dayMax
+    min[i] = roundTo(dayMin)
+    mean[i] = roundTo(dayMean / 14)
+    max[i] = roundTo(dayMax)
+
+    console.log(min[i], mean[i], max[i])
   }
-  console.log(min, mean, max)
-  return { min, mean, max }
+
+  return [min, mean, max]
+}
+
+const doyToDateString = (doy: number) => {
+  const year = 2025 // Can be any year, but not a leap year.
+  const date = new Date(year, 0) // January 1st of the given year
+  date.setDate(doy) // Add DOY as days offset
+  const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' }
+  return date.toLocaleDateString('en-US', options)
+}
+
+const doys = $_.range(1, 365 + 1)
+const dataLabels = doys.map((doy: number) => {
+  return doyToDateString(doy)
+})
+
+// hg is assumed to be non-null, raw, and only dynamic land cover now.
+const buildChart = hg => {
+  let traces: Data[] = []
+  let flowData = buildHydrographData(hg)
+
+  let doys = $_.range(1, 365 + 1)
+
+  let traceConfig = [
+    {
+      label: 'Minimum flow',
+      doy: doys,
+    },
+    {
+      label: 'Mean flow',
+      doy: doys,
+    },
+    {
+      label: 'Maximum flow',
+      doy: doys,
+    },
+  ]
+
+  flowData.forEach((traceData, index) => {
+    traces.push({
+      x: doys,
+      y: traceData,
+      mode: 'lines',
+      line: { shape: 'spline', smoothing: 2 },
+      name: traceConfig[index].label,
+    })
+  })
+
+  const yAxisLabel = 'Daily flow rate (cfm)'
+
+  // These numbers correspond to the 1st of each month in a 366-day year.
+  let xTickVals = [1, 32, 59, 90, 121, 152, 182, 213, 244, 274, 305, 335]
+  let xTickLabels = xTickVals.map((doy: number) => {
+    return doyToDateString(doy)
+  })
+
+  const chartTitle = 'Hydrograph'
+
+  const titleText: string =
+    'Minimum, mean and maximum flow rate across 13 models'
+
+  const layout = getLayout(titleText, yAxisLabel, {
+    tickangle: 45,
+  })
+
+  layout.xaxis = {
+    tickmode: 'array',
+    tickvals: xTickVals,
+    ticktext: xTickLabels,
+  }
+
+  layout.yaxis = {
+    type: 'log',
+    autorange: true,
+  }
+
+  const config = getConfig(chartTitle)
+
+  $Plotly.newPlot('hydrograph', traces, layout, config)
 }
 
 watch(streamHydrograph, hg => {
-  buildHydrographData(toRaw(hg.data.dynamic))
+  // Is briefly null when switching places
+  if (hg.data) {
+    buildChart(toRaw(hg.data.dynamic))
+  }
 })
 </script>
 
@@ -85,12 +176,13 @@ watch(streamHydrograph, hg => {
         <p>Loading data&hellip; this can take a minute or two.</p>
         <progress class="progress" />
       </div>
-      <div v-if="!isLoading && streamHydrograph">
+      <div v-show="!isLoading && streamHydrograph">
         <h3
           class="title is-3 is-flex is-justify-content-center is-align-items-center mt-6 mb-5"
         >
           Hydrograph for {{ segmentName }}
         </h3>
+        <div id="hydrograph"></div>
       </div>
     </div>
   </section>
