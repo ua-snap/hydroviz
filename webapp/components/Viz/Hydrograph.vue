@@ -45,8 +45,6 @@ function buildHydrographData(hydrographData, scenario: Scenario, era: Era) {
     // If true, initialize the day min/max/mean for this iteration
     let unset = true
     Object.keys(hydrographData).forEach(model => {
-      console.log('Model: ', model, 'Scenario', scenario, 'Era:', era)
-      console.log('hydrographData[model]', hydrographData[model])
       if (unset) {
         dayMin = hydrographData[model][scenario][era][i]['doy_min']
         dayMax = hydrographData[model][scenario][era][i]['doy_max']
@@ -66,7 +64,7 @@ function buildHydrographData(hydrographData, scenario: Scenario, era: Era) {
     })
 
     min[i] = roundTo(dayMin)
-    mean[i] = roundTo(dayMean / 14)
+    mean[i] = roundTo(dayMean / Object.keys(hydrographData).length)
     max[i] = roundTo(dayMax)
   }
 
@@ -88,8 +86,22 @@ function convertDoysToHydroYearDoys(series) {
   let joined = octDec.concat(janSept)
   return octDec.concat(janSept)
 }
-
 const hydroDoys = convertDoysToHydroYearDoys($_.range(1, 366 + 1))
+
+// Converts & LOWESS smooths a timeseries of Y values
+// BIG TODO: the Loess isn't fitting right still.
+// Need to trick it so there's not discontinuity between day 366/1.
+function processLowessAndHydroYear(traceData) {
+  let hydroYearTraceData = convertDoysToHydroYearDoys(traceData)
+  let smoothed = lowess(hydroDoys, hydroYearTraceData, {
+    f: 0.05,
+  })
+  let hydroOrderedSmoothedY = convertDoysToHydroYearDoys(smoothed.y)
+  hydroOrderedSmoothedY = hydroOrderedSmoothedY.map((cfm: number) => {
+    return roundTo(cfm)
+  })
+  return hydroOrderedSmoothedY
+}
 
 // hg is assumed to be non-null, raw, and only dynamic land cover now.
 const buildChart = hg => {
@@ -100,16 +112,54 @@ const buildChart = hg => {
   historicalMaurer['Maurer'] = hg['Maurer']
   delete hg['Maurer']
 
-  console.log(historicalMaurer)
+  // Create historical trace
   let historicalFlowData = buildHydrographData(
     historicalMaurer,
     'historical',
     '1976-2005'
   )
 
+  let hydroYearHistoricalDataMin = processLowessAndHydroYear(
+    historicalFlowData[0]
+  )
+  let hydroYearHistoricalDataMean = processLowessAndHydroYear(
+    historicalFlowData[1]
+  )
+  let hydroYearHistoricalDataMax = processLowessAndHydroYear(
+    historicalFlowData[2]
+  )
+
+  traces.push({
+    x: hydroDoys,
+    y: hydroYearHistoricalDataMin,
+    type: 'scatter',
+    mode: 'line',
+    line: { color: '#aaaaaa', width: 0 },
+    name: 'Historical Minimum (Modeled), 1975-2005',
+  })
+
+  traces.push({
+    x: hydroDoys,
+    y: hydroYearHistoricalDataMax,
+    type: 'scatter',
+    fill: 'tonexty',
+    mode: 'none',
+    fillcolor: '#cccccc',
+    name: 'Historical Maximum (Modeled), 1975-2005',
+  })
+
+  traces.push({
+    x: hydroDoys,
+    y: hydroYearHistoricalDataMean,
+    type: 'scatter',
+    mode: 'line',
+    line: { color: '#FFFFFF', width: 3 },
+    name: 'Historical Mean (Modeled), 1975-2005',
+  })
+
   // There's a gotcha here: two scenarios (ACCESS1-0, BNU-ESM) don't have RCP 2.6 or 6.0.
   // Historical needs to have been removed.
-  let projectedFlowData = buildHydrographData(hg, 'rcp45', '2046-2075')
+  let projectedFlowData = buildHydrographData(hg, 'rcp85', '2046-2075')
 
   let traceConfig = [
     {
@@ -127,17 +177,7 @@ const buildChart = hg => {
   ]
 
   projectedFlowData.forEach((traceData, index) => {
-    // BIG TODO: the Loess isn't fitting right still.
-    // Need to trick it so there's not discontinuity between day 366/1.
-
-    let hydroYearTraceData = convertDoysToHydroYearDoys(traceData)
-    let smoothed = lowess(hydroDoys, hydroYearTraceData, {
-      f: 0.05,
-    })
-    let hydroOrderedSmoothedY = convertDoysToHydroYearDoys(smoothed.y)
-    hydroOrderedSmoothedY = hydroOrderedSmoothedY.map((cfm: number) => {
-      return roundTo(cfm)
-    })
+    let hydroOrderedSmoothedY = processLowessAndHydroYear(traceData)
     traces.push({
       x: hydroDoys,
       y: hydroOrderedSmoothedY,

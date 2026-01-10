@@ -21,10 +21,8 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     try {
       const statsResponse = await $fetch(statsRequestUrl)
       streamStats.value = statsResponse
-      console.log(statsResponse)
       const hydrographResponse = await $fetch(hydrographRequestUrl)
       streamHydrograph.value = hydrographResponse
-      console.log(hydrographResponse)
     } finally {
       isLoading.value = false
     }
