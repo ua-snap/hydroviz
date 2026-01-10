@@ -11,7 +11,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
 
   const fetchStreamStats = async (): Promise<void> => {
     let statsRequestUrl = `${$config.public.snapApiUrl}/conus_hydrology/stats/${segmentId.value}`
-    let hydrographRequestUrl = `${$config.public.snapApiUrl}/conus_hydrology/hydrograph/${segmentId.value}`
+    let hydrographRequestUrl = `${$config.public.snapApiUrl}/conus_hydrology/modeled_climatology/${segmentId.value}`
 
     streamStats.value = null
     streamHydrograph.value = null
@@ -21,9 +21,10 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     try {
       const statsResponse = await $fetch(statsRequestUrl)
       streamStats.value = statsResponse
-
+      console.log(statsResponse)
       const hydrographResponse = await $fetch(hydrographRequestUrl)
       streamHydrograph.value = hydrographResponse
+      console.log(hydrographResponse)
     } finally {
       isLoading.value = false
     }
