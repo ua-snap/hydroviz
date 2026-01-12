@@ -246,14 +246,6 @@ def main():
     # Save converted dataset
     print(f"\nSaving converted dataset to: {output_file}")
     try:
-        # Add global attributes about the conversion
-        ds_converted.attrs.update({
-            'rasdaman_conversion': 'String dimensions converted to integers for Rasdaman ingestion',
-            'converted_dimensions': ', '.join(args.string_dims),
-            'conversion_date': str(np.datetime64('now')),
-            'original_file': str(input_file.name)
-        })
-        
         # Save with compression
         encoding = {}
         for var_name in ds_converted.data_vars:
