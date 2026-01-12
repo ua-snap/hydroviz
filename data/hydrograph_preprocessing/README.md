@@ -189,9 +189,9 @@ The script will:
 - Preserve all data variables and other coordinates unchanged
 - Add compression to reduce file size
 
-### split_combined_netcdf_file.py
+### split_combined_netcdf_file.py (optional)
 
-Splits the combined file into four separate files for ingestion. Files are split by time period (historical vs projected) and by landcover (static vs dynamic).
+Optionally, split the combined file into four separate files for ingestion. Files are split by time period (historical vs projected) and by landcover (static vs dynamic).
 
 ```bash
 srun --partition=analysis --mem=750G --pty /bin/bash
@@ -241,7 +241,7 @@ python convert_strings_for_rasdaman.py \
     netcdf_dir/combined.nc \
     netcdf_dir/rasdaman_ready_output.nc \
 
-# Step 7: Split into multiple coverages
+# Step 7: Optionally, split into multiple coverages
 # run on high-RAM compute node
 srun --partition=analysis --mem=750G --pty /bin/bash
 conda activate snap-geo
@@ -292,8 +292,9 @@ The Rasdaman conversion creates an integer-indexed version:
 - Same data structure as combined file
 - String dimensions converted to integers (0, 1, 2, ...)
 - Original string mappings stored in coordinate attributes as 'encoding'
+- Can be ingested using `REGULAR` tiling option
 
-### Split coverage files
+### Split coverage files (optional)
 The combined Rasdaman-ready file is split by time period and by landcover.
 - Reduces coverage size 
 - Split method can be easily adjusted for future optimization
