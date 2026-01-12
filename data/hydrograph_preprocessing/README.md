@@ -167,7 +167,7 @@ The script will:
 
 ## Rasdaman Prep
 
-For ingestion into Rasdaman, string dimensions must be converted to integers, and we need encoding information added to the dimension attributes. We also need to split the combined dataset into smaller pieces so that we aren't ingesting a file that is too large or complex to be performant. These tasks are done in a separate steps here to increase granularity and allow for easier source dataset revisions if problems arise during the ingestion process.
+For ingestion into Rasdaman, string dimensions must be converted to integers, and we need encoding information added to the dimension attributes. We also need to split the combined dataset into smaller pieces so that we aren't ingesting a file that is too large or complex to be performant. These tasks are done in separate steps here to increase granularity and allow for easier source dataset revisions if problems arise during the ingestion process.
 
 ### convert_strings_for_rasdaman.py
 
