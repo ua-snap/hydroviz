@@ -1,3 +1,10 @@
+import requests
+import json
+import scores
+import matplotlib.pyplot as plt
+import geopandas as gpd
+
+
 def run_test_suite(test_streams):
     """For each stream in the test_streams dict, run the test suite.
     This function fetches modeled historical daily climatology data and
@@ -130,7 +137,15 @@ def print_stats_summary(stats_list):
 
 
 def calculate_comparative_statistics(modeled_data, observed_data):
-    """Calculate the normalized Nash–Sutcliffe model efficiency coefficient (NNSE).
+    """Calculate some statistics using the scores package.
+
+    Background for interpreting these stats: https://www.sciencedirect.com/science/article/pii/S1364815225003494
+
+    https://scores.readthedocs.io/en/stable/tutorials/NSE.html
+    https://scores.readthedocs.io/en/stable/tutorials/Mean_Absolute_Error.html
+    https://scores.readthedocs.io/en/stable/tutorials/Root_Mean_Squared_Error.html
+
+    These need to be normalized appropriately in order to compare across streams and regions.
 
     Args:
         modeled_data (dict): Modeled climatology data.
