@@ -1,0 +1,458 @@
+{
+    "Marine West Coast Forest": {
+        "Coast Range": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "50576",
+                    "gnis_name": "Queets River",
+                    "usgs_gauge_id": "USGS-12040500",
+                    "usgs_gauge_name": "Queets River Near Clearwater, WA",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Queets_River",
+                    "notes": "River on Washington's Olympic Peninsula"
+                },
+                {
+                    "hydroviz_stream_id": "50920",
+                    "gnis_name": "Siuslaw River",
+                    "usgs_gauge_id": "USGS-14307620",
+                    "usgs_gauge_name": "Siuslaw River Near Mapleton, OR",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Siuslaw_River",
+                    "notes": "River in southwestern Oregon"
+                }
+            ]
+        }
+    },
+    "Western Cordillera": {
+        "North Cascades": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "52371",
+                    "gnis_name": "Thunder Creek",
+                    "usgs_gauge_id": "USGS-12175500",
+                    "usgs_gauge_name": "Thunder Creek Near Newhalem, WA",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Thunder_Creek_(Washington)",
+                    "notes": "Glacial river above Diablo Lake reservoir"
+                },
+                {
+                    "hydroviz_stream_id": "52916",
+                    "gnis_name": "Methow River",
+                    "usgs_gauge_id": "USGS-12447383",
+                    "usgs_gauge_name": "Methow River Above Goat Creek Near Mazama, WA",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Methow_River",
+                    "notes": "Tributary of the Columbia River in Washington"
+                }
+            ]
+        },
+        "Cascades": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "50291",
+                    "gnis_name": "Breitenbush River",
+                    "usgs_gauge_id": "USGS-14179000",
+                    "usgs_gauge_name": "Breitenbush R Abv French CR NR Detroit, OR",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Breitenbush_River",
+                    "notes": "River above Detroit Lake reservoir in Oregon"
+                },
+                {
+                    "hydroviz_stream_id": "50262",
+                    "gnis_name": "Lookout Creek",
+                    "usgs_gauge_id": "USGS-14161500",
+                    "usgs_gauge_name": "Lookout Creek Near Blue River, OR",
+                    "wikipedia_url": "",
+                    "notes": "River above Blue River Lake reservoir in Oregon"
+                }
+            ]
+        }
+    },
+    "Mediterranean California": {
+        "California Coastal Sage, Chaparral, and Oak Woodlands": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "54594",
+                    "gnis_name": "Big Sulphur Creek",
+                    "usgs_gauge_id": "USGS-11463170",
+                    "usgs_gauge_name": "Big Sulphur C a G Resort NR Cloverdale CA",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Big_Sulphur_Creek",
+                    "notes": "Tributary of the Russian River in California"
+                },
+                {
+                    "hydroviz_stream_id": "55353",
+                    "gnis_name": "Santa Paula Creek",
+                    "usgs_gauge_id": "USGS-11113500",
+                    "usgs_gauge_name": "Santa Paula C NR Santa Paula",
+                    "wikipedia_url": "",
+                    "notes": "Tributary of the Santa Clara River in California; flood control structures present"
+                }
+            ]
+        }
+    },
+    "Cold Deserts": {
+        "Central Basin and Range": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "47244",
+                    "gnis_name": "Humboldt River",
+                    "usgs_gauge_id": "USGS-10322500",
+                    "usgs_gauge_name": "Humboldt RV at Palisade, NV",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Humboldt_River",
+                    "notes": "Gauge upstream of Rye Patch Reservoir in Nevada"
+                },
+                {
+                    "hydroviz_stream_id": "47362",
+                    "gnis_name": "Martin Creek",
+                    "usgs_gauge_id": "USGS-10329500",
+                    "usgs_gauge_name": "Martin CK NR Paradise Valley, NV",
+                    "wikipedia_url": "",
+                    "notes": "River in Nevada with irrigation infrastructure"
+                }
+            ]
+        },
+        "Colorado Plateaus": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "43861",
+                    "gnis_name": "Dirty Devil River",
+                    "usgs_gauge_id": "USGS-09333500",
+                    "usgs_gauge_name": "Dirty Devil R AB Poison SP Wsh NR Hanksville UT",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Dirty_Devil_River",
+                    "notes": "Tributary of the Colorado River in Utah"
+                },
+                {
+                    "hydroviz_stream_id": "43914",
+                    "gnis_name": "White River",
+                    "usgs_gauge_id": "USGS-09306500",
+                    "usgs_gauge_name": "White River Near Watson, Utah",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/White_River_(Green_River_tributary)",
+                    "notes": "Tributary of the Green River in Utah with small dams and irrigation infrastructure"
+                }
+            ]
+        }
+    },
+    "Warm Deserts": {
+        "Mojave Basin and Range": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "56347",
+                    "gnis_name": "Mojave River",
+                    "usgs_gauge_id": "USGS-10261500",
+                    "usgs_gauge_name": "Mojave R a LO Narrows NR Victorville CA",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Mojave_River",
+                    "notes": "Intermittent river in California, west fork is dammed"
+                },
+                {
+                    "hydroviz_stream_id": "55769",
+                    "gnis_name": "Amargosa River",
+                    "usgs_gauge_id": "USGS-10251300",
+                    "usgs_gauge_name": "Amargosa RV at Tecopa, CA",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Amargosa_River",
+                    "notes": "River in California's Mojave Desert"
+                }
+            ]
+        },
+        "Sonoran Desert": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "44935",
+                    "gnis_name": "Sabino Creek",
+                    "usgs_gauge_id": "USGS-09484000",
+                    "usgs_gauge_name": "Sabino Creek Near Tucson, AZ",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Sabino_Canyon",
+                    "notes": "River in Arizona with small dam at gauge location"
+                },
+                {
+                    "hydroviz_stream_id": "56271",
+                    "gnis_name": "",
+                    "usgs_gauge_id": "USGS-10259200",
+                    "usgs_gauge_name": "Deep C NR Palm Desert CA",
+                    "wikipedia_url": "",
+                    "notes": "Tributary of Whitewater River in California"
+                }
+            ]
+        }
+    },
+    "Great Plains": {
+        "High Plains": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "24197",
+                    "gnis_name": "Big Dry Creek",
+                    "usgs_gauge_id": "USGS-06710150",
+                    "usgs_gauge_name": "Big Dry Creek Below C-470 at Highlands Ranch, CO",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Big_Dry_Creek_(Littleton,_Colorado)",
+                    "notes": "Tributary of the South Platte River in Colorado"
+                },
+                {
+                    "hydroviz_stream_id": "27446",
+                    "gnis_name": "Lodgepole Creek",
+                    "usgs_gauge_id": "USGS-06762500",
+                    "usgs_gauge_name": "Lodgepole Creek at Bushnell, Nebr",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Lodgepole_Creek",
+                    "notes": "Tributary of the South Platte River in Nebraska with irrigation infrastructure"
+                }
+            ]
+        },
+        "Central Great Plains": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "27801",
+                    "gnis_name": "North Fork Solomon River",
+                    "usgs_gauge_id": "USGS-06872500",
+                    "usgs_gauge_name": "NF Solomon R at Portis, KS",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Solomon_River",
+                    "notes": "River in Kansas; gauge is above Waconda Dam"
+                },
+                {
+                    "hydroviz_stream_id": "28087",
+                    "gnis_name": "White Rock Creek",
+                    "usgs_gauge_id": "USGS-06853800",
+                    "usgs_gauge_name": "White Rock C NR Burr Oak, KS",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/White_Rock_Creek_(Kansas)",
+                    "notes": "River in Kansas"
+                }
+            ]
+        },
+        "Northwestern Great Plains": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "31380",
+                    "gnis_name": "Musselshell River",
+                    "usgs_gauge_id": "USGS-06130500",
+                    "usgs_gauge_name": "Musselshell River at Mosby MT",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Musselshell_River",
+                    "notes": "River in Montana with tributary dams and irrigation, but no mainstem dams"
+                },
+                {
+                    "hydroviz_stream_id": "29015",
+                    "gnis_name": "Yellowstone River",
+                    "usgs_gauge_id": "USGS-06214500",
+                    "usgs_gauge_name": "Yellowstone River at Billings MT",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Yellowstone_River",
+                    "notes": "River in Montana with tributary dams and irrigation, but no mainstem dams"
+                }
+            ]
+        },
+        "Western Corn Belt Plains": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "17871",
+                    "gnis_name": "Redwood River",
+                    "usgs_gauge_id": "USGS-05316500",
+                    "usgs_gauge_name": "Redwood River Near Redwood Falls, MN",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Redwood_River",
+                    "notes": "Gauge upstream of Lake Redwood Reservoir in Minnesota"
+                },
+                {
+                    "hydroviz_stream_id": "24828",
+                    "gnis_name": "East Fork One Hundred and Two River",
+                    "usgs_gauge_id": "USGS-06819185",
+                    "usgs_gauge_name": "East Fork 102 River at Bedford, IA",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/One_Hundred_and_Two_River",
+                    "notes": "River originating in Iowa"
+                }
+            ]
+        }
+    },
+    "Eastern Temperate Forests": {
+        "Piedmont": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "4521",
+                    "gnis_name": "Chattahoochee River",
+                    "usgs_gauge_id": "USGS-02331600",
+                    "usgs_gauge_name": "Chattahoochee River Near Cornelia, GA",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Chattahoochee_River",
+                    "notes": "Gauge upstream of Lake Lanier reservoir in Georgia"
+                },
+                {
+                    "hydroviz_stream_id": "4889",
+                    "gnis_name": "Sweetwater Creek",
+                    "usgs_gauge_id": "USGS-02337000",
+                    "usgs_gauge_name": "Sweetwater Creek Near Austell, GA",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Sweetwater_Creek_(Chattahoochee_River_tributary)",
+                    "notes": "Tributary of the Chattahoochee River in Georgia"
+                }
+            ]
+        },
+        "Southeastern Plains": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "4847",
+                    "gnis_name": "Murder Creek",
+                    "usgs_gauge_id": "USGS-02374500",
+                    "usgs_gauge_name": "Murder Creek Near Evergreen AL",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Murder_Creek_(Alabama)",
+                    "notes": "River in Alabama"
+                },
+                {
+                    "hydroviz_stream_id": "9245",
+                    "gnis_name": "Pine Barren Creek",
+                    "usgs_gauge_id": "USGS-02427250",
+                    "usgs_gauge_name": "Pine Barren Creek Near Snow Hill, Al.",
+                    "wikipedia_url": "",
+                    "notes": "River in Alabama"
+                }
+            ]
+        },
+        "South Central Plains": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "34617",
+                    "gnis_name": "Paw Paw Bayou",
+                    "usgs_gauge_id": "USGS-07344450",
+                    "usgs_gauge_name": "Paw Paw Bayou near Greenwood, LA",
+                    "wikipedia_url": "",
+                    "notes": "Gauge upstream of Cross Lake reservoir in Louisiana"
+                },
+                {
+                    "hydroviz_stream_id": "35668",
+                    "gnis_name": "",
+                    "usgs_gauge_id": "USGS-07351500",
+                    "usgs_gauge_name": "Cypress Bayou near Keithville, LA",
+                    "wikipedia_url": "",
+                    "notes": "River in Louisiana"
+                }
+            ]
+        },
+        "Middle Atlantic Coastal Plain": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "9176",
+                    "gnis_name": "Ebenezer Creek",
+                    "usgs_gauge_id": "USGS-02198690",
+                    "usgs_gauge_name": "Ebenezer Creek at Springfield, GA",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Ebenezer_Creek",
+                    "notes": "River in Georgia"
+                },
+                {
+                    "hydroviz_stream_id": "6260",
+                    "gnis_name": "",
+                    "usgs_gauge_id": "USGS-02110500",
+                    "usgs_gauge_name": "Waccamaw River Near Longs, SC",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Waccamaw_River",
+                    "notes": "Tidally influenced river in South Carolina"
+                }
+            ]
+        },
+        "Southern Coastal Plain": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "8705",
+                    "gnis_name": "North Prong Saint Marys River",
+                    "usgs_gauge_id": "USGS-02228500",
+                    "usgs_gauge_name": "North Prong St. Marys River at Moniac, GA",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/St._Marys_River_(Florida%E2%80%93Georgia)",
+                    "notes": "Tidally influenced river in Georgia"
+                },
+                {
+                    "hydroviz_stream_id": "4464",
+                    "gnis_name": "Econfina River",
+                    "usgs_gauge_id": "USGS-02326000",
+                    "usgs_gauge_name": "Econfina River Near Perry, Fla.",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Econfina_River",
+                    "notes": "Tidally influenced river in Florida"
+                }
+            ]
+        },
+        "Central Corn Belt Plains": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "19784",
+                    "gnis_name": "Sugar Creek",
+                    "usgs_gauge_id": "USGS-05525500",
+                    "usgs_gauge_name": "Sugar Creek at Milford, IL",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Sugar_Creek_(Sangamon_River_tributary)",
+                    "notes": "River in central Illinois"
+                },
+                {
+                    "hydroviz_stream_id": "20915",
+                    "gnis_name": "",
+                    "usgs_gauge_id": "USGS-05453000",
+                    "usgs_gauge_name": "Big Bear Creek at Ladora, IA",
+                    "wikipedia_url": "",
+                    "notes": "River in Iowa"
+                }
+            ]
+        },
+        "Eastern Corn Belt Plains": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "12934",
+                    "gnis_name": "Whitewater River",
+                    "usgs_gauge_id": "USGS-03274650",
+                    "usgs_gauge_name": "Whitewater River Near Economy, IN",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Whitewater_River_(Great_Miami_River_tributary)",
+                    "notes": "River in Indiana"
+                },
+                {
+                    "hydroviz_stream_id": "15118",
+                    "gnis_name": "Pleasant Run",
+                    "usgs_gauge_id": "USGS-03368000",
+                    "usgs_gauge_name": "Brush Creek Near Nebraska, IN",
+                    "wikipedia_url": "",
+                    "notes": "Gauge upstream of Brush Creek Reservoir in Indiana"
+                }
+            ]
+        },
+        "Eastern Great Lakes and Hudson Lowlands": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "11595",
+                    "gnis_name": "Tonawanda Creek",
+                    "usgs_gauge_id": "USGS-04216418",
+                    "usgs_gauge_name": "Tonawanda Creek at Attica NY",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Tonawanda_Creek",
+                    "notes": "River in northwestern New York"
+                },
+                {
+                    "hydroviz_stream_id": "11367",
+                    "gnis_name": "Little Salmon River",
+                    "usgs_gauge_id": "USGS-04270200",
+                    "usgs_gauge_name": "Little Salmon River at Bombay NY",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Little_Salmon_River_(Lake_Ontario)",
+                    "notes": "River in northwestern New York"
+                }
+            ]
+        }
+    },
+    "Northern Forests": {
+        "Northern Lakes and Forests": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "23625",
+                    "gnis_name": "Kawishiwi River",
+                    "usgs_gauge_id": "USGS-05124480",
+                    "usgs_gauge_name": "Kawishiwi River Near Ely, MN",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Kawishiwi_River",
+                    "notes": "River in northern Minnesota"
+                },
+                {
+                    "hydroviz_stream_id": "23666",
+                    "gnis_name": "Vermilion River",
+                    "usgs_gauge_id": "USGS-05129115",
+                    "usgs_gauge_name": "Vermilion River NR Crane Lake, MN",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Vermillion_River_(Minnesota)",
+                    "notes": "River in northern Minnesota"
+                }
+            ]
+        },
+        "Northern Appalachian and Atlantic Maritime Highlands": {
+            "streams": [
+                {
+                    "hydroviz_stream_id": "928",
+                    "gnis_name": "East Branch Pemigewasset River",
+                    "usgs_gauge_id": "USGS-01074520",
+                    "usgs_gauge_name": "East Branch Pemigewasset River at Lincoln, NH",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/East_Branch_Pemigewasset_River",
+                    "notes": "River in New Hampshire"
+                },
+                {
+                    "hydroviz_stream_id": "505",
+                    "gnis_name": "Ammonoosuc River",
+                    "usgs_gauge_id": "USGS-01137500",
+                    "usgs_gauge_name": "Ammonoosuc River at Bethlehem Junction, NH",
+                    "wikipedia_url": "https://en.wikipedia.org/wiki/Ammonoosuc_River",
+                    "notes": "River in New Hampshire"
+                }
+            ]
+        }
+    }
+}
