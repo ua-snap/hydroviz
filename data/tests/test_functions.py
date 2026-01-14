@@ -16,6 +16,9 @@ def run_test_suite(test_streams):
     Returns:
         None (prints output to console and generates plots).
     """
+
+    stats_list = []
+
     for stream_dict in reformat_test_stream_dict(test_streams):
         modeled_data = fetch_modeled_climatology_data(stream_dict["hydroviz_stream_id"])
         observed_data = fetch_observed_climatology_data(
@@ -23,8 +26,12 @@ def run_test_suite(test_streams):
         )
 
         stats = calculate_comparative_statistics(modeled_data, observed_data)
+        stats_list.append(stats)
+
         plot_hydrograph(modeled_data, observed_data, stream_dict, stats)
         plot_stream_map(stream_dict)
+
+    print_stats_summary(stats_list)
 
     return None
 
@@ -111,7 +118,7 @@ def plot_stream_map(stream_dict):
     return None
 
 
-def print_summary_statistics():
+def print_stats_summary(stats_list):
     """Print summary statistics comparing modeled and observed data.
 
     Returns:
