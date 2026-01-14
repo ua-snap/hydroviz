@@ -2,6 +2,7 @@ import requests
 import scores
 import matplotlib.pyplot as plt
 import geopandas as gpd
+import numpy as np
 
 
 api_base_url = "localhost:5000/"
@@ -30,15 +31,15 @@ def run_test_suite(test_streams):
 
     for stream_dict in reformat_test_stream_dict(test_streams):
         modeled_data = fetch_modeled_climatology_data(stream_dict["hydroviz_stream_id"])
-        observed_data = fetch_observed_climatology_data(
+        observed_data, gauge_metadata = fetch_observed_climatology_data(
             stream_dict["hydroviz_stream_id"]
         )
 
         stats = calculate_comparative_statistics(modeled_data, observed_data)
         stats_list.append(stats)
 
-        plot_hydrograph(modeled_data, observed_data, stream_dict, stats)
-        plot_stream_map(stream_dict)
+        plot_hydrograph(modeled_data, observed_data, gauge_metadata, stream_dict, stats)
+        plot_stream_map(stream_dict, gauge_metadata)
 
     print_stats_summary(stats_list)
 
@@ -118,10 +119,17 @@ def fetch_observed_climatology_data(hydroviz_stream_id):
             observed_data["actual"]["mean_values"].append(doy_dict["mean"])
             observed_data["actual"]["max_values"].append(doy_dict["max"])
 
-    return observed_data
+        gauge_metadata = {
+            "latitude": data["latitude"],
+            "longitude": data["longitude"],
+            "name": data["name"],
+            "percent_complete": data["metadata"]["percent_complete"],
+        }
+
+    return observed_data, gauge_metadata
 
 
-def plot_hydrograph(modeled_data, observed_data, stream_dict, stats):
+def plot_hydrograph(modeled_data, observed_data, gauge_metadata, stream_dict, stats):
     """Plot the modeled and observed hydrograph data.
 
     Args:
@@ -133,8 +141,148 @@ def plot_hydrograph(modeled_data, observed_data, stream_dict, stats):
     Returns:
         None: Generates a plot.
     """
-    # Placeholder for plotting logic
-    pass
+    # index values to align with water year
+    doy_values = np.arange(1, 367)
+    water_year_order = np.concatenate(
+        [
+            np.arange(276, 367),  # Oct 1 (275) to Dec 31 (366)
+            np.arange(1, 276),  # Jan 1 (1) to Sep 30 (273)
+        ]
+    )
+
+    # Find the indices to reorder the data
+    reorder_indices = np.searchsorted(doy_values, water_year_order)
+
+    # Create water year DOY axis (1 to 366)
+    water_year_doy = np.arange(1, len(water_year_order) + 1)
+
+    # Convert lists to numpy arrays and reorder
+    modeled_dynamic_min_ordered = np.array(modeled_data["dynamic"]["min_values"])[
+        reorder_indices
+    ]
+    modeled_dynamic_mean_ordered = np.array(modeled_data["dynamic"]["mean_values"])[
+        reorder_indices
+    ]
+    modeled_dynamic_max_ordered = np.array(modeled_data["dynamic"]["max_values"])[
+        reorder_indices
+    ]
+
+    modeled_static_min_ordered = np.array(modeled_data["static"]["min_values"])[
+        reorder_indices
+    ]
+    modeled_static_mean_ordered = np.array(modeled_data["static"]["mean_values"])[
+        reorder_indices
+    ]
+    modeled_static_max_ordered = np.array(modeled_data["static"]["max_values"])[
+        reorder_indices
+    ]
+
+    observed_min_ordered = np.array(observed_data["actual"]["min_values"])[
+        reorder_indices
+    ]
+    observed_mean_ordered = np.array(observed_data["actual"]["mean_values"])[
+        reorder_indices
+    ]
+    observed_max_ordered = np.array(observed_data["actual"]["max_values"])[
+        reorder_indices
+    ]
+
+    # Create figure
+    plt.figure(figsize=(12, 6))
+
+    # Plot with properly ordered water year data
+    plt.plot(
+        water_year_doy,
+        modeled_dynamic_mean_ordered,
+        label="Modeled Dynamic Mean",
+        color="blue",
+    )
+    plt.fill_between(
+        water_year_doy,
+        modeled_dynamic_min_ordered,
+        modeled_dynamic_max_ordered,
+        color="blue",
+        alpha=0.2,
+        label="Modeled Dynamic Min-Max Range",
+    )
+    plt.plot(
+        water_year_doy,
+        modeled_static_mean_ordered,
+        label="Modeled Static Mean",
+        color="green",
+    )
+    plt.fill_between(
+        water_year_doy,
+        modeled_static_min_ordered,
+        modeled_static_max_ordered,
+        color="green",
+        alpha=0.2,
+        label="Modeled Static Min-Max Range",
+    )
+    plt.plot(
+        water_year_doy,
+        observed_mean_ordered,
+        label="Observed Mean",
+        color="red",
+    )
+    plt.fill_between(
+        water_year_doy,
+        observed_min_ordered,
+        observed_max_ordered,
+        color="red",
+        alpha=0.2,
+        label="Observed Min-Max Range",
+    )
+    # Get info for title
+    stream_id = stream_dict["hydroviz_stream_id"]
+    model = "Maurer"
+    scenario = "historical"
+    era = "1976-2005"
+    gauge_name = gauge_metadata["name"]
+    percent_complete = gauge_metadata["percent_complete"]
+    latitude = gauge_metadata["latitude"]
+    longitude = gauge_metadata["longitude"]
+
+    # Set x-axis limits and labels for water year
+    plt.xlim(0, 365)
+    # plt.xlabel('Days from Start of Water Year (Oct 1 = 0)')
+    plt.ylabel("Streamflow (cfs)")
+
+    # Add month labels for reference
+    month_labels = [
+        "Oct",
+        "Nov",
+        "Dec",
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+    ]
+    # Approximate day of year for start of each month in water year
+    month_starts = [0, 31, 62, 92, 123, 151, 182, 212, 243, 273, 304, 335]
+    plt.xticks(month_starts, month_labels, rotation=45)
+
+    # add title
+    plt.title(
+        f"Modeled and Observed Daily Streamflow Climatology for Stream ID: {stream_id}"
+    )
+
+    plt.suptitle(
+        f"Gauge: {gauge_name} (Lat: {latitude:.2f}, Lon: {longitude:.2f}) | Data Completeness: {percent_complete:.1f}%\nModel: {model} | Scenario: {scenario} | Era: {era}",
+        fontsize=10,
+        y=0.93,
+    )
+
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.show()
+
     return None
 
 
