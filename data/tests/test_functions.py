@@ -1,8 +1,10 @@
 import requests
-import json
 import scores
 import matplotlib.pyplot as plt
 import geopandas as gpd
+
+
+api_base_url = "localhost:5000/"
 
 
 def run_test_suite(test_streams):
@@ -72,11 +74,25 @@ def fetch_modeled_climatology_data(hydroviz_stream_id):
         dict: Modeled climatology data, limited to the Maurer model. Results include both
         landcover types.
     """
-    # Placeholder for API call to fetch modeled data
     modeled_data = {
         "dynamic": {"doy": [], "min_values": [], "mean_values": [], "max_values": []},
         "static": {"doy": [], "min_values": [], "mean_values": [], "max_values": []},
     }
+
+    url = api_base_url + f"conus_hydrology/modeled_climatology/{hydroviz_stream_id}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        # Filter for Maurer model only
+        for landcover in ["dynamic", "static"]:
+            for doy_dict in data["data"][landcover]["Maurer"]["historical"][
+                "1976-2005"
+            ]:
+                modeled_data[landcover]["doy"].append(doy_dict["doy"])
+                modeled_data[landcover]["min_values"].append(doy_dict["min"])
+                modeled_data[landcover]["mean_values"].append(doy_dict["mean"])
+                modeled_data[landcover]["max_values"].append(doy_dict["max"])
+
     return modeled_data
 
 
@@ -89,8 +105,19 @@ def fetch_observed_climatology_data(hydroviz_stream_id):
     Returns:
         dict: Observed climatology data.
     """
-    # Placeholder for API call to fetch observed data
-    observed_data = {"doy": [], "min_values": [], "mean_values": [], "max_values": []}
+    observed_data = {
+        "actual": {"doy": [], "min_values": [], "mean_values": [], "max_values": []}
+    }
+    url = api_base_url + f"conus_hydrology/observed_climatology/{hydroviz_stream_id}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        for doy_dict in data["data"]["actual"]["usgs"]["observed"]["1976-2005"]:
+            observed_data["actual"]["doy"].append(doy_dict["doy"])
+            observed_data["actual"]["min_values"].append(doy_dict["min"])
+            observed_data["actual"]["mean_values"].append(doy_dict["mean"])
+            observed_data["actual"]["max_values"].append(doy_dict["max"])
+
     return observed_data
 
 
