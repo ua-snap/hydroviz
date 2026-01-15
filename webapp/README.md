@@ -9,12 +9,18 @@ npm install
 
 ## Running for development
 
-Run the [local data API](https://github.com/ua-snap/data-api/) from the `hydroviz_prototype_api` branch.
+For static-only local development (no interaction with an API, using fixtures taken from https://github.com/ua-snap/data-api/commit/f9ba6916dd6f94b2e959baacb75f4e35b9b3781b):
+
+```
+export HYDROVIZ_USE_STATIC_FIXTURES=true
+
+```
+
+For development with a backend API, export the `SNAP_API_URL` env var to the desired location (local or remote, defaults to `https://earthmaps.io`).
 
 Running the webapp:
 
 ```
-export SNAP_API_URL=http://localhost:5000
-cd hydroviz-webapp
+cd webapp
 npm run dev
 ```

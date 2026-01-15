@@ -6,24 +6,42 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const segmentId = ref(null)
   const segmentName = ref(null)
   const streamStats = ref(null)
+  const streamHydrograph = ref(null)
   const { $config } = useNuxtApp()
 
   const fetchStreamStats = async (): Promise<void> => {
-    let requestUrl = `${$config.public.snapApiUrl}/conus_hydrology/stats/${segmentId.value}`
+    let statsRequestUrl = `${$config.public.snapApiUrl}/conus_hydrology/stats/${segmentId.value}`
+    let hydrographRequestUrl = `${$config.public.snapApiUrl}/conus_hydrology/modeled_climatology/${segmentId.value}`
+
+    // BUG: this causes the front end render to fail because
+    // it still tries to render the chart (!)
     streamStats.value = null
+    streamHydrograph.value = null
+    var statsResponse, hydrographResponse
 
     // Needs error checking, etc.
     isLoading.value = true
     try {
-      const res = await $fetch(requestUrl)
-      streamStats.value = res
+      if ($config.public.staticFixtures) {
+        console.log('Using static fixtures for hydroviz API data')
+        statsResponse = await import('@/assets/fixtures/stats.json')
+        hydrographResponse = await import(
+          '@/assets/fixtures/modeled_climatology.json'
+        )
+      } else {
+        statsResponse = await $fetch(statsRequestUrl)
+        hydrographResponse = await $fetch(hydrographRequestUrl)
+      }
     } finally {
       isLoading.value = false
     }
+    streamStats.value = statsResponse
+    streamHydrograph.value = hydrographResponse
   }
 
   return {
     streamStats: streamStats,
+    streamHydrograph: streamHydrograph,
     fetchStreamStats,
     segmentName,
     segmentId,

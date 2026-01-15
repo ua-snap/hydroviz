@@ -7,6 +7,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       snapApiUrl: process.env.SNAP_API_URL || 'https://earthmaps.io',
+      staticFixtures: process.env.HYDROVIZ_USE_STATIC_FIXTURE || false,
     },
   },
 })
