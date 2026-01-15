@@ -26,6 +26,9 @@ def run_test_suite(test_streams):
     Returns:
         None (prints output to console and generates plots).
     """
+    # load CONUS shapefile for mapping
+    conus_shp = "data/tests/shp/ne_50m_admin_1_states_provinces_lakes/ne_50m_admin_1_states_provinces_lakes.shp"
+    conus_gdf = gpd.read_file(conus_shp)
 
     stats_list = []
 
@@ -36,10 +39,16 @@ def run_test_suite(test_streams):
         )
 
         stats = calculate_comparative_statistics(modeled_data, observed_data)
-        stats_list.append(stats)
+        stats_info = {
+            "stats_lc_dict": stats,
+            "model": "Maurer",
+            "scenario": "historical",
+            "era": "1976-2005",
+        }
+        stats_list.append((stream_dict, stats_info))
 
         plot_hydrograph(modeled_data, observed_data, gauge_metadata, stream_dict, stats)
-        plot_stream_map(stream_dict, gauge_metadata)
+        plot_stream_map(stream_dict, gauge_metadata, conus_gdf)
 
     print_stats_summary(stats_list)
 
@@ -286,7 +295,7 @@ def plot_hydrograph(modeled_data, observed_data, gauge_metadata, stream_dict, st
     return None
 
 
-def plot_stream_map(stream_dict):
+def plot_stream_map(stream_dict, gauge_metadata, conus_gdf):
     """Generate a map of the stream location.
 
     Args:
@@ -295,19 +304,56 @@ def plot_stream_map(stream_dict):
     Returns:
         None: Generates a map plot.
     """
-    # Placeholder for map plotting logic
-    pass
+    # Create a GeoDataFrame for the gauge lat/lon
+    gauge_gdf = gpd.GeoDataFrame(
+        {
+            "name": [gauge_metadata["name"]],
+            "geometry": gpd.points_from_xy(
+                [gauge_metadata["longitude"]], [gauge_metadata["latitude"]]
+            ),
+        },
+        crs="EPSG:4326",
+    )
+    # Plot the map
+    fig, ax = plt.subplots(figsize=(8, 8))
+    conus_gdf.boundary.plot(ax=ax, color="black", linewidth=0.5)
+    gauge_gdf.plot(ax=ax, color="red", markersize=100, label="Stream Gauge")
+    plt.title(
+        f"Stream Gauge Location: {gauge_metadata['name']} (Lat: {gauge_metadata['latitude']:.2f}, Lon: {gauge_metadata['longitude']:.2f})"
+    )
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+
     return None
 
 
 def print_stats_summary(stats_list):
     """Print summary statistics comparing modeled and observed data.
+    Args:
+        stats_list (list): A list where each item is a tuple; first element is stream_dict, second element is corresponding stats_info dict.
 
     Returns:
         None: Prints statistics to console.
     """
-    # Placeholder for statistics calculation and printing
-    pass
+    for stream_dict, stats_info in stats_list:
+        stream_id = stream_dict["hydroviz_stream_id"]
+        region = stream_dict["region"]
+        subregion = stream_dict["subregion"]
+        model = stats_info["model"]
+        scenario = stats_info["scenario"]
+        era = stats_info["era"]
+        stats = stats_info["stats_lc_dict"]
+
+        print(f"Stream ID: {stream_id} | Region: {region} | Subregion: {subregion}")
+        print(f"Model: {model} | Scenario: {scenario} | Era: {era}")
+        for landcover in ["dynamic", "static"]:
+            print(f"  Landcover Type: {landcover.capitalize()}")
+            print(
+                f"    NNSE: {stats[landcover]['NNSE']:.4f}, NMAE: {stats[landcover]['NMAE']:.4f}, NRMSE: {stats[landcover]['NRMSE']:.4f}"
+            )
+        print("-" * 80)
+
     return None
 
 
@@ -329,7 +375,38 @@ def calculate_comparative_statistics(modeled_data, observed_data):
     Returns:
         dict: A dictionary containing comparative statistics.
     """
-    # Placeholder for stats calculation
-    stats = {"NNSE": 0, "NMAE": 0, "NRMSE": 0}
+    stats = {
+        "dynamic": {"NNSE": None, "NMAE": None, "NRMSE": None},
+        "static": {"NNSE": None, "NMAE": None, "NRMSE": None},
+    }
+
+    # Convert lists to numpy arrays
+    modeled_mean_dynamic = np.array(modeled_data["dynamic"]["mean_values"])
+    modeled_mean_static = np.array(modeled_data["static"]["mean_values"])
+    observed_mean = np.array(observed_data["actual"]["mean_values"])
+
+    # Group for stats calculations
+    groups = {
+        "dynamic": (observed_mean, modeled_mean_dynamic),
+        "static": (observed_mean, modeled_mean_static),
+    }
+
+    # Calculate statistics for each group and populate stats dict
+    for group_name, (obs, mod) in groups.items():
+        # NNSE = 1 / (2 - NSE)
+        nse = scores.continuous.nse(obs, mod)
+        nnse = 1 / (2 - nse)
+
+        # NMAE = MAE / mean of observations
+        mae = scores.continuous.mean_absolute_error(obs, mod)
+        nmae = mae / np.mean(obs)
+
+        # NRMSE = RMSE / range of observations
+        rmse = scores.continuous.root_mean_squared_error(obs, mod)
+        nrmse = rmse / (np.max(obs) - np.min(obs))
+
+        stats[group_name]["NNSE"] = nnse
+        stats[group_name]["NMAE"] = nmae
+        stats[group_name]["NRMSE"] = nrmse
 
     return stats
