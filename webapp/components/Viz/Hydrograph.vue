@@ -4,7 +4,7 @@
 import { watch } from 'vue'
 import lowess from '@stdlib/stats-lowess'
 import { useStreamSegmentStore } from '~/stores/streamSegment'
-import { getLayout, getConfig } from '~/utils/chart'
+import { getLayout, getConfig, initializeChart } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js-dist-min'
 

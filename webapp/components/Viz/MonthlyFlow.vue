@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { watch } from 'vue'
 import { useStreamSegmentStore } from '~/stores/streamSegment'
-import { getLayout, getConfig } from '~/utils/chart'
+import { getLayout, getConfig, initializeChart } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js-dist-min'
 
