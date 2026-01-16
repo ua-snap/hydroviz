@@ -189,8 +189,6 @@ const buildChart = hg => {
     })
   })
 
-  const yAxisLabel = 'Daily flow rate (cfm)'
-
   // These numbers correspond to the 1st of each month in a 366-day year,
   // oriented by the hydro year.
   let xTickVals = [274, 305, 335, 1, 32, 60, 91, 121, 152, 182, 213, 244]
@@ -221,13 +219,9 @@ const buildChart = hg => {
 }
 
 watch(streamHydrograph, newValue => {
-  // BUG: this check passes and it tries to render even when
-  // newValue is actually null.  (!)
-  if (newValue) {
-    $Plotly.purge('hydrograph')
-    buildChart(newValue.data.dynamic)
-    window.dispatchEvent(new Event('resize'))
-  }
+  // We cannot access $Plotly directly from utils/charts.ts, so we need to
+  // pass it as a function parameter here.
+  initializeChart($Plotly, 'hydrograph', buildChart, newValue)
 })
 </script>
 
