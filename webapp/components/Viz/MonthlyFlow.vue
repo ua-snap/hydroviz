@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, toRaw, nextTick } from 'vue'
+import { watch } from 'vue'
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 import { getLayout, getConfig } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()

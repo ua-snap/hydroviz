@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // import { lcs, models, scenarios, eras } from '~/types/modelsScenarios'
 // import { statVars } from '~/types/statsVars'
-import { watch, toRaw } from 'vue'
+import { watch } from 'vue'
 import lowess from '@stdlib/stats-lowess'
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 import { getLayout, getConfig } from '~/utils/chart'
