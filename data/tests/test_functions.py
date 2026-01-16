@@ -223,7 +223,8 @@ def plot_hydrograph(modeled_data, observed_data, gauge_metadata, stream_dict, st
         reorder_indices
     ]
 
-    # if there are any negative values in the "min" arrays, set them to zero for plotting and print a warning
+    # if there are any values < 0 in the "min" arrays, set them to 0 for plotting and print a warning
+    # this should not happen, but we want to know if it does!
     for arr, label in [
         (modeled_dynamic_min_ordered, "Modeled Dynamic Min"),
         (modeled_static_min_ordered, "Modeled Static Min"),
@@ -231,7 +232,7 @@ def plot_hydrograph(modeled_data, observed_data, gauge_metadata, stream_dict, st
     ]:
         if np.any(arr < 0):
             print(
-                f"Warning: Negative values found in {label} data. Setting negative values to zero for plotting."
+                f"Warning: Values < 1 found in {label} data. Setting values to 1 for log-scale plotting."
             )
             arr[arr < 0] = 0.0
 
@@ -325,12 +326,23 @@ def plot_hydrograph(modeled_data, observed_data, gauge_metadata, stream_dict, st
     plt.title(
         f"Gauge: {gauge_id} - {gauge_name} ({latitude:.2f}, {longitude:.2f}) | Data Completeness: {percent_complete:.1f}%\nModel: {model} | Scenario: {scenario} | Era: {era} \n\n NNSE: Dynamic = {stats['dynamic']['NNSE']:.3f}, Static = {stats['static']['NNSE']:.3f} | NMAE: Dynamic = {stats['dynamic']['NMAE']:.3f}, Static = {stats['static']['NMAE']:.3f} | NRMSE: Dynamic = {stats['dynamic']['NRMSE']:.3f}, Static = {stats['static']['NRMSE']:.3f}",
         fontsize=10,
-        # y=0.93,
     )
 
-    # use log scale on y-axis
-    # clip 0 values to a very small number for log scale plotting
-    plt.yscale("log", nonpositive="clip")
+    # use symlog scale on y-axis
+    # uses a linear scale for values between -linthresh and linthresh, and a logarithmic scale for values outside that range
+    plt.yscale("symlog", linthresh=1, linscale=1)
+    # get absolute min and max of all y values for setting y-limits
+    y = np.concatenate(
+        [
+            modeled_dynamic_min_ordered,
+            modeled_dynamic_max_ordered,
+            modeled_static_min_ordered,
+            modeled_static_max_ordered,
+            observed_min_ordered,
+            observed_max_ordered,
+        ]
+    )
+    plt.ylim(y[y > 0].min(), y.max())
 
     plt.legend()
     plt.grid(True, alpha=0.3)
