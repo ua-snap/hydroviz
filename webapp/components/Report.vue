@@ -12,6 +12,7 @@ const scenarioInput = defineModel('scenario', { default: 'rcp60' })
 
 <template>
   <VizHydrograph />
+  <VizMonthlyFlow />
   <section class="section report">
     <div class="container">
       <Loading />
