@@ -3,9 +3,10 @@ import scores
 import matplotlib.pyplot as plt
 import geopandas as gpd
 import numpy as np
+import xarray as xr
 
 
-api_base_url = "localhost:5000/"
+api_base_url = "http://localhost:5000/"
 
 
 def run_test_suite(test_streams):
@@ -27,16 +28,34 @@ def run_test_suite(test_streams):
         None (prints output to console and generates plots).
     """
     # load CONUS shapefile for mapping
-    conus_shp = "data/tests/shp/ne_50m_admin_1_states_provinces_lakes/ne_50m_admin_1_states_provinces_lakes.shp"
+    conus_shp = "shp/ne_50m_admin_1_states_provinces_lakes/ne_50m_admin_1_states_provinces_lakes.shp"
     conus_gdf = gpd.read_file(conus_shp)
 
     stats_list = []
 
     for stream_dict in reformat_test_stream_dict(test_streams):
         modeled_data = fetch_modeled_climatology_data(stream_dict["hydroviz_stream_id"])
+
+        if modeled_data is None:
+            print(
+                f"Problem getting modeled data for stream ID: {stream_dict['hydroviz_stream_id']}. Skipping."
+            )
+            continue
+
         observed_data, gauge_metadata = fetch_observed_climatology_data(
             stream_dict["hydroviz_stream_id"]
         )
+
+        if observed_data is None:
+            print(
+                f"Problem getting observed data for stream ID: {stream_dict['hydroviz_stream_id']}. Skipping."
+            )
+            continue
+        if gauge_metadata is None:
+            print(
+                f"Problem getting gauge metadata for stream ID: {stream_dict['hydroviz_stream_id']}. Skipping."
+            )
+            continue
 
         stats = calculate_comparative_statistics(modeled_data, observed_data)
         stats_info = {
@@ -45,10 +64,12 @@ def run_test_suite(test_streams):
             "scenario": "historical",
             "era": "1976-2005",
         }
-        stats_list.append((stream_dict, stats_info))
+        stats_list.append((stream_dict, stats_info, gauge_metadata))
 
         plot_hydrograph(modeled_data, observed_data, gauge_metadata, stream_dict, stats)
         plot_stream_map(stream_dict, gauge_metadata, conus_gdf)
+
+        # break
 
     print_stats_summary(stats_list)
 
@@ -99,9 +120,11 @@ def fetch_modeled_climatology_data(hydroviz_stream_id):
                 "1976-2005"
             ]:
                 modeled_data[landcover]["doy"].append(doy_dict["doy"])
-                modeled_data[landcover]["min_values"].append(doy_dict["min"])
-                modeled_data[landcover]["mean_values"].append(doy_dict["mean"])
-                modeled_data[landcover]["max_values"].append(doy_dict["max"])
+                modeled_data[landcover]["min_values"].append(doy_dict["doy_min"])
+                modeled_data[landcover]["mean_values"].append(doy_dict["doy_mean"])
+                modeled_data[landcover]["max_values"].append(doy_dict["doy_max"])
+    else:
+        return None
 
     return modeled_data
 
@@ -113,7 +136,7 @@ def fetch_observed_climatology_data(hydroviz_stream_id):
         hydroviz_stream_id (str): The Hydroviz stream ID.
 
     Returns:
-        dict: Observed climatology data.
+        A tuple containing: a dict of observed climatology data and a dict of gauge metadata.
     """
     observed_data = {
         "actual": {"doy": [], "min_values": [], "mean_values": [], "max_values": []}
@@ -124,16 +147,20 @@ def fetch_observed_climatology_data(hydroviz_stream_id):
         data = response.json()
         for doy_dict in data["data"]["actual"]["usgs"]["observed"]["1976-2005"]:
             observed_data["actual"]["doy"].append(doy_dict["doy"])
-            observed_data["actual"]["min_values"].append(doy_dict["min"])
-            observed_data["actual"]["mean_values"].append(doy_dict["mean"])
-            observed_data["actual"]["max_values"].append(doy_dict["max"])
+            observed_data["actual"]["min_values"].append(doy_dict["doy_min"])
+            observed_data["actual"]["mean_values"].append(doy_dict["doy_mean"])
+            observed_data["actual"]["max_values"].append(doy_dict["doy_max"])
 
         gauge_metadata = {
-            "latitude": data["latitude"],
-            "longitude": data["longitude"],
-            "name": data["name"],
-            "percent_complete": data["metadata"]["percent_complete"],
+            "latitude": data.get("latitude", "NA"),
+            "longitude": data.get("longitude", "NA"),
+            "name": data.get("name", "NA"),
+            "percent_complete": data.get("metadata", "NA").get(
+                "percent_complete", "NA"
+            ),
         }
+    else:
+        return None, None
 
     return observed_data, gauge_metadata
 
@@ -196,21 +223,33 @@ def plot_hydrograph(modeled_data, observed_data, gauge_metadata, stream_dict, st
         reorder_indices
     ]
 
+    # if there are any negative values in the "min" arrays, set them to zero for plotting and print a warning
+    for arr, label in [
+        (modeled_dynamic_min_ordered, "Modeled Dynamic Min"),
+        (modeled_static_min_ordered, "Modeled Static Min"),
+        (observed_min_ordered, "Observed Min"),
+    ]:
+        if np.any(arr < 0):
+            print(
+                f"Warning: Negative values found in {label} data. Setting negative values to zero for plotting."
+            )
+            arr[arr < 0] = 0.0
+
     # Create figure
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(10, 6))
 
     # Plot with properly ordered water year data
     plt.plot(
         water_year_doy,
         modeled_dynamic_mean_ordered,
         label="Modeled Dynamic Mean",
-        color="blue",
+        color="lightcoral",
     )
     plt.fill_between(
         water_year_doy,
         modeled_dynamic_min_ordered,
         modeled_dynamic_max_ordered,
-        color="blue",
+        color="lightcoral",
         alpha=0.2,
         label="Modeled Dynamic Min-Max Range",
     )
@@ -218,13 +257,13 @@ def plot_hydrograph(modeled_data, observed_data, gauge_metadata, stream_dict, st
         water_year_doy,
         modeled_static_mean_ordered,
         label="Modeled Static Mean",
-        color="green",
+        color="cornflowerblue",
     )
     plt.fill_between(
         water_year_doy,
         modeled_static_min_ordered,
         modeled_static_max_ordered,
-        color="green",
+        color="cornflowerblue",
         alpha=0.2,
         label="Modeled Static Min-Max Range",
     )
@@ -232,13 +271,13 @@ def plot_hydrograph(modeled_data, observed_data, gauge_metadata, stream_dict, st
         water_year_doy,
         observed_mean_ordered,
         label="Observed Mean",
-        color="red",
+        color="black",
     )
     plt.fill_between(
         water_year_doy,
         observed_min_ordered,
         observed_max_ordered,
-        color="red",
+        color="gray",
         alpha=0.2,
         label="Observed Min-Max Range",
     )
@@ -248,6 +287,7 @@ def plot_hydrograph(modeled_data, observed_data, gauge_metadata, stream_dict, st
     scenario = "historical"
     era = "1976-2005"
     gauge_name = gauge_metadata["name"]
+    gauge_id = stream_dict["usgs_gauge_id"]
     percent_complete = gauge_metadata["percent_complete"]
     latitude = gauge_metadata["latitude"]
     longitude = gauge_metadata["longitude"]
@@ -277,15 +317,20 @@ def plot_hydrograph(modeled_data, observed_data, gauge_metadata, stream_dict, st
     plt.xticks(month_starts, month_labels, rotation=45)
 
     # add title
-    plt.title(
-        f"Modeled and Observed Daily Streamflow Climatology for Stream ID: {stream_id}"
+    plt.suptitle(
+        f"Modeled and Observed Daily Streamflow Climatology for Stream ID: {stream_id}\n Ecoregion: {stream_dict['region']}, Subregion: {stream_dict['subregion']}",
+        fontsize=13,
     )
 
-    plt.suptitle(
-        f"Gauge: {gauge_name} (Lat: {latitude:.2f}, Lon: {longitude:.2f}) | Data Completeness: {percent_complete:.1f}%\nModel: {model} | Scenario: {scenario} | Era: {era}",
+    plt.title(
+        f"Gauge: {gauge_id} - {gauge_name} ({latitude:.2f}, {longitude:.2f}) | Data Completeness: {percent_complete:.1f}%\nModel: {model} | Scenario: {scenario} | Era: {era} \n\n NNSE: Dynamic = {stats['dynamic']['NNSE']:.3f}, Static = {stats['static']['NNSE']:.3f} | NMAE: Dynamic = {stats['dynamic']['NMAE']:.3f}, Static = {stats['static']['NMAE']:.3f} | NRMSE: Dynamic = {stats['dynamic']['NRMSE']:.3f}, Static = {stats['static']['NRMSE']:.3f}",
         fontsize=10,
-        y=0.93,
+        # y=0.93,
     )
+
+    # use log scale on y-axis
+    # clip 0 values to a very small number for log scale plotting
+    plt.yscale("log", nonpositive="clip")
 
     plt.legend()
     plt.grid(True, alpha=0.3)
@@ -315,15 +360,22 @@ def plot_stream_map(stream_dict, gauge_metadata, conus_gdf):
         crs="EPSG:4326",
     )
     # Plot the map
-    fig, ax = plt.subplots(figsize=(8, 8))
+    fig, ax = plt.subplots(figsize=(5, 3))
     conus_gdf.boundary.plot(ax=ax, color="black", linewidth=0.5)
     gauge_gdf.plot(ax=ax, color="red", markersize=100, label="Stream Gauge")
     plt.title(
-        f"Stream Gauge Location: {gauge_metadata['name']} (Lat: {gauge_metadata['latitude']:.2f}, Lon: {gauge_metadata['longitude']:.2f})"
+        f"Stream Gauge Location: {gauge_metadata['name']} \n (Lat: {gauge_metadata['latitude']:.2f}, Lon: {gauge_metadata['longitude']:.2f})",
+        fontsize=10,
     )
-    plt.legend()
+
+    # limit the map extent to the CONUS
+    ax.set_xlim(-128, -65)
+    ax.set_ylim(24, 50)
+
+    # plt.legend()
     plt.grid(True, alpha=0.3)
-    plt.tight_layout()
+    # plt.tight_layout()
+    plt.show()
 
     return None
 
@@ -331,12 +383,14 @@ def plot_stream_map(stream_dict, gauge_metadata, conus_gdf):
 def print_stats_summary(stats_list):
     """Print summary statistics comparing modeled and observed data.
     Args:
-        stats_list (list): A list where each item is a tuple; first element is stream_dict, second element is corresponding stats_info dict.
+        stats_list (list): A list where each item is a 3-tuple;
+        first element is stream_dict, second element is corresponding stats_info dict,
+        third element is gauge metadata.
 
     Returns:
         None: Prints statistics to console.
     """
-    for stream_dict, stats_info in stats_list:
+    for stream_dict, stats_info, gauge_metadata in stats_list:
         stream_id = stream_dict["hydroviz_stream_id"]
         region = stream_dict["region"]
         subregion = stream_dict["subregion"]
@@ -344,8 +398,14 @@ def print_stats_summary(stats_list):
         scenario = stats_info["scenario"]
         era = stats_info["era"]
         stats = stats_info["stats_lc_dict"]
+        gauge_id = stream_dict["usgs_gauge_id"]
+        gauge_name = gauge_metadata["name"]
+        pct_complete = gauge_metadata["percent_complete"]
 
         print(f"Stream ID: {stream_id} | Region: {region} | Subregion: {subregion}")
+        print(
+            f"Gauge ID: {gauge_id} | Gauge Name: {gauge_name} | Data Completeness: {pct_complete:.1f}%"
+        )
         print(f"Model: {model} | Scenario: {scenario} | Era: {era}")
         for landcover in ["dynamic", "static"]:
             print(f"  Landcover Type: {landcover.capitalize()}")
@@ -380,10 +440,11 @@ def calculate_comparative_statistics(modeled_data, observed_data):
         "static": {"NNSE": None, "NMAE": None, "NRMSE": None},
     }
 
-    # Convert lists to numpy arrays
-    modeled_mean_dynamic = np.array(modeled_data["dynamic"]["mean_values"])
-    modeled_mean_static = np.array(modeled_data["static"]["mean_values"])
-    observed_mean = np.array(observed_data["actual"]["mean_values"])
+    # Convert lists to xarray DataArrays for scores calculations
+
+    modeled_mean_dynamic = xr.DataArray(modeled_data["dynamic"]["mean_values"])
+    modeled_mean_static = xr.DataArray(modeled_data["static"]["mean_values"])
+    observed_mean = xr.DataArray(observed_data["actual"]["mean_values"])
 
     # Group for stats calculations
     groups = {
@@ -398,11 +459,11 @@ def calculate_comparative_statistics(modeled_data, observed_data):
         nnse = 1 / (2 - nse)
 
         # NMAE = MAE / mean of observations
-        mae = scores.continuous.mean_absolute_error(obs, mod)
+        mae = scores.continuous.mae(obs, mod)
         nmae = mae / np.mean(obs)
 
         # NRMSE = RMSE / range of observations
-        rmse = scores.continuous.root_mean_squared_error(obs, mod)
+        rmse = scores.continuous.rmse(obs, mod)
         nrmse = rmse / (np.max(obs) - np.min(obs))
 
         stats[group_name]["NNSE"] = nnse
