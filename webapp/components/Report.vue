@@ -3,7 +3,7 @@ import { lcs, models, scenarios, eras } from '~/types/modelsScenarios'
 import { statVars } from '~/types/statsVars'
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { streamStats, segmentName, isLoading } = storeToRefs(streamSegmentStore)
+let { streamStats, segmentName } = storeToRefs(streamSegmentStore)
 
 const lcInput = defineModel('lc', { default: 'dynamic' })
 const modelInput = defineModel('model', { default: 'CCSM4' })
@@ -14,11 +14,8 @@ const scenarioInput = defineModel('scenario', { default: 'rcp60' })
   <VizHydrograph />
   <section class="section report">
     <div class="container">
-      <div v-if="isLoading == true" class="loading content is-size-4">
-        <p>Loading data&hellip; this can take a minute or two.</p>
-        <progress class="progress" />
-      </div>
-      <div v-if="!isLoading && streamStats">
+      <Loading />
+      <div v-if="streamStats">
         <h3
           class="title is-3 is-flex is-justify-content-center is-align-items-center mt-6 mb-5"
         >

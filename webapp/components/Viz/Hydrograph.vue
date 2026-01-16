@@ -10,12 +10,7 @@ import type { Data } from 'plotly.js-dist-min'
 
 var plotlyChart // will have the Plotly object if value
 const streamSegmentStore = useStreamSegmentStore()
-let { streamHydrograph, segmentName, isLoading } =
-  storeToRefs(streamSegmentStore)
-
-// const lcInput = defineModel('lc', { default: 'dynamic' })
-// const modelInput = defineModel('model', { default: 'CCSM4' })
-// const scenarioInput = defineModel('scenario', { default: 'rcp60' })
+let { streamHydrograph, segmentName } = storeToRefs(streamSegmentStore)
 
 // Round to significant digits.  Stub.
 function roundTo(num, sig = 3) {
@@ -239,11 +234,7 @@ watch(streamHydrograph, newValue => {
 <template>
   <section class="section">
     <div class="container">
-      <div v-if="isLoading == true" class="loading content is-size-4">
-        <p>Loading data&hellip; this can take a minute or two.</p>
-        <progress class="progress" />
-      </div>
-      <div v-show="!isLoading && streamHydrograph" class="content">
+      <div v-show="streamHydrograph" class="content">
         <h3 class="title is-3">Hydrograph for {{ segmentName }}</h3>
         <ClientOnly>
           <div id="hydrograph"></div>
