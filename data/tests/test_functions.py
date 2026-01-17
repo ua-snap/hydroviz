@@ -520,7 +520,7 @@ def print_stats_summary(stats_list):
         for landcover in ["dynamic", "static"]:
             print(f"  Landcover Type: {landcover.capitalize()}")
             print(
-                f"    NNSE: {stats[landcover]['NNSE']:.4f}, NMAE: {stats[landcover]['NMAE']:.4f}, NRMSE: {stats[landcover]['NRMSE']:.4f}"
+                f"    NNSE: {stats[landcover]['NNSE']}, NMAE: {stats[landcover]['NMAE']}, NRMSE: {stats[landcover]['NRMSE']}"
             )
         print("-" * 80)
 
