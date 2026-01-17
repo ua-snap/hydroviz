@@ -35,6 +35,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     } finally {
       isLoading.value = false
     }
+    console.log(statsResponse)
     streamStats.value = statsResponse
     streamHydrograph.value = hydrographResponse
   }
