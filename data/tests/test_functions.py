@@ -9,7 +9,7 @@ import xarray as xr
 api_base_url = "http://localhost:5000/"
 
 
-def run_test_suite(test_streams):
+def run_test_suite(test_streams, type):
     """For each stream in the test_streams dict, run the test suite.
     This function fetches modeled historical daily climatology data and
     observed daily climatology data from the API, and plots them together.
@@ -23,6 +23,7 @@ def run_test_suite(test_streams):
         test_streams (dict): A dictionary where the first level is region,
         second level is subregion, and the third level is a list of dictionaries
         with stream information.
+        type (str): Type of test suite being run ('baseline' or 'ensemble').
 
     Returns:
         None (prints output to console and generates plots).
@@ -34,7 +35,9 @@ def run_test_suite(test_streams):
     stats_list = []
 
     for stream_dict in reformat_test_stream_dict(test_streams):
-        modeled_data = fetch_modeled_climatology_data(stream_dict["hydroviz_stream_id"])
+        modeled_data = fetch_modeled_climatology_data(
+            stream_dict["hydroviz_stream_id"], type
+        )
 
         if modeled_data is None:
             print(
@@ -60,17 +63,31 @@ def run_test_suite(test_streams):
         stats = calculate_comparative_statistics(modeled_data, observed_data)
         stats_info = {
             "stats_lc_dict": stats,
-            "model": "Maurer",
+            "model": None,
             "scenario": "historical",
             "era": "1976-2005",
         }
+        if type == "baseline":
+            stats_info["model"] = "Maurer"
+        elif type == "ensemble":
+            stats_info["model"] = "Ensemble Mean"
+
         stats_list.append((stream_dict, stats_info, gauge_metadata))
 
-        plot_hydrograph(modeled_data, observed_data, gauge_metadata, stream_dict, stats)
-        plot_stream_map(stream_dict, gauge_metadata, conus_gdf)
+        plot_hydrograph(
+            modeled_data, observed_data, gauge_metadata, stream_dict, stats, type
+        )
+        plot_stream_map(gauge_metadata, conus_gdf)
+
+        print("\n\n\n")
+        print(
+            "-----------------------------------------------------------------------------------------------------------------"
+        )
+        print("\n\n\n")
 
         # break
 
+    print("\n\n\n")
     print_stats_summary(stats_list)
 
     return None
@@ -95,15 +112,16 @@ def reformat_test_stream_dict(test_streams):
     return reformatted_stream_dicts
 
 
-def fetch_modeled_climatology_data(hydroviz_stream_id):
+def fetch_modeled_climatology_data(hydroviz_stream_id, type):
     """Fetch modeled historical daily climatology data from the API.
 
     Args:
         hydroviz_stream_id (str): The Hydroviz stream ID.
+        type (str): Type of modeled data to fetch ('baseline' or 'ensemble').
 
     Returns:
-        dict: Modeled climatology data, limited to the Maurer model. Results include both
-        landcover types.
+        dict: Modeled climatology data.
+        Results include both landcover types.
     """
     modeled_data = {
         "dynamic": {"doy": [], "min_values": [], "mean_values": [], "max_values": []},
@@ -114,15 +132,58 @@ def fetch_modeled_climatology_data(hydroviz_stream_id):
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
-        # Filter for Maurer model only
-        for landcover in ["dynamic", "static"]:
-            for doy_dict in data["data"][landcover]["Maurer"]["historical"][
-                "1976-2005"
-            ]:
-                modeled_data[landcover]["doy"].append(doy_dict["doy"])
-                modeled_data[landcover]["min_values"].append(doy_dict["doy_min"])
-                modeled_data[landcover]["mean_values"].append(doy_dict["doy_mean"])
-                modeled_data[landcover]["max_values"].append(doy_dict["doy_max"])
+        if type == "baseline":
+            for landcover in ["dynamic", "static"]:
+                for doy_dict in data["data"][landcover]["Maurer"]["historical"][
+                    "1976-2005"
+                ]:
+                    modeled_data[landcover]["doy"].append(doy_dict["doy"])
+                    modeled_data[landcover]["min_values"].append(doy_dict["doy_min"])
+                    modeled_data[landcover]["mean_values"].append(doy_dict["doy_mean"])
+                    modeled_data[landcover]["max_values"].append(doy_dict["doy_max"])
+        elif type == "ensemble":
+            all_models = [
+                "ACCESS1-0",
+                "BCC-CSM1-1",
+                "BNU-ESM",
+                "CCSM4",
+                "GFDL-ESM2G",
+                "GFDL-ESM2M",
+                "IPSL-CM5A-LR",
+                "IPSL-CM5A-MR",
+                "MIROC-ESM",
+                "MIROC-ESM-CHEM",
+                "MIROC5",
+                "MRI-CGCM3",
+                "NorESM1-M",
+            ]
+
+            # collect the min, mean, max across all models for each day of year
+            # get the max of max, min of min, and mean of mean
+            # and populate the modeled_data dict
+
+            for landcover in ["dynamic", "static"]:
+                for doy_dict in data["data"][landcover][all_models[0]]["historical"][
+                    "1976-2005"
+                ]:
+                    doy = doy_dict["doy"]
+                    min_values = []
+                    mean_values = []
+                    max_values = []
+                    for ensemble_member in all_models:
+                        for doy_dict in data["data"][landcover][ensemble_member][
+                            "historical"
+                        ]["1976-2005"]:
+                            if doy_dict["doy"] == doy:
+                                min_values.append(doy_dict["doy_min"])
+                                mean_values.append(doy_dict["doy_mean"])
+                                max_values.append(doy_dict["doy_max"])
+                                break
+                    modeled_data[landcover]["doy"].append(doy)
+                    modeled_data[landcover]["min_values"].append(min(min_values))
+                    modeled_data[landcover]["mean_values"].append(np.mean(mean_values))
+                    modeled_data[landcover]["max_values"].append(max(max_values))
+
     else:
         return None
 
@@ -165,7 +226,9 @@ def fetch_observed_climatology_data(hydroviz_stream_id):
     return observed_data, gauge_metadata
 
 
-def plot_hydrograph(modeled_data, observed_data, gauge_metadata, stream_dict, stats):
+def plot_hydrograph(
+    modeled_data, observed_data, gauge_metadata, stream_dict, stats, type
+):
     """Plot the modeled and observed hydrograph data.
 
     Args:
@@ -284,7 +347,10 @@ def plot_hydrograph(modeled_data, observed_data, gauge_metadata, stream_dict, st
     )
     # Get info for title
     stream_id = stream_dict["hydroviz_stream_id"]
-    model = "Maurer"
+    if type == "baseline":
+        model = "Maurer"
+    elif type == "ensemble":
+        model = "Ensemble Mean"
     scenario = "historical"
     era = "1976-2005"
     gauge_name = gauge_metadata["name"]
@@ -292,6 +358,38 @@ def plot_hydrograph(modeled_data, observed_data, gauge_metadata, stream_dict, st
     percent_complete = gauge_metadata["percent_complete"]
     latitude = gauge_metadata["latitude"]
     longitude = gauge_metadata["longitude"]
+
+    # Format stats values for title
+
+    if stats["dynamic"]["NNSE"] != "NA":
+        nnse_dyanmic = f"{stats['dynamic']['NNSE']:.3f}"
+    else:
+        nnse_dyanmic = "NA"
+
+    if stats["static"]["NNSE"] != "NA":
+        nnse_static = f"{stats['static']['NNSE']:.3f}"
+    else:
+        nnse_static = "NA"
+
+    if stats["dynamic"]["NMAE"] != "NA":
+        nmae_dynamic = f"{stats['dynamic']['NMAE']:.3f}"
+    else:
+        nmae_dynamic = "NA"
+
+    if stats["static"]["NMAE"] != "NA":
+        nmae_static = f"{stats['static']['NMAE']:.3f}"
+    else:
+        nmae_static = "NA"
+
+    if stats["dynamic"]["NRMSE"] != "NA":
+        nrmse_dynamic = f"{stats['dynamic']['NRMSE']:.3f}"
+    else:
+        nrmse_dynamic = "NA"
+
+    if stats["static"]["NRMSE"] != "NA":
+        nrmse_static = f"{stats['static']['NRMSE']:.3f}"
+    else:
+        nrmse_static = "NA"
 
     # Set x-axis limits and labels for water year
     plt.xlim(0, 365)
@@ -324,7 +422,7 @@ def plot_hydrograph(modeled_data, observed_data, gauge_metadata, stream_dict, st
     )
 
     plt.title(
-        f"Gauge: {gauge_id} - {gauge_name} ({latitude:.2f}, {longitude:.2f}) | Data Completeness: {percent_complete:.1f}%\nModel: {model} | Scenario: {scenario} | Era: {era} \n\n NNSE: Dynamic = {stats['dynamic']['NNSE']:.3f}, Static = {stats['static']['NNSE']:.3f} | NMAE: Dynamic = {stats['dynamic']['NMAE']:.3f}, Static = {stats['static']['NMAE']:.3f} | NRMSE: Dynamic = {stats['dynamic']['NRMSE']:.3f}, Static = {stats['static']['NRMSE']:.3f}",
+        f"Gauge: {gauge_id} - {gauge_name} ({latitude:.2f}, {longitude:.2f}) | Data Completeness: {percent_complete:.1f}%\nModel: {model} | Scenario: {scenario} | Era: {era} \n\n NNSE: Dynamic = {nnse_dyanmic}, Static = {nnse_static} | NMAE: Dynamic = {nmae_dynamic}, Static = {nmae_static} | NRMSE: Dynamic = {nrmse_dynamic}, Static = {nrmse_static}",
         fontsize=10,
     )
 
@@ -352,7 +450,7 @@ def plot_hydrograph(modeled_data, observed_data, gauge_metadata, stream_dict, st
     return None
 
 
-def plot_stream_map(stream_dict, gauge_metadata, conus_gdf):
+def plot_stream_map(gauge_metadata, conus_gdf):
     """Generate a map of the stream location.
 
     Args:
@@ -448,8 +546,8 @@ def calculate_comparative_statistics(modeled_data, observed_data):
         dict: A dictionary containing comparative statistics.
     """
     stats = {
-        "dynamic": {"NNSE": None, "NMAE": None, "NRMSE": None},
-        "static": {"NNSE": None, "NMAE": None, "NRMSE": None},
+        "dynamic": {"NNSE": "NA", "NMAE": "NA", "NRMSE": "NA"},
+        "static": {"NNSE": "NA", "NMAE": "NA", "NRMSE": "NA"},
     }
 
     # Convert lists to xarray DataArrays for scores calculations
@@ -457,6 +555,15 @@ def calculate_comparative_statistics(modeled_data, observed_data):
     modeled_mean_dynamic = xr.DataArray(modeled_data["dynamic"]["mean_values"])
     modeled_mean_static = xr.DataArray(modeled_data["static"]["mean_values"])
     observed_mean = xr.DataArray(observed_data["actual"]["mean_values"])
+
+    # test if all values are zero in any of the modeled arrays; if so, return NaN for all stats and print a warning
+    # this catches a known missing data error
+    for arr in [modeled_mean_dynamic, modeled_mean_static]:
+        if np.all(arr.values == 0):
+            print(
+                "Warning: All modeled values are zero for one of the landcover types. Returning NaN for all statistics."
+            )
+            return stats
 
     # Group for stats calculations
     groups = {
