@@ -62,3 +62,18 @@ export const getLayout = (
   },
   autosize: true,
 })
+
+export const initializeChart = (
+  $Plotly: any,
+  chartId: string,
+  buildChart: Function,
+  newValue: any
+): void => {
+  // BUG: this check passes and it tries to render even when
+  // newValue is actually null.  (!)
+  if (newValue) {
+    $Plotly.purge(chartId)
+    buildChart(newValue.data.dynamic)
+    window.dispatchEvent(new Event('resize'))
+  }
+}
