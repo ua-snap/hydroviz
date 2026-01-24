@@ -70,6 +70,7 @@ interface StreamflowStatistic {
   description_full: string
   description: string
   units: string
+  units_short: string
 }
 
 const streamflowStatistics: StreamflowStatistic[] = [

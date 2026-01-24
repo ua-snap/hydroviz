@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { watch } from 'vue'
+
 import { eras } from '~/types/modelsScenarios'
 
 import { streamflowStatistics } from '~/types/statsVars'
 const { $_ } = useNuxtApp()
 
 const props = defineProps(['streamStats', 'category'])
-var statsInCategory
+
 var statsInCategory = $_.filter(streamflowStatistics, {
   category: props.category,
 })
@@ -24,7 +24,7 @@ var statsInCategory = $_.filter(streamflowStatistics, {
         </th>
       </tr>
     </thead>
-    <tr v-for="stat in statsInCategory">
+    <tr v-for="stat in statsInCategory" :key="stat.id">
       <th scope="row">
         <code>{{ stat.id }}</code>
       </th>
