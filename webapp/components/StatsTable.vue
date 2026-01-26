@@ -17,10 +17,8 @@ var statsInCategory = $_.filter(streamflowStatistics, {
       <tr>
         <th>Statistic</th>
         <th>Description</th>
-        <th>1976-2005</th>
-        <th v-for="era in Object.keys(eras)">
-          {{ eras[era] }}
-        </th>
+        <th>1976&ndash;2005</th>
+        <th v-for="era in eras" :key="era" v-html="era"></th>
       </tr>
     </thead>
     <tbody>
