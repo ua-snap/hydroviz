@@ -40,8 +40,8 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   }
 
   return {
-    streamStats: streamStats,
-    streamHydrograph: streamHydrograph,
+    streamStats,
+    streamHydrograph,
     fetchStreamStats,
     segmentName,
     segmentId,

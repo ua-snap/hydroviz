@@ -67,13 +67,13 @@ export const initializeChart = (
   $Plotly: any,
   chartId: string,
   buildChart: Function,
-  newValue: any
+  sourceData: any
 ): void => {
   // BUG: this check passes and it tries to render even when
   // newValue is actually null.  (!)
-  if (newValue) {
+  if (sourceData) {
     $Plotly.purge(chartId)
-    buildChart(newValue.data.dynamic)
+    buildChart(sourceData)
     window.dispatchEvent(new Event('resize'))
   }
 }

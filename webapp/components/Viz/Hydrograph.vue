@@ -1,16 +1,29 @@
 <script setup lang="ts">
-// import { lcs, models, scenarios, eras } from '~/types/modelsScenarios'
-// import { statVars } from '~/types/statsVars'
-import { watch } from 'vue'
+import { toRaw } from 'vue'
 import lowess from '@stdlib/stats-lowess'
-import { useStreamSegmentStore } from '~/stores/streamSegment'
 import { getLayout, getConfig, initializeChart } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js-dist-min'
 
-var plotlyChart // will have the Plotly object if value
-const streamSegmentStore = useStreamSegmentStore()
-let { streamHydrograph, segmentName } = storeToRefs(streamSegmentStore)
+const props = defineProps(['streamHydrograph'])
+
+onMounted(() => {
+  initializeChart(
+    $Plotly,
+    'hydrograph',
+    buildChart,
+    toRaw(props.streamHydrograph.data.static)
+  )
+})
+
+watch(props.streamHydrograph, newValue => {
+  initializeChart(
+    $Plotly,
+    'hydrograph',
+    buildChart,
+    toRaw(newValue.data.static)
+  )
+})
 
 // Round to significant digits.  Stub.
 function roundTo(num, sig = 3) {
@@ -36,7 +49,7 @@ function buildHydrographData(hydrographData, scenario: Scenario, era: Era) {
 
   var dayMin, dayMax, dayMean
 
-  // old school for loop!
+  // Determine the mins of mins / maxes of maxes & means for each day
   for (let i = 0; i <= 365; i++) {
     // If true, initialize the day min/max/mean for this iteration
     let unset = true
@@ -217,25 +230,10 @@ const buildChart = hg => {
 
   $Plotly.newPlot('hydrograph', traces, layout, config)
 }
-
-watch(streamHydrograph, newValue => {
-  // We cannot access $Plotly directly from utils/charts.ts, so we need to
-  // pass it as a function parameter here.
-  initializeChart($Plotly, 'hydrograph', buildChart, newValue)
-})
 </script>
 
 <template>
-  <section class="section">
-    <div class="container">
-      <div v-show="streamHydrograph" class="content">
-        <h3 class="title is-3">Hydrograph for {{ segmentName }}</h3>
-        <ClientOnly>
-          <div id="hydrograph"></div>
-        </ClientOnly>
-      </div>
-    </div>
-  </section>
+  <div id="hydrograph"></div>
 </template>
 
 <style lang="scss" scoped></style>

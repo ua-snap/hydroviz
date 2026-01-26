@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { watch } from 'vue'
-import { useStreamSegmentStore } from '~/stores/streamSegment'
+import { watch, toRaw } from 'vue'
 import { getLayout, getConfig, initializeChart } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js-dist-min'
 
-const streamSegmentStore = useStreamSegmentStore()
-let { streamStats, segmentName } = storeToRefs(streamSegmentStore)
+const props = defineProps(['streamStats'])
 
 const monthLabels = {
   ma21: 'Oct',
@@ -22,6 +20,24 @@ const monthLabels = {
   ma19: 'Aug',
   ma20: 'Sep',
 }
+
+onMounted(() => {
+  initializeChart(
+    $Plotly,
+    'monthly-flow',
+    buildChart,
+    toRaw(props.streamStats.data.static)
+  )
+})
+
+watch(props.streamStats, newValue => {
+  initializeChart(
+    $Plotly,
+    'monthly-flow',
+    buildChart,
+    toRaw(newValue.data.static)
+  )
+})
 
 // Returns an object with keys for each month, and values are arrays of flow
 // values across all projected models.
@@ -121,23 +137,10 @@ const buildChart = stats => {
 
   $Plotly.newPlot('monthly-flow', traces, layout, config)
 }
-
-watch(streamStats, newValue => {
-  initializeChart($Plotly, 'monthly-flow', buildChart, newValue)
-})
 </script>
 
 <template>
-  <section class="section">
-    <div class="container">
-      <div v-show="streamStats" class="content">
-        <h3 class="title is-3">Monthly flow for {{ segmentName }}</h3>
-        <ClientOnly>
-          <div id="monthly-flow"></div>
-        </ClientOnly>
-      </div>
-    </div>
-  </section>
+  <div id="monthly-flow"></div>
 </template>
 
 <style lang="scss" scoped></style>
