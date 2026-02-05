@@ -7,6 +7,8 @@ According to the Regan paper above, the PRMS uses the original geospatial fabric
 
 Read about the dataset's statistics in the `data/streamflow_statistics_description_table.csv` file in this repo.
 
+The HUC8 watershed boundary polygons were downloaded from [here](https://www.usgs.gov/national-hydrography/watershed-boundary-dataset).
+
 
 ### How to use this codebase
 
@@ -17,7 +19,7 @@ Read about the dataset's statistics in the `data/streamflow_statistics_descripti
 - Use the `data/eda/eda.ipynb` notebook to familiarize yourself with the stats dataset's original tabular structure.
 
 - To coerce the stats tabular data into a netCDF format, use the code in the `data/preprocess` directory. 
-    - Run the following command to submit an `sbatch` script, changing the script locations to match your repo location, and changing the `--output_dir` argument to save the netCDF files to a different location and avoid overwriting previous outputs. The script should only take ~5 minutes to run once compute resources are allocated. The script also creates an `ingest.json` file to ingest the netCDF _output as a Rasdaman coverage (_not yet implemented!_)
+    - Run the following command to submit an `sbatch` script, changing the script locations to match your repo location, and changing the `--output_dir` argument to save the netCDF files to a different location and avoid overwriting previous outputs. The script should only take ~5 minutes to run once compute resources are allocated. The script also creates an `ingest.json` file to ingest the netCDF _output as a Rasdaman coverage (_not fully implemented!_)
 
 ```
 python run_build_nc.py --data_dir /beegfs/CMIP6/jdpaul3/hydroviz_data/stats --gis_dir /beegfs/CMIP6/jdpaul3/hydroviz_data/gis --output_dir /beegfs/CMIP6/jdpaul3/hydroviz_data/nc --conda_init_script /beegfs/CMIP6/jdpaul3/hydroviz/data/preprocess/conda_init.sh --conda_env_name snap-geo --build_nc_script /beegfs/CMIP6/jdpaul3/hydroviz/data/preprocess/build_nc.py --build_json_script /beegfs/CMIP6/jdpaul3/hydroviz/data/rasdaman/build_ingest_json.py
@@ -25,7 +27,7 @@ python run_build_nc.py --data_dir /beegfs/CMIP6/jdpaul3/hydroviz_data/stats --gi
 
  -  Use the `data/preprocess/qc.ipynb` notebook to compare stats values in the netCDFs to the original tabular values.
 
-- Run the `data/preprocess/xwalk.ipynb` notebook to crosswalk stream segment IDs and watershed IDs from the geospatial data (`Segments_subset.shp` and `HRU_subset.shp`) to the GNIS name attributes in the NHM geospatial fabric. This notebook exports new shapefiles with the added GNIS common names for hosting in GeoServer ([gs.earthmaps.io](http://gs.earthmaps.io/)) and eventually enabling search by stream name in the web app.
+- Run the notebooks in `data/preprocess/shp` to 1) crosswalk stream segment IDs from the geospatial data (`Segments_subset.shp`) to the GNIS name attributes in the NHM geospatial fabric; 2) crosswalk HUC8 polygons to stream segment IDs and determine which streams are HUC8 outlets; 3) compute select statistical deltas and add them as attributes in the stream segment shapefile. These notebooks export a new shapefile with the added attributes for hosting in GeoServer ([gs.earthmaps.io](http://gs.earthmaps.io/)) and eventually enabling search by stream name in the web app. 
 
 - To coerce the daily tabular data into netCDF format for generating hydrographs, follow the README instructions in the `data/hydrograph_preprocessing` directory.
 
