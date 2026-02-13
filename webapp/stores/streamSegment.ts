@@ -56,9 +56,8 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
             })
           } finally {
             clearTimeout(timeout)
+            clearTimeout(slowTimer)
           }
-
-          clearTimeout(slowTimer)
         } catch (error: any) {
           // If API is unreachable, returns error, or times out.
           if (
