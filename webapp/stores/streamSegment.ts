@@ -16,7 +16,6 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     let statsRequestUrl = `${$config.public.snapApiUrl}/conus_hydrology/stats/${segmentId.value}`
     let hydrographRequestUrl = `${$config.public.snapApiUrl}/conus_hydrology/modeled_climatology/${segmentId.value}`
 
-    apiSlow.value = false
     apiFailed.value = false
 
     // BUG: this causes the front end render to fail because
@@ -70,13 +69,14 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
       }
     } finally {
       isLoading.value = false
+      apiSlow.value = false
     }
 
     // Treat the failure of either API endpoint as a total data failure
     // to avoid partial/unpredictable webapp states. In production, it's
     // unlikely that one endpoint will succeed when the other fails, so
     // it's probably not worth trying to handle them separately.
-    if (statsResponse.data && hydrographResponse.data) {
+    if ('data' in statsResponse && 'data' in hydrographResponse) {
       streamStats.value = statsResponse
       streamHydrograph.value = hydrographResponse
     }
