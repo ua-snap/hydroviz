@@ -1,0 +1,404 @@
+{
+    "ma12": {
+        "var_description": "Mean January flow",
+        "stats": [
+            "ma12_min_d",
+            "ma12_avg_d",
+            "ma12_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "mean",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble ma12 values and Maurer historical",
+            "difference between mean of ensemble ma12 values and Maurer historical",
+            "difference between maximum of ensemble ma12 values and Maurer historical"
+        ],
+        "units": "cfs",
+        "difference": "percentage"
+    },
+    "ma13": {
+        "var_description": "Mean February flow",
+        "stats": [
+            "ma13_min_d",
+            "ma13_avg_d",
+            "ma13_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "mean",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble ma13 values and Maurer historical",
+            "difference between mean of ensemble ma13 values and Maurer historical",
+            "difference between maximum of ensemble ma13 values and Maurer historical"
+        ],
+        "units": "cfs",
+        "difference": "percentage"
+    },
+    "ma14": {
+        "var_description": "Mean March flow",
+        "stats": [
+            "ma14_min_d",
+            "ma14_avg_d",
+            "ma14_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "mean",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble ma14 values and Maurer historical",
+            "difference between mean of ensemble ma14 values and Maurer historical",
+            "difference between maximum of ensemble ma14 values and Maurer historical"
+        ],
+        "units": "cfs",
+        "difference": "percentage"
+    },
+    "ma15": {
+        "var_description": "Mean April flow",
+        "stats": [
+            "ma15_min_d",
+            "ma15_avg_d",
+            "ma15_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "mean",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble ma15 values and Maurer historical",
+            "difference between mean of ensemble ma15 values and Maurer historical",
+            "difference between maximum of ensemble ma15 values and Maurer historical"
+        ],
+        "units": "cfs",
+        "difference": "percentage"
+    },
+    "ma16": {
+        "var_description": "Mean May flow",
+        "stats": [
+            "ma16_min_d",
+            "ma16_avg_d",
+            "ma16_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "mean",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble ma16 values and Maurer historical",
+            "difference between mean of ensemble ma16 values and Maurer historical",
+            "difference between maximum of ensemble ma16 values and Maurer historical"
+        ],
+        "units": "cfs",
+        "difference": "percentage"
+    },
+    "ma17": {
+        "var_description": "Mean June flow",
+        "stats": [
+            "ma17_min_d",
+            "ma17_avg_d",
+            "ma17_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "mean",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble ma17 values and Maurer historical",
+            "difference between mean of ensemble ma17 values and Maurer historical",
+            "difference between maximum of ensemble ma17 values and Maurer historical"
+        ],
+        "units": "cfs",
+        "difference": "percentage"
+    },
+    "ma18": {
+        "var_description": "Mean July flow",
+        "stats": [
+            "ma18_min_d",
+            "ma18_avg_d",
+            "ma18_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "mean",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble ma18 values and Maurer historical",
+            "difference between mean of ensemble ma18 values and Maurer historical",
+            "difference between maximum of ensemble ma18 values and Maurer historical"
+        ],
+        "units": "cfs",
+        "difference": "percentage"
+    },
+    "ma19": {
+        "var_description": "Mean August flow",
+        "stats": [
+            "ma19_min_d",
+            "ma19_avg_d",
+            "ma19_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "mean",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble ma19 values and Maurer historical",
+            "difference between mean of ensemble ma19 values and Maurer historical",
+            "difference between maximum of ensemble ma19 values and Maurer historical"
+        ],
+        "units": "cfs",
+        "difference": "percentage"
+    },
+    "ma20": {
+        "var_description": "Mean September flow",
+        "stats": [
+            "ma20_min_d",
+            "ma20_avg_d",
+            "ma20_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "mean",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble ma20 values and Maurer historical",
+            "difference between mean of ensemble ma20 values and Maurer historical",
+            "difference between maximum of ensemble ma20 values and Maurer historical"
+        ],
+        "units": "cfs",
+        "difference": "percentage"
+    },
+    "ma21": {
+        "var_description": "Mean October flow",
+        "stats": [
+            "ma21_min_d",
+            "ma21_avg_d",
+            "ma21_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "mean",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble ma21 values and Maurer historical",
+            "difference between mean of ensemble ma21 values and Maurer historical",
+            "difference between maximum of ensemble ma21 values and Maurer historical"
+        ],
+        "units": "cfs",
+        "difference": "percentage"
+    },
+    "ma22": {
+        "var_description": "Mean November flow",
+        "stats": [
+            "ma22_min_d",
+            "ma22_avg_d",
+            "ma22_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "mean",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble ma22 values and Maurer historical",
+            "difference between mean of ensemble ma22 values and Maurer historical",
+            "difference between maximum of ensemble ma22 values and Maurer historical"
+        ],
+        "units": "cfs",
+        "difference": "percentage"
+    },
+    "ma23": {
+        "var_description": "Mean December flow",
+        "stats": [
+            "ma23_min_d",
+            "ma23_avg_d",
+            "ma23_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "mean",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble ma23 values and Maurer historical",
+            "difference between mean of ensemble ma23 values and Maurer historical",
+            "difference between maximum of ensemble ma23 values and Maurer historical"
+        ],
+        "units": "cfs",
+        "difference": "percentage"
+    },
+    "dh1": {
+        "var_description": "Annual Maximum Daily Flow",
+        "stats": [
+            "dh1_min_d",
+            "dh1_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble dh1 values and Maurer historical",
+            "difference between maximum of ensemble dh1 values and Maurer historical"
+        ],
+        "units": "cfs",
+        "difference": "percentage"
+    },
+    "dl1": {
+        "var_description": "Annual Minimum Daily Flow",
+        "stats": [
+            "dl1_min_d",
+            "dl1_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble dl1 values and Maurer historical",
+            "difference between maximum of ensemble dl1 values and Maurer historical"
+        ],
+        "units": "cfs",
+        "difference": "percentage"
+    },
+    "dh15": {
+        "var_description": "High Flow Pulse Duration",
+        "stats": [
+            "dh15_min_d",
+            "dh15_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble dh15 values and Maurer historical",
+            "difference between maximum of ensemble dh15 values and Maurer historical"
+        ],
+        "units": "days per year",
+        "difference": "absolute"
+    },
+    "dl16": {
+        "var_description": "Low Flow Pulse Duration",
+        "stats": [
+            "dl16_min_d",
+            "dl16_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble dl16 values and Maurer historical",
+            "difference between maximum of ensemble dl16 values and Maurer historical"
+        ],
+        "units": "days per year",
+        "difference": "absolute"
+    },
+    "fh1": {
+        "var_description": "High Flood Pulse Count",
+        "stats": [
+            "fh1_min_d",
+            "fh1_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble fh1 values and Maurer historical",
+            "difference between maximum of ensemble fh1 values and Maurer historical"
+        ],
+        "units": "events per year",
+        "difference": "absolute"
+    },
+    "fl1": {
+        "var_description": "Low Flood Pulse Count",
+        "stats": [
+            "fl1_min_d",
+            "fl1_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble fl1 values and Maurer historical",
+            "difference between maximum of ensemble fl1 values and Maurer historical"
+        ],
+        "units": "events per year",
+        "difference": "absolute"
+    },
+    "th1": {
+        "var_description": "Julian Date of Annual Maximum",
+        "stats": [
+            "th1_min_d",
+            "th1_avg_d",
+            "th1_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "mean",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble th1 values and Maurer historical",
+            "difference between mean of ensemble th1 values and Maurer historical",
+            "difference between maximum of ensemble th1 values and Maurer historical"
+        ],
+        "units": "day of year",
+        "difference": "absolute"
+    },
+    "tl1": {
+        "var_description": "Julian Date of Annual Minimum",
+        "stats": [
+            "tl1_min_d",
+            "tl1_avg_d",
+            "tl1_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "mean",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble tl1 values and Maurer historical",
+            "difference between mean of ensemble tl1 values and Maurer historical",
+            "difference between maximum of ensemble tl1 values and Maurer historical"
+        ],
+        "units": "day of year",
+        "difference": "absolute"
+    },
+    "ma99": {
+        "var_description": "Mean annual flow",
+        "stats": [
+            "ma99_min_d",
+            "ma99_avg_d",
+            "ma99_max_d"
+        ],
+        "aggregation": [
+            "minimum",
+            "mean",
+            "maximum"
+        ],
+        "stat_descriptions": [
+            "difference between minimum of ensemble ma99 values and Maurer historical",
+            "difference between mean of ensemble ma99 values and Maurer historical",
+            "difference between maximum of ensemble ma99 values and Maurer historical"
+        ],
+        "units": "cfs",
+        "difference": "percentage"
+    }
+}
