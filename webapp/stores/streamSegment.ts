@@ -77,7 +77,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     // to avoid partial/unpredictable webapp states. In production, it's
     // unlikely that one endpoint will succeed when the other fails, so
     // it's probably not worth trying to handle them separately.
-    if (statsResponse.ok && hydrographResponse.ok) {
+    if (statsResponse.data && hydrographResponse.data) {
       streamStats.value = statsResponse
       streamHydrograph.value = hydrographResponse
     }
