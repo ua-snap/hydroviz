@@ -277,14 +277,17 @@
         "var_description": "High Flow Pulse Duration",
         "stats": [
             "dh15_min_d",
+            "dh15_avg_d",
             "dh15_max_d"
         ],
         "aggregation": [
             "minimum",
+            "mean",
             "maximum"
         ],
         "stat_descriptions": [
             "difference between minimum of ensemble dh15 values and Maurer historical",
+            "difference between mean of ensemble dh15 values and Maurer historical",
             "difference between maximum of ensemble dh15 values and Maurer historical"
         ],
         "units": "days per year",
@@ -294,14 +297,17 @@
         "var_description": "Low Flow Pulse Duration",
         "stats": [
             "dl16_min_d",
+            "dl16_avg_d",
             "dl16_max_d"
         ],
         "aggregation": [
             "minimum",
+            "mean",
             "maximum"
         ],
         "stat_descriptions": [
             "difference between minimum of ensemble dl16 values and Maurer historical",
+            "difference between mean of ensemble dl16 values and Maurer historical",
             "difference between maximum of ensemble dl16 values and Maurer historical"
         ],
         "units": "days per year",
@@ -311,14 +317,17 @@
         "var_description": "High Flood Pulse Count",
         "stats": [
             "fh1_min_d",
+            "fh1_avg_d",
             "fh1_max_d"
         ],
         "aggregation": [
             "minimum",
+            "mean",
             "maximum"
         ],
         "stat_descriptions": [
             "difference between minimum of ensemble fh1 values and Maurer historical",
+            "difference between mean of ensemble fh1 values and Maurer historical",
             "difference between maximum of ensemble fh1 values and Maurer historical"
         ],
         "units": "events per year",
@@ -328,14 +337,17 @@
         "var_description": "Low Flood Pulse Count",
         "stats": [
             "fl1_min_d",
+            "fl1_avg_d",
             "fl1_max_d"
         ],
         "aggregation": [
             "minimum",
+            "mean",
             "maximum"
         ],
         "stat_descriptions": [
             "difference between minimum of ensemble fl1 values and Maurer historical",
+            "difference between mean of ensemble fl1 values and Maurer historical",
             "difference between maximum of ensemble fl1 values and Maurer historical"
         ],
         "units": "events per year",
