@@ -27,6 +27,12 @@ let { streamStats, segmentName, streamHydrograph } =
 
     <section class="section">
       <div class="container">
+        <DataSentences />
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
         <h4 class="title is-4">Hydrograph</h4>
         <VizHydrograph :stream-hydrograph="streamHydrograph" />
       </div>
