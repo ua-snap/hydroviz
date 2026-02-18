@@ -7,8 +7,6 @@ const streamSegmentStore = useStreamSegmentStore()
 let zoomAddGeoJson = false
 let moveAddGeoJson = false
 let selectedSeg = null // will have a reference to a stream segment Leaflet object
-let { segmentId } = storeToRefs(streamSegmentStore)
-
 onMounted(() => {
   var map = $L
     .map('map', {
