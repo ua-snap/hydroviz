@@ -47,6 +47,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     streamStats,
     streamHydrograph,
     fetchStreamStats,
+    clearStreamStats,
     segmentId,
     isLoading,
   }
