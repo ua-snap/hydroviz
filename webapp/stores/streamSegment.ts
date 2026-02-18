@@ -4,7 +4,6 @@ import { ref } from 'vue'
 export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const isLoading = ref<boolean>(false)
   const segmentId = ref(null)
-  const segmentName = ref(null)
   const streamStats = ref(null)
   const streamHydrograph = ref(null)
   const { $config } = useNuxtApp()
@@ -39,11 +38,15 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     streamHydrograph.value = hydrographResponse
   }
 
+  const clearStreamStats = async (): Promise<void> => {
+    streamStats.value = ref(null)
+    streamHydrograph.value = ref(null)
+  }
+
   return {
     streamStats,
     streamHydrograph,
     fetchStreamStats,
-    segmentName,
     segmentId,
     isLoading,
   }

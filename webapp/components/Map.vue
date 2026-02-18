@@ -7,7 +7,7 @@ const streamSegmentStore = useStreamSegmentStore()
 let zoomAddGeoJson = false
 let moveAddGeoJson = false
 let selectedSeg = null // will have a reference to a stream segment Leaflet object
-let { segmentName, segmentId } = storeToRefs(streamSegmentStore)
+let { segmentId } = storeToRefs(streamSegmentStore)
 
 onMounted(() => {
   var map = $L
@@ -119,28 +119,8 @@ onMounted(() => {
           })
           .addTo(map)
           .on('click', function (e) {
-            // "clear data"
-            // "reset stream segment to normal state"
-            if (selectedSeg) {
-              selectedSeg.setStyle({
-                color: 'rgb(51, 136, 255)',
-              })
-            }
-
-            // "assign data for use by the map"
-            // "assign stream segment selected/highlighted state"
-            selectedSeg = e.sourceTarget
-
-            // Reactive & bound to store: sets properties in the store
-            segmentName.value = selectedSeg.feature.properties.GNIS_NAME
-            segmentId.value = selectedSeg.feature.properties.seg_id_nat
-
-            selectedSeg.setStyle({
-              color: 'red',
-            })
-
-            // Query data API for datacube
-            streamSegmentStore.fetchStreamStats()
+            // Navigate to report page
+            navigateTo('/conus/' + e.sourceTarget.feature.properties.seg_id_nat)
           })
         zoomAddGeoJson = false
         moveAddGeoJson = false

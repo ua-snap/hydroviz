@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { streamStats, segmentName, streamHydrograph } =
-  storeToRefs(streamSegmentStore)
+let { streamStats, streamHydrograph } = storeToRefs(streamSegmentStore)
 </script>
 
 <template>
@@ -16,7 +15,7 @@ let { streamStats, segmentName, streamHydrograph } =
     <section class="section">
       <div class="container">
         <h3 class="title is-3">
-          Statistics for {{ segmentName }}
+          Statistics for {{ streamStats.name }}
           <span class="segmentId">ID{{ streamStats.id }}</span>
         </h3>
         <div class="content is-size-5">
