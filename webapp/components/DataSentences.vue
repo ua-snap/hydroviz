@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
 let { streamStats, segmentName } = storeToRefs(streamSegmentStore)
@@ -56,10 +57,45 @@ function blurbFromEventCountOrDuration(count, type) {
   }
   return blurb
 }
+
+// Whether we think there is strong model disagreement for a min/max range
+const isMeanAnnualFlowHighlyVariable = computed(() => {
+  return (
+    Math.abs(
+      streamStats.value.summary.ma99_delta.range_high -
+        streamStats.value.summary.ma99_delta.range_low
+    ) > 50
+  )
+})
+
+const isMax1DayFlowHighlyVariable = computed(() => {
+  return (
+    Math.abs(
+      streamStats.value.summary.dh1_delta.range_high -
+        streamStats.value.summary.dh1_delta.range_low
+    ) > 50 ||
+    Math.abs(
+      streamStats.value.summary.dl1_delta.range_high -
+        streamStats.value.summary.dl1_delta.range_low
+    ) > 50
+  )
+})
+
+const lowFlow = computed(() => {
+  return streamStats.value.summary.ma99_hist.value <= 5
+})
 </script>
 
 <template>
   <div class="content is-size-5">
+    <p v-if="lowFlow">
+      <strong>Note: this stream segment has a low mean annual flow.</strong>
+      Headwaters and other small or intermittent streams have high variability.
+    </p>
+    <p v-if="isMeanAnnualFlowHighlyVariable || isMax1DayFlowHighlyVariable">
+      <span class="warn">&#x26A0;&#xFE0F;</span> Models outputs have a high
+      range of uncertainty (greater than 50%) for these variables.
+    </p>
     <ul>
       <li>
         Historically, this stream has a mean annual flow of about
@@ -68,6 +104,7 @@ function blurbFromEventCountOrDuration(count, type) {
         {{ adjectiveForPercent(streamStats.summary.ma99_delta.value) }} ({{
           streamStats.summary.ma99_delta.value
         }}%) by mid-century.
+        <span v-if="isMeanAnnualFlowHighlyVariable">&#x26A0;&#xFE0F;</span>
       </li>
       <li>
         The maximum 1-day flow is projected to
@@ -77,6 +114,7 @@ function blurbFromEventCountOrDuration(count, type) {
         {{ adjectiveForPercent(streamStats.summary.dl1_delta.value) }} ({{
           streamStats.summary.dl1_delta.value
         }}%).
+        <span v-if="isMax1DayFlowHighlyVariable">&#x26A0;&#xFE0F;</span>
       </li>
       <li>
         The mean number of high flow events is projected to
@@ -111,13 +149,9 @@ function blurbFromEventCountOrDuration(count, type) {
       </li>
     </ul>
     <p>
-      Historical data uses the Maurer calibration, 1976–2005. Future projections
-      use an model ensemble mean (13 models) for mid-century (2046–2075, with a
-      middle-of-the-road emissions scenario (RCP 6.0).
-    </p>
-    <p>
-      Note that models predict a large range of values for this variable.
-      &#x26A0;&#xFE0F;
+      Historical data uses the Maurer calibration, 1976&ndash;2005. Future
+      projections for mid-century (2046&ndash;2075) use the mean of 13 global
+      circulation models and a middle-of-the-road emissions scenario (RCP 6.0).
     </p>
   </div>
 </template>
