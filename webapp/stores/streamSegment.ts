@@ -38,9 +38,9 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     streamHydrograph.value = hydrographResponse
   }
 
-  const clearStreamStats = async (): Promise<void> => {
-    streamStats.value = ref(null)
-    streamHydrograph.value = ref(null)
+  const clearStreamStats = (): void => {
+    streamStats.value = null
+    streamHydrograph.value = null
   }
 
   return {
