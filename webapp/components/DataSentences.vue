@@ -84,17 +84,21 @@ const isMax1DayFlowHighlyVariable = computed(() => {
 const lowFlow = computed(() => {
   return streamStats.value.summary.ma99_hist.value <= 5
 })
+
+function orMoreIf100Percent(amount) {
+  if (amount >= 100) {
+    return 'or more'
+  }
+  return ''
+}
 </script>
 
 <template>
   <div class="content is-size-5">
     <p v-if="lowFlow">
       <strong>Note: this stream segment has a low mean annual flow.</strong>
-      Headwaters and other small or intermittent streams have high variability.
-    </p>
-    <p v-if="isMeanAnnualFlowHighlyVariable || isMax1DayFlowHighlyVariable">
-      <span class="warn">&#x26A0;&#xFE0F;</span> Models outputs have a high
-      range of uncertainty (greater than 50%) for these variables.
+      Headwaters and other small or intermittent streams have high statistical
+      variability.
     </p>
     <ul>
       <li>
@@ -103,17 +107,19 @@ const lowFlow = computed(() => {
         projected to
         {{ adjectiveForPercent(streamStats.summary.ma99_delta.value) }} ({{
           streamStats.summary.ma99_delta.value
-        }}%) by mid-century.
+        }}% {{ orMoreIf100Percent(streamStats.summary.ma99_delta.value) }}) by
+        mid-century.
         <span v-if="isMeanAnnualFlowHighlyVariable">&#x26A0;&#xFE0F;</span>
       </li>
       <li>
         The maximum 1-day flow is projected to
         {{ adjectiveForPercent(streamStats.summary.dh1_delta.value) }} ({{
           streamStats.summary.dh1_delta.value
-        }}%) and the minimum 1-day flow is projected to
+        }}% {{ orMoreIf100Percent(streamStats.summary.dh1_delta.value) }}) and
+        the minimum 1-day flow is projected to
         {{ adjectiveForPercent(streamStats.summary.dl1_delta.value) }} ({{
           streamStats.summary.dl1_delta.value
-        }}%).
+        }}% {{ orMoreIf100Percent(streamStats.summary.dl1_delta.value) }}).
         <span v-if="isMax1DayFlowHighlyVariable">&#x26A0;&#xFE0F;</span>
       </li>
       <li>
@@ -129,8 +135,7 @@ const lowFlow = computed(() => {
             streamStats.summary.dh15_delta.value,
             'day'
           )
-        }}
-        .
+        }}.
       </li>
       <li>
         The mean number of low flow events is projected to
@@ -148,6 +153,10 @@ const lowFlow = computed(() => {
         }}.
       </li>
     </ul>
+    <p v-if="isMeanAnnualFlowHighlyVariable || isMax1DayFlowHighlyVariable">
+      <span class="warn">&#x26A0;&#xFE0F;</span> Models outputs vary by 50% or
+      more for these variables.
+    </p>
     <p>
       Historical data uses the Maurer calibration, 1976&ndash;2005. Future
       projections for mid-century (2046&ndash;2075) use the mean of 13 global
