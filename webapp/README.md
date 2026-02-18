@@ -24,3 +24,13 @@ Running the webapp:
 cd webapp
 npm run dev
 ```
+
+## Deployment
+
+To deploy to our development S3 bucket, set environment variables if necessary, then run:
+
+```bash
+rm -fr .output
+npm run generate
+aws s3 sync .output/public s3://hydroviz-dev/ --acl public-read --delete
+```
