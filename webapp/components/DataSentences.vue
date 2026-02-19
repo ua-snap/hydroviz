@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { streamStats, segmentName } = storeToRefs(streamSegmentStore)
+let { streamStats } = storeToRefs(streamSegmentStore)
 
 function adjectiveForPercent(value) {
   if (value < -50) {
