@@ -3,6 +3,9 @@ import { ref } from 'vue'
 
 export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const isLoading = ref<boolean>(false)
+  const apiSlow = ref<boolean>(false)
+  const apiFailed = ref<boolean>(false)
+
   const segmentId = ref(null)
   const segmentName = ref(null)
   const streamStats = ref(null)
@@ -12,6 +15,8 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const fetchStreamStats = async (): Promise<void> => {
     let statsRequestUrl = `${$config.public.snapApiUrl}/conus_hydrology/stats/${segmentId.value}`
     let hydrographRequestUrl = `${$config.public.snapApiUrl}/conus_hydrology/modeled_climatology/${segmentId.value}`
+
+    apiFailed.value = false
 
     // BUG: this causes the front end render to fail because
     // it still tries to render the chart (!)
@@ -29,14 +34,52 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
           '@/assets/fixtures/modeled_climatology.json'
         )
       } else {
-        statsResponse = await $fetch(statsRequestUrl)
-        hydrographResponse = await $fetch(hydrographRequestUrl)
+        try {
+          // Used to track mildly slow data API responses that don't abort.
+          const slowTimer = setTimeout(() => {
+            apiSlow.value = true
+          }, 10000)
+
+          // Used to track very slow API responses that do abort.
+          const controller = new AbortController()
+          const timeout = setTimeout(() => {
+            controller.abort()
+          }, 60000)
+
+          try {
+            statsResponse = await $fetch(statsRequestUrl, {
+              signal: controller.signal,
+            })
+            hydrographResponse = await $fetch(hydrographRequestUrl, {
+              signal: controller.signal,
+            })
+          } finally {
+            clearTimeout(timeout)
+            clearTimeout(slowTimer)
+          }
+        } catch (error: any) {
+          // If API is unreachable, returns error, or times out.
+          if (
+            !error?.statusCode ||
+            (error?.statusCode >= 400 && error?.statusCode < 600)
+          ) {
+            apiFailed.value = true
+          }
+        }
       }
     } finally {
       isLoading.value = false
+      apiSlow.value = false
     }
-    streamStats.value = statsResponse
-    streamHydrograph.value = hydrographResponse
+
+    // Treat the failure of either API endpoint as a total data failure
+    // to avoid partial/unpredictable webapp states. In production, it's
+    // unlikely that one endpoint will succeed when the other fails, so
+    // it's probably not worth trying to handle them separately.
+    if ('data' in statsResponse && 'data' in hydrographResponse) {
+      streamStats.value = statsResponse
+      streamHydrograph.value = hydrographResponse
+    }
   }
 
   return {
@@ -46,5 +89,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     segmentName,
     segmentId,
     isLoading,
+    apiSlow,
+    apiFailed,
   }
 })
