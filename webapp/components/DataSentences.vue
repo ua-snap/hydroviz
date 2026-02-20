@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { fnc } from '~/utils/general'
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
 let { streamStats } = storeToRefs(streamSegmentStore)
@@ -93,7 +94,7 @@ const sculptedMeanAnnualFlow = computed(() => {
   if (streamStats.value.summary.ma99_hist.value == 0) {
     return 'less than 1'
   }
-  return 'of about ' + streamStats.value.summary.ma99_hist.value
+  return 'of about ' + fnc(streamStats.value.summary.ma99_hist.value)
 })
 
 function orMoreIf100Percent(amount) {
