@@ -17689,9 +17689,11 @@
       }
     }
   },
+  "huc8": "17100102",
+  "huc8_outlet": false,
   "id": "50563",
-  "latitude": 47.4562,
-  "longitude": -123.8963,
+  "latitude": 47.4569,
+  "longitude": -123.8909,
   "metadata": {
     "source": {
       "citation": "LaFontaine, J.H., and Riley, J.W., 2023, Model Input and Output for Hydrologic Simulations for the Conterminous United States for Historical and Future Conditions Using the National Hydrologic Model Infrastructure (NHM) and the Coupled Model Intercomparison Project Phase 5 (CMIP5), 1950 - 2100: U.S. Geological Survey data release, https://doi.org/10.5066/P9EBKREQ."
@@ -17911,5 +17913,91 @@
       }
     }
   },
-  "name": "Quinault River"
+  "name": "Quinault River",
+  "summary": {
+    "dh15_delta": {
+      "description": "projected change in high flow pulse duration",
+      "range_high": 1,
+      "range_low": -1,
+      "units": "days",
+      "value": 0
+    },
+    "dh15_hist": {
+      "description": "historical high flow pulse duration",
+      "range_high": null,
+      "range_low": null,
+      "units": "days",
+      "value": 6
+    },
+    "dh1_delta": {
+      "description": "projected change in maximum 1-day flow",
+      "range_high": 6,
+      "range_low": -7,
+      "units": "percent",
+      "value": 6
+    },
+    "dl16_delta": {
+      "description": "projected change in low flow pulse duration",
+      "range_high": 5,
+      "range_low": 2,
+      "units": "days",
+      "value": 3
+    },
+    "dl16_hist": {
+      "description": "historical low flow pulse duration",
+      "range_high": null,
+      "range_low": null,
+      "units": "days",
+      "value": 14
+    },
+    "dl1_delta": {
+      "description": "projected change in minimum 1-day flow",
+      "range_high": 1,
+      "range_low": -36,
+      "units": "percent",
+      "value": -36
+    },
+    "fh1_delta": {
+      "description": "projected change in high flood pulse count",
+      "range_high": 0,
+      "range_low": -3,
+      "units": "events",
+      "value": -1
+    },
+    "fh1_hist": {
+      "description": "historical high flood pulse count",
+      "range_high": null,
+      "range_low": null,
+      "units": "events",
+      "value": 17
+    },
+    "fl1_delta": {
+      "description": "projected change in low flood pulse count",
+      "range_high": -1,
+      "range_low": -2,
+      "units": "events",
+      "value": -1
+    },
+    "fl1_hist": {
+      "description": "historical low flood pulse count",
+      "range_high": null,
+      "range_low": null,
+      "units": "events",
+      "value": 6
+    },
+    "ma99_delta": {
+      "description": "projected change in mean annual flow",
+      "range_high": 22,
+      "range_low": 8,
+      "units": "percent",
+      "value": 16
+    },
+    "ma99_hist": {
+      "description": "historical mean annual flow",
+      "range_high": null,
+      "range_low": null,
+      "units": "cfs",
+      "value": 3105
+    }
+  }
 }

@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { streamStats, segmentName, streamHydrograph } =
-  storeToRefs(streamSegmentStore)
+let { streamStats, streamHydrograph } = storeToRefs(streamSegmentStore)
 </script>
 
 <template>
@@ -15,13 +14,22 @@ let { streamStats, segmentName, streamHydrograph } =
   <div v-if="streamStats">
     <section class="section">
       <div class="container">
-        <h3 class="title is-3">Statistics for {{ segmentName }}</h3>
+        <h3 class="title is-3">
+          Statistics for {{ streamStats.name }}
+          <span class="segmentId">ID{{ streamStats.id }}</span>
+        </h3>
         <div class="content is-size-5">
           Introduction to the report goes here. We can pull some summarized info
           about the specific stream segment in order to highlight aspects of
           uncertainty and some succinct characterization of net change over
           time.
         </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <DataSentences />
       </div>
     </section>
 
