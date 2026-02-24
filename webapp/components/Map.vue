@@ -68,10 +68,14 @@ const initializeMap = () => {
         addMapBoundsSegments()
       }
     } else {
-      if (resetButtonInstance) {
-        map.removeControl(resetButtonInstance)
-        resetButtonInstance = null
-        map.addLayer(wmsLayer)
+      if (!hucBasedGeoJson) {
+        if (resetButtonInstance) {
+          map.removeControl(resetButtonInstance)
+          resetButtonInstance = null
+          if (!map.hasLayer(wmsLayer)) {
+            map.addLayer(wmsLayer)
+          }
+        }
       }
     }
   })
@@ -138,6 +142,9 @@ const initializeMap = () => {
 
 const addDetailedHucLayer = (data: any) => {
   let huc = data
+  if (map.hasLayer(wmsLayer)) {
+    map.removeLayer(wmsLayer)
+  }
   detailedHucLayer = $L
     .geoJSON(huc, {
       style: {
