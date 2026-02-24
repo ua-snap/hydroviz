@@ -1,12 +1,11 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, shallowRef } from 'vue'
 
 export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const isLoading = ref<boolean>(false)
   const segmentId = ref(null)
-  const segmentName = ref(null)
-  const streamStats = ref(null)
-  const streamHydrograph = ref(null)
+  const streamStats = shallowRef(null)
+  const streamHydrograph = shallowRef(null)
   const { $config } = useNuxtApp()
 
   const fetchStreamStats = async (): Promise<void> => {
@@ -39,11 +38,16 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     streamHydrograph.value = hydrographResponse
   }
 
+  const clearStreamStats = (): void => {
+    streamStats.value = null
+    streamHydrograph.value = null
+  }
+
   return {
     streamStats,
     streamHydrograph,
     fetchStreamStats,
-    segmentName,
+    clearStreamStats,
     segmentId,
     isLoading,
   }
