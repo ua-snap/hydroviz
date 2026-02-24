@@ -35,7 +35,11 @@ function ifPlural(value) {
 }
 
 // Type = 'event' or 'day'
-function blurbFromEventCountOrDuration(historical, delta, type) {
+function blurbFromEventCountOrDuration(
+  historical: number,
+  delta: number,
+  type: string
+): string {
   let blurb = ''
   if (delta < 0) {
     blurb +=
@@ -97,7 +101,7 @@ const sculptedMeanAnnualFlow = computed(() => {
   return 'of about ' + fnc(streamStats.value.summary.ma99_hist.value)
 })
 
-function orMoreIf100Percent(amount) {
+function orMoreIf100Percent(amount: number): string {
   if (amount >= 100) {
     return ' or more'
   }
@@ -169,7 +173,7 @@ function orMoreIf100Percent(amount) {
       </li>
     </ul>
     <p v-if="isMeanAnnualFlowHighlyVariable || isMax1DayFlowHighlyVariable">
-      <span class="warn">&#x26A0;&#xFE0F;</span> Models outputs vary by 50% or
+      <span class="warn">&#x26A0;&#xFE0F;</span> Model outputs vary by 50% or
       more for these variables.
     </p>
     <p>

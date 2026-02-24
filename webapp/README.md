@@ -75,4 +75,4 @@ In the "Redirection rules" text area, add the following:
 ]
 ```
 
-Code in `app.vue` catches and routes these redirects into fully hydrated report pages.
+Code in `layouts/default.vue` catches and routes these redirects into fully hydrated report pages.
