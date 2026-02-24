@@ -241,30 +241,40 @@ const hucClickHandler = (feature: any, layer: any) => {
       let segFetch = fetch(segUrl)
       let hucFetch = fetch(hucUrl)
 
-      Promise.all([segFetch, hucFetch]).then(() => {
-        if (hucSegmentLayers.length > 0) {
-          hucSegmentLayers.forEach(layer => {
-            map.removeLayer(layer)
-          })
-          hucSegmentLayers = []
-        }
-        hucFetch
-          .then(response => response.json())
-          .then(data => {
-            addDetailedHucLayer(data)
-          })
-        segFetch
-          .then(response => response.json())
-          .then(data => {
-            addHucSegments(data)
-          })
-      })
+      Promise.all([segFetch, hucFetch])
+        .then(async ([segResponse, hucResponse]) => {
+          if (!segResponse.ok || !hucResponse.ok) {
+            throw new Error(
+              `Failed to fetch HUC or segment data (segments status: ${segResponse.status}, huc status: ${hucResponse.status})`,
+            )
+          }
+
+          if (hucSegmentLayers.length > 0) {
+            hucSegmentLayers.forEach(layer => {
+              map.removeLayer(layer)
+            })
+            hucSegmentLayers = []
+          }
+
+          const hucData = await hucResponse.json()
+          addDetailedHucLayer(hucData)
+
+          const segData = await segResponse.json()
+          addHucSegments(segData)
+        })
+        .catch(error => {
+          console.error('Error loading HUC or segment data:', error)
+        })
     }
   })
 }
 
 const loadSimplifiedHucs = async () => {
-  simplifiedHucs = await import('@/assets/hucs_simplified.json')
+  try {
+    simplifiedHucs = await import('@/assets/hucs_simplified.json')
+  } catch (error) {
+    console.error('Failed to load simplified HUCs:', error)
+  }
 }
 
 onMounted(() => {
