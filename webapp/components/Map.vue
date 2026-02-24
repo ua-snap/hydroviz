@@ -155,7 +155,7 @@ const addDetailedHucLayer = (data: any) => {
   if (map.hasLayer(wmsLayer)) {
     map.removeLayer(wmsLayer)
   }
-  if (detailedHucLayer) {
+  if (detailedHucLayer && map.hasLayer(detailedHucLayer)) {
     map.removeLayer(detailedHucLayer)
   }
   detailedHucLayer = $L
