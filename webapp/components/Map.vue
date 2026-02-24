@@ -120,7 +120,7 @@ const initializeMap = () => {
       position: 'topright',
     },
     onAdd: function () {
-      const btn = $L.DomUtil.create('resetButton', 'button')
+      const btn = $L.DomUtil.create('button', 'resetButton')
       btn.innerHTML = 'Reset'
       $L.DomEvent.disableClickPropagation(btn)
       btn.addEventListener('click', () => {
