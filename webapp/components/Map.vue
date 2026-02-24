@@ -102,7 +102,9 @@ const initializeMap = () => {
       fetch(segUrl)
         .then(response => {
           if (!response.ok) {
-            throw new Error(`Failed to fetch segment data: ${response.status} ${response.statusText}`)
+            throw new Error(
+              `Failed to fetch segment data: ${response.status} ${response.statusText}`
+            )
           }
           return response.json()
         })
@@ -120,7 +122,7 @@ const initializeMap = () => {
       position: 'topright',
     },
     onAdd: function () {
-      const btn = $L.DomUtil.create('button', 'resetButton')
+      const btn = $L.DomUtil.create('button', 'button')
       btn.innerHTML = 'Reset'
       $L.DomEvent.disableClickPropagation(btn)
       btn.addEventListener('click', () => {
@@ -255,7 +257,7 @@ const hucClickHandler = (feature: any, layer: any) => {
         .then(async ([segResponse, hucResponse]) => {
           if (!segResponse.ok || !hucResponse.ok) {
             throw new Error(
-              `Failed to fetch HUC or segment data (segments status: ${segResponse.status}, huc status: ${hucResponse.status})`,
+              `Failed to fetch HUC or segment data (segments status: ${segResponse.status}, huc status: ${hucResponse.status})`
             )
           }
 
