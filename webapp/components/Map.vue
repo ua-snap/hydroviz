@@ -229,8 +229,10 @@ const hucClickHandler = (feature: any, layer: any) => {
   layer.on('click', function () {
     hucBasedGeoJson = true
     map.removeLayer(simplifiedHucsLayer)
-    resetButtonInstance = new resetButton()
-    map.addControl(resetButtonInstance)
+    if (!resetButtonInstance) {
+      resetButtonInstance = new resetButton()
+      map.addControl(resetButtonInstance)
+    }
     if (feature.properties && feature.properties.huc8) {
       // Make the simplified HUC-8 visible when it is clicked.
       // It will be swapped with a high-vertex HUC-8 before zooming in.
