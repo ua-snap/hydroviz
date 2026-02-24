@@ -171,7 +171,7 @@ const addDetailedHucLayer = (data: any) => {
   })
 }
 
-const addGeoJson = async data => {
+const addGeoJson = async (data: any) => {
   // Add each segment individually so we can add hover effects
   // (color change and tooltip) to each segment individually.
   data.features.forEach(feature => {
