@@ -169,7 +169,7 @@ function orMoreIf100Percent(amount) {
       </li>
     </ul>
     <p v-if="isMeanAnnualFlowHighlyVariable || isMax1DayFlowHighlyVariable">
-      <span class="warn">&#x26A0;&#xFE0F;</span> Models outputs vary by 50% or
+      <span class="warn">&#x26A0;&#xFE0F;</span> Model outputs vary by 50% or
       more for these variables.
     </p>
     <p>
