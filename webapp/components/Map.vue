@@ -1,6 +1,5 @@
 <script setup lang="ts">
 const { $L, $config } = useNuxtApp()
-import simplifiedHucs from '~/assets/hucs_simplified.json'
 
 let segBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=huc8=`
 let hucBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=huc8=`
@@ -10,6 +9,7 @@ const defaultMapCenter = [37.8, -96]
 
 let hucBasedGeoJson = false
 
+let simplifiedHucs: any
 let map: any
 let wmsLayer: any
 let simplifiedHucsLayer: any
@@ -256,8 +256,14 @@ const hucClickHandler = (feature: any, layer: any) => {
   })
 }
 
+const loadSimplifiedHucs = async () => {
+  simplifiedHucs = await import('@/assets/hucs_simplified.json')
+}
+
 onMounted(() => {
-  initializeMap()
+  loadSimplifiedHucs().then(() => {
+    initializeMap()
+  })
 })
 </script>
 
