@@ -8,8 +8,6 @@ let hucBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&versi
 const defaultMapZoom = 4
 const defaultMapCenter = [37.8, -96]
 
-let zoomAddGeoJson = false
-let moveAddGeoJson = false
 let hucBasedGeoJson = false
 
 let map: any
@@ -81,8 +79,6 @@ const initializeMap = () => {
   map.on('moveend', function () {
     if (hucBasedGeoJson) {
       return
-    } else {
-      moveAddGeoJson = true
     }
     if (!hucBasedGeoJson && hucSegmentLayers.length > 0) {
       hucSegmentLayers.forEach(layer => {
