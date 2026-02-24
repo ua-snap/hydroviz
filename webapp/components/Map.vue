@@ -178,7 +178,7 @@ const addGeoJson = async data => {
           color: '#ffff00',
         })
         let segmentName = feature.properties.GNIS_NAME
-        if (segmentName.length !== '') {
+        if (segmentName !== '') {
           layer.bindTooltip(segmentName).openTooltip()
         }
       })
