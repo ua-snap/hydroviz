@@ -205,7 +205,9 @@ const addGeoJson = async (data: any) => {
 }
 
 const addHucSegments = (data: any) => {
-  map.removeLayer(simplifiedHucLayer)
+  if (simplifiedHucLayer && map.hasLayer(simplifiedHucLayer)) {
+    map.removeLayer(simplifiedHucLayer)
+  }
   addGeoJson(data)
   map.removeLayer(wmsLayer)
 }
