@@ -100,9 +100,17 @@ const initializeMap = () => {
         `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=` +
         `INTERSECTS(the_geom,ENVELOPE(${minLon},${maxLon},${minLat},${maxLat}))`
       fetch(segUrl)
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Failed to fetch segment data: ${response.status} ${response.statusText}`)
+          }
+          return response.json()
+        })
         .then(data => {
           addGeoJson(data)
+        })
+        .catch(error => {
+          console.error('Error fetching segment data for map move:', error)
         })
     }
   })
