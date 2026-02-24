@@ -97,7 +97,7 @@ const sculptedMeanAnnualFlow = computed(() => {
   return 'of about ' + fnc(streamStats.value.summary.ma99_hist.value)
 })
 
-function orMoreIf100Percent(amount) {
+function orMoreIf100Percent(amount: number): string {
   if (amount >= 100) {
     return ' or more'
   }
