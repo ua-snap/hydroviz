@@ -123,6 +123,7 @@ const initializeMap = () => {
     },
     onAdd: function () {
       const btn = $L.DomUtil.create('button', 'button')
+      btn.setAttribute('aria-label', 'Reset map view')
       btn.innerHTML = 'Reset'
       $L.DomEvent.disableClickPropagation(btn)
       btn.addEventListener('click', () => {
