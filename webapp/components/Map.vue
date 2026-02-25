@@ -213,7 +213,9 @@ const addHucSegments = (data: any) => {
     map.removeLayer(simplifiedHucLayer)
   }
   addGeoJson(data)
-  map.removeLayer(wmsLayer)
+  if (map.hasLayer(wmsLayer)) {
+    map.removeLayer(wmsLayer)
+  }
 }
 
 const addMapBoundsSegments = () => {
@@ -228,7 +230,9 @@ const addMapBoundsSegments = () => {
   fetch(segUrl)
     .then(response => response.json())
     .then(data => {
-      map.removeLayer(wmsLayer)
+      if (map.hasLayer(wmsLayer)) {
+        map.removeLayer(wmsLayer)
+      }
       addGeoJson(data)
     })
 }
@@ -236,7 +240,9 @@ const addMapBoundsSegments = () => {
 const hucClickHandler = (feature: any, layer: any) => {
   layer.on('click', function () {
     hucBasedGeoJson = true
-    map.removeLayer(simplifiedHucsLayer)
+    if (map.hasLayer(simplifiedHucsLayer)) {
+      map.removeLayer(simplifiedHucsLayer)
+    }
     if (!resetButtonInstance) {
       resetButtonInstance = new resetButton()
       map.addControl(resetButtonInstance)
