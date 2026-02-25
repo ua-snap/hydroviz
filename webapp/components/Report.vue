@@ -1,7 +1,19 @@
 <script setup lang="ts">
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { streamStats, streamHydrograph } = storeToRefs(streamSegmentStore)
+let { streamStats, streamHydrograph, hucId, segmentId } =
+  storeToRefs(streamSegmentStore)
+
+onMounted(() => {
+  if (segmentId.value !== null) {
+    streamSegmentStore.fetchStreamStats()
+  } else if (hucId.value !== null) {
+    streamSegmentStore.fetchHucStats()
+  }
+})
+onUnmounted(() => {
+  streamSegmentStore.clearStats()
+})
 </script>
 
 <template>
@@ -18,17 +30,14 @@ let { streamStats, streamHydrograph } = storeToRefs(streamSegmentStore)
           Statistics for {{ streamStats.name }}
           <span class="segmentId">ID{{ streamStats.id }}</span>
         </h3>
+        <ReportMap class="my-6" />
         <div class="content is-size-5">
           Introduction to the report goes here. We can pull some summarized info
           about the specific stream segment in order to highlight aspects of
           uncertainty and some succinct characterization of net change over
           time.
         </div>
-      </div>
-    </section>
 
-    <section class="section">
-      <div class="container">
         <DataSentences />
       </div>
     </section>

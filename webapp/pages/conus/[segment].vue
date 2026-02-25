@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { onUnmounted } from 'vue'
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
 let { segmentId } = storeToRefs(streamSegmentStore)
@@ -14,11 +13,6 @@ if (!segment || !Number.isInteger(segment) || segment > 56460 || segment < 0) {
 
 // Set + fetch data.
 segmentId.value = segment
-streamSegmentStore.fetchStreamStats()
-
-onUnmounted(() => {
-  streamSegmentStore.clearStreamStats()
-})
 </script>
 
 <template>
