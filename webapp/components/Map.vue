@@ -6,6 +6,7 @@ let hucBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&versi
 
 const defaultMapZoom = 4
 const defaultMapCenter = [37.8, -96]
+const clickToZoomThreshold = 8
 
 let hucBasedGeoJson = false
 
@@ -15,7 +16,7 @@ let wmsLayer: any
 let simplifiedHucsLayer: any
 let simplifiedHucLayer: any
 let detailedHucLayer: any
-let hucSegmentLayers: any[] = []
+let segmentsLayer: any[] = []
 let resetButton: any
 let resetButtonInstance: any
 
@@ -42,6 +43,7 @@ const initializeMap = () => {
       layers: 'hydrology:huc8_conus_stats_simplified',
       styles: 'hydrology:hydroviz-choropleth',
       zIndex: 10,
+      opacity: 0.85,
     })
     .addTo(map)
 
@@ -54,12 +56,12 @@ const initializeMap = () => {
         fillColor: 'transparent',
         weight: 0,
       },
-      onEachFeature: hucClickHandler,
+      onEachFeature: hucFeatureHandler,
     })
     .addTo(map)
 
   map.on('zoomend', function () {
-    if (map.getZoom() > 9) {
+    if (map.getZoom() > clickToZoomThreshold) {
       if (!hucBasedGeoJson) {
         if (!resetButtonInstance) {
           resetButtonInstance = new resetButton()
@@ -68,52 +70,33 @@ const initializeMap = () => {
         addMapBoundsSegments()
       }
     } else {
-      if (!hucBasedGeoJson) {
-        if (resetButtonInstance) {
-          map.removeControl(resetButtonInstance)
-          resetButtonInstance = null
-          if (!map.hasLayer(wmsLayer)) {
-            map.addLayer(wmsLayer)
-          }
-        }
+      if (resetButtonInstance) {
+        map.removeControl(resetButtonInstance)
+        resetButtonInstance = null
       }
+      clearSegments()
+      if (!map.hasLayer(wmsLayer)) {
+        map.addLayer(wmsLayer)
+      }
+      resetHUC()
+      map.addLayer(simplifiedHucsLayer)
     }
+  })
+
+  map.on('click', function () {
+    if (map.getZoom() > clickToZoomThreshold) {
+      return
+    }
+    let latlng = map.mouseEventToLatLng(event)
+    map.setView(latlng, clickToZoomThreshold)
   })
 
   map.on('moveend', function () {
     if (hucBasedGeoJson) {
       return
     }
-    if (!hucBasedGeoJson && hucSegmentLayers.length > 0) {
-      hucSegmentLayers.forEach(layer => {
-        map.removeLayer(layer)
-      })
-      hucSegmentLayers = []
-    }
-    if (map.getZoom() > 9) {
-      let bounds = map.getBounds()
-      let minLon = bounds.getWest()
-      let maxLon = bounds.getEast()
-      let minLat = bounds.getSouth()
-      let maxLat = bounds.getNorth()
-      let segUrl =
-        `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=` +
-        `INTERSECTS(the_geom,ENVELOPE(${minLon},${maxLon},${minLat},${maxLat}))`
-      fetch(segUrl)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(
-              `Failed to fetch segment data: ${response.status} ${response.statusText}`
-            )
-          }
-          return response.json()
-        })
-        .then(data => {
-          addGeoJson(data)
-        })
-        .catch(error => {
-          console.error('Error fetching segment data for map move:', error)
-        })
+    if (map.getZoom() > clickToZoomThreshold) {
+      addMapBoundsSegments()
     }
   })
 
@@ -123,32 +106,35 @@ const initializeMap = () => {
     },
     onAdd: function () {
       const btn = $L.DomUtil.create('button', 'button')
-      btn.setAttribute('aria-label', 'Reset map view')
-      btn.innerHTML = 'Reset'
+      btn.setAttribute('aria-label', 'Unselect HUC')
+      btn.innerHTML = 'Unselect HUC'
       $L.DomEvent.disableClickPropagation(btn)
       btn.addEventListener('click', () => {
         map.removeControl(this)
-        if (detailedHucLayer) {
-          map.removeLayer(detailedHucLayer)
-        }
-        if (!map.hasLayer(wmsLayer)) {
+        resetButtonInstance = null
+        resetHUC()
+        if (map.getZoom() < clickToZoomThreshold && !map.hasLayer(wmsLayer)) {
           map.addLayer(wmsLayer)
         }
         map.addLayer(simplifiedHucsLayer)
-        if (hucSegmentLayers.length > 0) {
-          hucSegmentLayers.forEach(layer => {
-            map.removeLayer(layer)
-          })
-          hucSegmentLayers = []
-        }
-        hucBasedGeoJson = false
-        map.flyTo(defaultMapCenter, defaultMapZoom, {
-          duration: 0.25,
-        })
       })
       return btn
     },
   })
+}
+
+const clearSegments = () => {
+  segmentsLayer.forEach(layer => {
+    map.removeLayer(layer)
+  })
+  segmentsLayer = []
+}
+
+const resetHUC = () => {
+  if (detailedHucLayer) {
+    map.removeLayer(detailedHucLayer)
+  }
+  hucBasedGeoJson = false
 }
 
 const addDetailedHucLayer = (data: any) => {
@@ -162,28 +148,33 @@ const addDetailedHucLayer = (data: any) => {
   detailedHucLayer = $L
     .geoJSON(huc, {
       style: {
-        weight: 3,
+        weight: 0,
         color: '#444444',
-        fillOpacity: 0.15,
+        fillOpacity: 0.25,
       },
     })
     .addTo(map)
   let bounds = $L.geoJSON(huc).getBounds()
-  map.flyToBounds(bounds, {
+  map.fitBounds(bounds, {
     padding: [50, 50],
-    duration: 0.25,
   })
 }
 
-const addGeoJson = async (data: any) => {
+const addSegmentsGeoJson = async (data: any) => {
   // Add each segment individually so we can add hover effects
   // (color change and tooltip) to each segment individually.
   data.features.forEach(feature => {
+    let segmentColor: string
+    if (feature.properties.h8_outlet === 1) {
+      segmentColor = '#ff0000' // Red for outlet segments
+    } else {
+      segmentColor = '#0000ff' // Blue for non-outlet segments
+    }
     const layer = $L
       .geoJSON(feature, {
         style: {
-          weight: 4,
-          color: '#0000ff',
+          weight: 3,
+          color: segmentColor,
         },
       })
       .addTo(map)
@@ -198,34 +189,27 @@ const addGeoJson = async (data: any) => {
       })
       .on('mouseout', function (e) {
         e.target.setStyle({
-          color: '#0000ff',
+          color: segmentColor,
         })
       })
       .on('click', function (e) {
         navigateTo('/conus/' + e.sourceTarget.feature.properties.seg_id_nat)
       })
-    hucSegmentLayers.push(layer)
+    segmentsLayer.push(layer)
   })
 }
 
-const addHucSegments = (data: any) => {
+const addMapBoundsSegments = () => {
   if (simplifiedHucLayer && map.hasLayer(simplifiedHucLayer)) {
     map.removeLayer(simplifiedHucLayer)
   }
-  addGeoJson(data)
-  if (map.hasLayer(wmsLayer)) {
-    map.removeLayer(wmsLayer)
-  }
-}
-
-const addMapBoundsSegments = () => {
   let bounds = map.getBounds()
   let minLon = bounds.getWest()
   let maxLon = bounds.getEast()
   let minLat = bounds.getSouth()
   let maxLat = bounds.getNorth()
   let segUrl =
-    `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=` +
+    `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=` +
     `INTERSECTS(the_geom,ENVELOPE(${minLon},${maxLon},${minLat},${maxLat}))`
   fetch(segUrl)
     .then(response => {
@@ -240,15 +224,41 @@ const addMapBoundsSegments = () => {
       if (map.hasLayer(wmsLayer)) {
         map.removeLayer(wmsLayer)
       }
-      addGeoJson(data)
+      addSegmentsGeoJson(data)
     })
     .catch(error => {
       console.error('Error fetching segment data for map bounds:', error)
     })
 }
 
-const hucClickHandler = (feature: any, layer: any) => {
-  layer.on('click', function () {
+const hucFeatureHandler = (feature: any, layer: any) => {
+  layer.on('mouseover', function (e: any) {
+    e.target.setStyle({
+      color: '#ffff00',
+      fillColor: '#ffff00',
+      fillOpacity: 0.25,
+    })
+    const hucName = feature.properties.name
+    if (hucName) {
+      layer.bindTooltip(hucName).openTooltip()
+    }
+  })
+  layer.on('mouseout', function (e) {
+    e.target.setStyle({
+      color: 'transparent',
+      fillColor: 'transparent',
+      fillOpacity: 0,
+    })
+  })
+  layer.on('click', function (e) {
+    e.target.setStyle({
+      color: 'transparent',
+      fillColor: 'transparent',
+      fillOpacity: 0,
+    })
+    if (map.getZoom() < clickToZoomThreshold) {
+      return
+    }
     hucBasedGeoJson = true
     if (map.hasLayer(simplifiedHucsLayer)) {
       map.removeLayer(simplifiedHucsLayer)
@@ -282,19 +292,9 @@ const hucClickHandler = (feature: any, layer: any) => {
               `Failed to fetch HUC or segment data (segments status: ${segResponse.status}, huc status: ${hucResponse.status})`
             )
           }
-
-          if (hucSegmentLayers.length > 0) {
-            hucSegmentLayers.forEach(layer => {
-              map.removeLayer(layer)
-            })
-            hucSegmentLayers = []
-          }
-
           const hucData = await hucResponse.json()
           addDetailedHucLayer(hucData)
-
-          const segData = await segResponse.json()
-          addHucSegments(segData)
+          addMapBoundsSegments()
         })
         .catch(error => {
           console.error('Error loading HUC or segment data:', error)
@@ -322,4 +322,9 @@ onMounted(() => {
   <div id="map" style="height: 500px"></div>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+.leaflet-interactive:focus,
+.leaflet-interactive:active {
+  outline: none;
+}
+</style>
