@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { $L, $config } = useNuxtApp()
 
-let segBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=huc8=`
+let segBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=`
 let hucBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=huc8=`
 
 const defaultMapZoom = 4
@@ -209,7 +209,7 @@ const addMapBoundsSegments = () => {
   let minLat = bounds.getSouth()
   let maxLat = bounds.getNorth()
   let segUrl =
-    `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=` +
+    segBaseUrl +
     `INTERSECTS(the_geom,ENVELOPE(${minLon},${maxLon},${minLat},${maxLat}))`
   fetch(segUrl)
     .then(response => {
@@ -280,16 +280,14 @@ const hucFeatureHandler = (feature: any, layer: any) => {
         })
         .addTo(map)
 
-      let segUrl = segBaseUrl + feature.properties.huc8
       let hucUrl = hucBaseUrl + feature.properties.huc8
-      let segFetch = fetch(segUrl)
       let hucFetch = fetch(hucUrl)
 
-      Promise.all([segFetch, hucFetch])
-        .then(async ([segResponse, hucResponse]) => {
-          if (!segResponse.ok || !hucResponse.ok) {
+      hucFetch
+        .then(async hucResponse => {
+          if (!hucResponse.ok) {
             throw new Error(
-              `Failed to fetch HUC or segment data (segments status: ${segResponse.status}, huc status: ${hucResponse.status})`
+              `Failed to fetch HUC data (huc status: ${hucResponse.status})`
             )
           }
           const hucData = await hucResponse.json()
@@ -297,7 +295,7 @@ const hucFeatureHandler = (feature: any, layer: any) => {
           addMapBoundsSegments()
         })
         .catch(error => {
-          console.error('Error loading HUC or segment data:', error)
+          console.error('Error loading HUC data:', error)
         })
     }
   })
