@@ -337,7 +337,7 @@ const hucFeatureHandler = (feature: any, layer: any) => {
         .geoJSON(feature, {
           style: {
             weight: 3,
-            color: '#444444',
+            color: '#555555',
             fillOpacity: 0.1,
           },
         })
