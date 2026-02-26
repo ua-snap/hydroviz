@@ -9,7 +9,7 @@ const defaultMapCenter = [37.8, -96]
 const segmentWmsThreshold = 6
 const clickToZoomThreshold = 7
 const hucSelectThreshold = 7
-const segViewThreshold = 8
+const segViewThreshold = 9
 
 let hucBasedGeoJson = false
 
@@ -111,7 +111,7 @@ const initializeMap = () => {
         map.addLayer(simplifiedHucsLayer)
       }
     }
-    if (zoomLevel < hucSelectThreshold) {
+    if (zoomLevel < hucSelectThreshold || zoomLevel >= segViewThreshold) {
       if (map.hasLayer(simplifiedHucsLayer)) {
         map.removeLayer(simplifiedHucsLayer)
       }
@@ -196,7 +196,7 @@ const addSegmentsGeoJson = async (data: any) => {
     } else {
       segmentColor = '#0000ff' // Blue for non-outlet segments
     }
-    const layer = $L
+    let line = $L
       .geoJSON(feature, {
         style: {
           weight: 3,
@@ -204,24 +204,54 @@ const addSegmentsGeoJson = async (data: any) => {
         },
       })
       .addTo(map)
-      .on('mouseover', function (e) {
-        e.target.setStyle({
-          color: '#ffff00',
+
+    // Extract the first coordinate to place the handle.
+    let firstCoord = feature.geometry.coordinates[0][0]
+    let latlng = $L.latLng(firstCoord[1], firstCoord[0])
+
+    // Add a circle marker as a handle.
+    let handle = $L
+      .circleMarker(latlng, {
+        radius: 4,
+        color: segmentColor,
+        fillColor: segmentColor,
+        fillOpacity: 1,
+      })
+      .addTo(map)
+
+    let segmentParts = [line, handle]
+    segmentParts.forEach(layer => {
+      layer
+        .on('mouseover', function (e) {
+          segmentParts.forEach(part => {
+            part.setStyle({
+              color: '#ffff00',
+              fillColor: '#ffff00',
+            })
+          })
+          let segmentName = feature.properties.GNIS_NAME
+          if (segmentName !== '') {
+            layer
+              .bindTooltip(segmentName, {
+                className: 'is-size-6 px-3',
+                opacity: 1,
+              })
+              .openTooltip()
+          }
         })
-        let segmentName = feature.properties.GNIS_NAME
-        if (segmentName !== '') {
-          layer.bindTooltip(segmentName).openTooltip()
-        }
-      })
-      .on('mouseout', function (e) {
-        e.target.setStyle({
-          color: segmentColor,
+        .on('mouseout', function (e) {
+          segmentParts.forEach(part => {
+            part.setStyle({
+              color: segmentColor,
+              fillColor: segmentColor,
+            })
+          })
         })
-      })
-      .on('click', function (e) {
-        navigateTo('/conus/' + e.sourceTarget.feature.properties.seg_id_nat)
-      })
-    segGeoJsonLayers.push(layer)
+        .on('click', function (e) {
+          navigateTo('/conus/' + feature.properties.seg_id_nat)
+        })
+      segGeoJsonLayers.push(layer)
+    })
   })
 }
 
@@ -268,9 +298,11 @@ const hucFeatureHandler = (feature: any, layer: any) => {
       fillColor: '#ffff00',
       fillOpacity: 0.5,
     })
-    const hucName = feature.properties.name
-    if (hucName) {
-      layer.bindTooltip(hucName).openTooltip()
+    const hoverText = `${feature.properties.name} (${feature.properties.huc8})`
+    if (hoverText) {
+      layer
+        .bindTooltip(hoverText, { className: 'is-size-6 px-3', opacity: 1 })
+        .openTooltip()
     }
   })
   layer.on('mouseout', function (e) {
