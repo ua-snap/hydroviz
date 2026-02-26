@@ -8,6 +8,7 @@ const defaultMapZoom = 4
 const defaultMapCenter = [37.8, -96]
 const segmentWmsThreshold = 6
 const clickToZoomThreshold = 7
+const hucSelectThreshold = 7
 const segViewThreshold = 8
 
 let hucBasedGeoJson = false
@@ -108,6 +109,11 @@ const initializeMap = () => {
       }
       if (!map.hasLayer(simplifiedHucsLayer)) {
         map.addLayer(simplifiedHucsLayer)
+      }
+    }
+    if (zoomLevel < hucSelectThreshold) {
+      if (map.hasLayer(simplifiedHucsLayer)) {
+        map.removeLayer(simplifiedHucsLayer)
       }
     }
     if (zoomLevel >= segmentWmsThreshold && zoomLevel < segViewThreshold) {
@@ -254,7 +260,7 @@ const addMapBoundsSegments = () => {
 const hucFeatureHandler = (feature: any, layer: any) => {
   layer.on('mouseover', function (e: any) {
     let mapZoom = map.getZoom()
-    if (mapZoom < segmentWmsThreshold || mapZoom >= segViewThreshold) {
+    if (mapZoom < hucSelectThreshold || mapZoom >= segViewThreshold) {
       return
     }
     e.target.setStyle({
@@ -269,7 +275,7 @@ const hucFeatureHandler = (feature: any, layer: any) => {
   })
   layer.on('mouseout', function (e) {
     let mapZoom = map.getZoom()
-    if (mapZoom < segmentWmsThreshold || mapZoom >= segViewThreshold) {
+    if (mapZoom < hucSelectThreshold || mapZoom >= segViewThreshold) {
       return
     }
     e.target.setStyle({
@@ -280,7 +286,7 @@ const hucFeatureHandler = (feature: any, layer: any) => {
   })
   layer.on('click', function (e) {
     let mapZoom = map.getZoom()
-    if (mapZoom >= segViewThreshold) {
+    if (mapZoom < hucSelectThreshold || mapZoom >= segViewThreshold) {
       return
     }
     e.target.setStyle({
