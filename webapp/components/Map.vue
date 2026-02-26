@@ -7,7 +7,7 @@ const hucBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&ver
 const defaultMapZoom = 4
 const defaultMapCenter = [37.8, -96]
 const segmentWmsThreshold = 6
-const clickToZoomThreshold = 6
+const clickToZoomThreshold = 7
 const segViewThreshold = 8
 
 let hucBasedGeoJson = false
