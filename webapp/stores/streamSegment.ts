@@ -14,22 +14,37 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     isLoading.value = true
     const hucBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=huc8=`
     let hucUrl = hucBaseUrl + hucId.value
-    fetch(hucUrl)
-      .then(response => response.json())
-      .then(data => {
-        // Find the first feature in the response where properties.h8_output is 1.
-        // TODO: What do we do if there is more than 1 outlet stream segment?
-        let outletFeature = data.features.find(
-          (feature: any) => feature.properties.h8_outlet === 1
-        )
-        segmentId.value = outletFeature.properties.seg_id_nat
-      })
-      .then(() => {
-        fetchStreamStats()
-      })
-      .catch(error => {
-        console.error('Error fetching HUC data:', error)
-      })
+    try {
+      const response = await fetch(hucUrl)
+      const data = await response.json()
+
+      const features = Array.isArray(data?.features) ? data.features : []
+      if (features.length === 0) {
+        console.error('No features returned for HUC:', hucId.value)
+        return
+      }
+
+      // Find the first feature in the response where properties.h8_outlet is 1.
+      // TODO: What do we do if there is more than 1 outlet stream segment?
+      const outletFeature = features.find(
+        (feature: any) => feature?.properties?.h8_outlet === 1
+      )
+
+      if (!outletFeature || !outletFeature.properties) {
+        console.error('No outlet feature found for HUC:', hucId.value)
+        return
+      }
+
+      segmentId.value = outletFeature.properties.seg_id_nat
+
+      if (segmentId.value != null) {
+        await fetchStreamStats()
+      }
+    } catch (error) {
+      console.error('Error fetching HUC data:', error)
+    } finally {
+      isLoading.value = false
+    }
   }
 
   const fetchStreamStats = async (): Promise<void> => {
