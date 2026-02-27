@@ -9,7 +9,7 @@ const defaultMapCenter = [37.8, -96]
 const segmentWmsThreshold = 6
 const clickToZoomThreshold = 7
 const hucSelectThreshold = 7
-const segViewThreshold = 9
+const segViewThreshold = 8
 
 let hucBasedGeoJson = false
 
@@ -175,7 +175,7 @@ const addDetailedHucLayer = (data: any) => {
     .geoJSON(huc, {
       style: {
         weight: 0,
-        color: '#444444',
+        fillColor: '#111111',
         fillOpacity: 0.25,
       },
     })
@@ -337,7 +337,7 @@ const hucFeatureHandler = (feature: any, layer: any) => {
         .geoJSON(feature, {
           style: {
             weight: 3,
-            color: '#555555',
+            color: '#444444',
             fillOpacity: 0.1,
           },
         })
