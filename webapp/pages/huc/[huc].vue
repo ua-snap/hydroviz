@@ -3,11 +3,16 @@ const { $L, $config } = useNuxtApp()
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 
 const streamSegmentStore = useStreamSegmentStore()
+const route = useRoute()
+
 let { hucId } = storeToRefs(streamSegmentStore)
 
-const route = useRoute()
-let huc = parseInt(route.params.huc)
-hucId.value = huc
+let huc = route.params.huc
+if (!/^\d{8}$/.test(huc)) {
+  throw createError('HUC ID not valid')
+} else {
+  hucId.value = parseInt(huc)
+}
 </script>
 
 <template>
