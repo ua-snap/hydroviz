@@ -35,7 +35,11 @@ function ifPlural(value) {
 }
 
 // Type = 'event' or 'day'
-function blurbFromEventCountOrDuration(historical: number, delta: number, type: string): string {
+function blurbFromEventCountOrDuration(
+  historical: number,
+  delta: number,
+  type: string
+): string {
   let blurb = ''
   if (delta < 0) {
     blurb +=
