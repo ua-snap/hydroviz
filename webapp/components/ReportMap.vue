@@ -60,8 +60,8 @@ const addHuc = () => {
 
 const addSegment = () => {
   const streamSegmentStore = useStreamSegmentStore()
-  const segmentId = streamSegmentStore.segmentId
-  let url = segBaseUrl + `seg_id_nat=${segmentId}`
+  const { segmentId } = storeToRefs(streamSegmentStore)
+  let url = segBaseUrl + `seg_id_nat=${segmentId.value}`
   fetch(url)
     .then(response => response.json())
     .then(data => {
