@@ -80,6 +80,7 @@ const initializeMap = () => {
     .geoJSON(conusPerimeter, {
       style: {
         opacity: 0,
+        fillOpacity: 0,
         interactive: true,
       },
       onEachFeature: function (feature, layer) {
