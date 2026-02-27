@@ -80,6 +80,8 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const clearStats = (): void => {
     streamStats.value = null
     streamHydrograph.value = null
+    segmentId.value = null
+    hucId.value = null
   }
 
   return {
