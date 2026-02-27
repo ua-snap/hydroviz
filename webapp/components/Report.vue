@@ -5,10 +5,11 @@ let { streamStats, streamHydrograph, hucId, segmentId } =
   storeToRefs(streamSegmentStore)
 
 onMounted(() => {
-  if (segmentId.value !== null) {
-    streamSegmentStore.fetchStreamStats()
-  } else if (hucId.value !== null) {
+  // Prefer HUC mode when both hucId and segmentId are set so behavior matches ReportMap
+  if (hucId.value !== null) {
     streamSegmentStore.fetchHucStats()
+  } else if (segmentId.value !== null) {
+    streamSegmentStore.fetchStreamStats()
   }
 })
 onUnmounted(() => {
