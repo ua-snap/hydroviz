@@ -91,8 +91,6 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
-@import '~/node_modules/@tarekraafat/autocomplete.js/dist/css/autoComplete.02.css';
-
 #search {
   background-image: none;
 }
