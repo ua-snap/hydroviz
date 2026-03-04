@@ -13,45 +13,54 @@ onMounted(() => {
 
         // Escape single quotes for safe use inside CQL string literals
         const safeQuery = query.replace(/'/g, "''")
-        const segFilter = `GNIS_NAME ILIKE '%${safeQuery}%'`
-        const hucFilter = `name ILIKE '%${safeQuery}%'`
+        let items: any[] = []
 
-        const segUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=seg_id_nat,GNIS_NAME,GAUGE_ID&cql_filter=${encodeURIComponent(segFilter)}`
-        const hucUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8_conus_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=huc8,name&cql_filter=name%20ILIKE%20%27%25${query}%25%27`
-        const [segRes, hucRes] = await Promise.all([
-          fetch(segUrl).then(res => res.json()),
-          fetch(hucUrl).then(res => res.json()),
-        ])
+        const segUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=seg_id_nat,GNIS_NAME,GAUGE_ID&cql_filter=GNIS_NAME%20ILIKE%20%27%25${query}%25%27`
+        const hucUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8_conus_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=%20huc8,name&cql_filter=name%20ILIKE%20%27%25${query}%25%27`
 
-        segRes.features.forEach((feature: any) => {
-          let seg_id_nat = feature.properties.seg_id_nat
-          let name = `${feature.properties.GNIS_NAME} (${seg_id_nat})`
-          items.push({
-            name: name,
-            id: seg_id_nat,
-            category: 'stream segment',
+        try {
+          const [segRes, hucRes] = await Promise.all([
+            fetch(segUrl).then(res => res.json()),
+            fetch(hucUrl).then(res => res.json()),
+          ])
+
+          if (segRes && Array.isArray(segRes.features)) {
+            segRes.features.forEach((feature: any) => {
+              let seg_id_nat = feature.properties.seg_id_nat
+              let name = `${feature.properties.GNIS_NAME} (${seg_id_nat})`
+              items.push({
+                name: name,
+                id: seg_id_nat,
+                category: 'stream segment',
+              })
+            })
+          }
+
+          if (hucRes && Array.isArray(hucRes.features)) {
+            hucRes.features.forEach((feature: any) => {
+              let hucId = feature.properties.huc8
+              let name = `${feature.properties.name} (${hucId})`
+              items.push({
+                name: name,
+                id: hucId,
+                category: 'huc',
+              })
+            })
+          }
+
+          items = $_.sortBy(items, ['name'])
+
+          items = $_.map(items, (item: { name: string; category: string }) => {
+            item.name =
+              item.name + ` <span class="category">${item.category}</span>`
+            return item
           })
-        })
 
-        hucRes.features.forEach((feature: any) => {
-          let hucId = feature.properties.huc8
-          let name = `${feature.properties.name} (${hucId})`
-          items.push({
-            name: name,
-            id: hucId,
-            category: 'huc',
-          })
-        })
-
-        items = $_.sortBy(items, ['name'])
-
-        items = $_.map(items, (item: { name: string; category: string }) => {
-          item.name =
-            item.name + ` <span class="category">${item.category}</span>`
-          return item
-        })
-
-        return items
+          return items
+        } catch (error) {
+          console.error('Error fetching autocomplete data', error)
+          return []
+        }
       },
       keys: ['name'],
     },
