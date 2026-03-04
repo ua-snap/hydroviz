@@ -1,7 +1,6 @@
 <script setup lang="ts">
 const { $autoComplete, $config, $_ } = useNuxtApp()
 const inputValue = ref('')
-const searchInput = ref()
 
 onMounted(() => {
   let config = {
@@ -87,12 +86,7 @@ onMounted(() => {
 <template>
   <section class="section">
     <div class="container">
-      <input
-        id="search"
-        v-model="inputValue"
-        ref="searchInput"
-        style="width: 600px"
-      />
+      <input id="search" v-model="inputValue" />
     </div>
   </section>
 </template>
@@ -106,7 +100,7 @@ onMounted(() => {
   height: 40px;
   outline: none;
   padding-left: 10px;
-  width: 370px;
+  width: 600px;
   background: none;
 }
 
