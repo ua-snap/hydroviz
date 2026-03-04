@@ -47,12 +47,6 @@ onMounted(() => {
 
           items = $_.sortBy(items, ['name'])
 
-          items = $_.map(items, (item: { name: string; category: string }) => {
-            item.name =
-              item.name + ` <span class="category">${item.category}</span>`
-            return item
-          })
-
           return items
         } catch (error) {
           console.error('Error fetching autocomplete data', error)
@@ -63,6 +57,17 @@ onMounted(() => {
     },
     resultItem: {
       highlight: true,
+      content: (
+        data: { value: { name: string; category: string } },
+        source: HTMLElement,
+      ) => {
+        const nameNode = document.createTextNode(data.value.name)
+        const categorySpan = document.createElement('span')
+        categorySpan.className = 'category'
+        categorySpan.textContent = data.value.category
+        source.appendChild(nameNode)
+        source.appendChild(categorySpan)
+      },
     },
     threshold: 3,
     debounce: 200,
