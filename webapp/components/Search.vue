@@ -9,14 +9,12 @@ onMounted(() => {
     placeHolder: 'Search for a stream segment or HUC',
     data: {
       src: async (query: string) => {
-        let items = []
-
         // Escape single quotes for safe use inside CQL string literals
         const safeQuery = query.replace(/'/g, "''")
-        let items: any[] = []
+        const segUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=seg_id_nat,GNIS_NAME,GAUGE_ID&cql_filter=GNIS_NAME%20ILIKE%20%27%25${safeQuery}%25%27`
+        const hucUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8_conus_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=%20huc8,name&cql_filter=name%20ILIKE%20%27%25${safeQuery}%25%27`
 
-        const segUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=seg_id_nat,GNIS_NAME,GAUGE_ID&cql_filter=GNIS_NAME%20ILIKE%20%27%25${query}%25%27`
-        const hucUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8_conus_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=%20huc8,name&cql_filter=name%20ILIKE%20%27%25${query}%25%27`
+        let items: any[] = []
 
         try {
           const [segRes, hucRes] = await Promise.all([
