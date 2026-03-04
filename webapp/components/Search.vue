@@ -47,12 +47,6 @@ onMounted(() => {
 
           items = $_.sortBy(items, ['name'])
 
-          items = $_.map(items, (item: { name: string; category: string }) => {
-            item.name =
-              item.name + ` <span class="category">${item.category}</span>`
-            return item
-          })
-
           return items
         } catch (error) {
           console.error('Error fetching autocomplete data', error)
@@ -62,7 +56,11 @@ onMounted(() => {
       keys: ['name'],
     },
     resultItem: {
-      highlight: true,
+      element: (element: HTMLElement, match: any) => {
+        let item = match.value
+        element.innerHTML =
+          item.name + '<span class="category">' + item.category + '</span>'
+      },
     },
     threshold: 3,
     debounce: 200,
