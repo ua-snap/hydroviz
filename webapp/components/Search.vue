@@ -56,17 +56,10 @@ onMounted(() => {
       keys: ['name'],
     },
     resultItem: {
-      highlight: true,
-      content: (
-        data: { value: { name: string; category: string } },
-        source: HTMLElement,
-      ) => {
-        const nameNode = document.createTextNode(data.value.name)
-        const categorySpan = document.createElement('span')
-        categorySpan.className = 'category'
-        categorySpan.textContent = data.value.category
-        source.appendChild(nameNode)
-        source.appendChild(categorySpan)
+      element: (element: HTMLElement, match: any) => {
+        let item = match.value
+        element.innerHTML =
+          item.name + '<span class="category">' + item.category + '</span>'
       },
     },
     threshold: 3,
