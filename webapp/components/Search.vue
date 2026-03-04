@@ -92,7 +92,15 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 #search {
-  background-image: none;
+  border: 1px solid rgba(33, 33, 33, 0.2);
+  border-radius: 4px;
+  color: #747474;
+  font-size: 1rem;
+  height: 40px;
+  outline: none;
+  padding-left: 10px;
+  width: 370px;
+  background: none;
 }
 
 :deep(.autoComplete_wrapper ul) {
