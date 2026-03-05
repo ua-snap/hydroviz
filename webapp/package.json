@@ -12,6 +12,7 @@
   "dependencies": {
     "@pinia/nuxt": "^0.7.0",
     "@stdlib/stats-lowess": "^0.2.2",
+    "@tarekraafat/autocomplete.js": "^10.2.9",
     "bulma": "^1.0.2",
     "leaflet": "^1.9.4",
     "lodash": "^4.17.21",
