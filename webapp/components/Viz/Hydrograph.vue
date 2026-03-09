@@ -3,7 +3,7 @@ import { toRaw } from 'vue'
 import lowess from '@stdlib/stats-lowess'
 import { getLayout, getConfig, initializeChart } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
-import type { Data } from 'plotly.js-basic-dist-min'
+import type { Data } from 'plotly.js'
 
 const props = defineProps(['streamHydrograph'])
 
