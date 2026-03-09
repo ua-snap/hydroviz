@@ -34,6 +34,8 @@ export const getLayout = (
       size: 24,
     },
     automargin: true,
+    yref: 'container',
+    y: 0.95,
   },
   xaxis: {
     automargin: true,
@@ -56,8 +58,8 @@ export const getLayout = (
   },
   margin: {
     l: 100,
-    t: 50,
-    b: 100,
+    t: 80,
+    b: 60,
     pad: 20,
   },
   autosize: true,
