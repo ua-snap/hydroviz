@@ -2,7 +2,7 @@
 import { watch, toRaw } from 'vue'
 import { getLayout, getConfig, initializeChart } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
-import type { Data } from 'plotly.js-basic-dist-min'
+import type { Data } from 'plotly.js'
 
 const props = defineProps(['streamStats'])
 

@@ -1,4 +1,4 @@
-import type { Config, Layout } from 'plotly.js-basic-dist-min'
+import type { Config, Layout } from 'plotly.js'
 
 export const getConfig = (filename: string): Partial<Config> => ({
   responsive: true, // changes the height / width dynamically for charts
