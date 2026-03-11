@@ -65,10 +65,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     try {
       if ($config.public.staticFixtures) {
         console.log('Using static fixtures for hydroviz API data')
-        statsResponse = await import('@/assets/fixtures/stats.json')
-        hydrographResponse = await import(
-          '@/assets/fixtures/modeled_climatology.json'
-        )
+        dataResponse = await import('@/assets/fixtures/api_output_example.json')
       } else {
         dataResponse = await $fetch(dataUrl)
       }
