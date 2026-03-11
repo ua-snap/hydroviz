@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { fnc } from '~/utils/general'
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { streamStats } = storeToRefs(streamSegmentStore)
+let { streamSummary } = storeToRefs(streamSegmentStore)
 
 function adjectiveForPercent(value) {
   if (value < -50) {
@@ -71,8 +71,8 @@ function blurbFromEventCountOrDuration(
 const isMeanAnnualFlowHighlyVariable = computed(() => {
   return (
     Math.abs(
-      streamStats.value.summary.ma99_delta.range_high -
-        streamStats.value.summary.ma99_delta.range_low
+      streamSummary.value.ma99_delta.range_high -
+        streamSummary.value.ma99_delta.range_low
     ) > 50
   )
 })
@@ -80,25 +80,25 @@ const isMeanAnnualFlowHighlyVariable = computed(() => {
 const isMax1DayFlowHighlyVariable = computed(() => {
   return (
     Math.abs(
-      streamStats.value.summary.dh1_delta.range_high -
-        streamStats.value.summary.dh1_delta.range_low
+      streamSummary.value.dh1_delta.range_high -
+        streamSummary.value.dh1_delta.range_low
     ) > 50 ||
     Math.abs(
-      streamStats.value.summary.dl1_delta.range_high -
-        streamStats.value.summary.dl1_delta.range_low
+      streamSummary.value.dl1_delta.range_high -
+        streamSummary.value.dl1_delta.range_low
     ) > 50
   )
 })
 
 const lowFlow = computed(() => {
-  return streamStats.value.summary.ma99_hist.value <= 5
+  return streamSummary.value.ma99_hist.value <= 5
 })
 
 const sculptedMeanAnnualFlow = computed(() => {
-  if (streamStats.value.summary.ma99_hist.value == 0) {
+  if (streamSummary.value.ma99_hist.value == 0) {
     return 'less than 1'
   }
-  return 'of about ' + fnc(streamStats.value.summary.ma99_hist.value)
+  return 'of about ' + fnc(streamSummary.value.ma99_hist.value)
 })
 
 function orMoreIf100Percent(amount: number): string {
@@ -120,36 +120,36 @@ function orMoreIf100Percent(amount: number): string {
       <li>
         Historically, this stream has a mean annual flow
         {{ sculptedMeanAnnualFlow }} cf/s. The mean annual flow is projected to
-        {{ adjectiveForPercent(streamStats.summary.ma99_delta.value) }} ({{
-          streamStats.summary.ma99_delta.value
-        }}%{{ orMoreIf100Percent(streamStats.summary.ma99_delta.value) }}) by
+        {{ adjectiveForPercent(streamSummary.ma99_delta.value) }} ({{
+          streamSummary.ma99_delta.value
+        }}%{{ orMoreIf100Percent(streamSummary.ma99_delta.value) }}) by
         mid-century.
         <span v-if="isMeanAnnualFlowHighlyVariable">&#x26A0;&#xFE0F;</span>
       </li>
       <li>
         The maximum 1-day flow is projected to
-        {{ adjectiveForPercent(streamStats.summary.dh1_delta.value) }} ({{
-          streamStats.summary.dh1_delta.value
-        }}%{{ orMoreIf100Percent(streamStats.summary.dh1_delta.value) }}) and
-        the minimum 1-day flow is projected to
-        {{ adjectiveForPercent(streamStats.summary.dl1_delta.value) }} ({{
-          streamStats.summary.dl1_delta.value
-        }}%{{ orMoreIf100Percent(streamStats.summary.dl1_delta.value) }}).
+        {{ adjectiveForPercent(streamSummary.dh1_delta.value) }} ({{
+          streamSummary.dh1_delta.value
+        }}%{{ orMoreIf100Percent(streamSummary.dh1_delta.value) }}) and the
+        minimum 1-day flow is projected to
+        {{ adjectiveForPercent(streamSummary.dl1_delta.value) }} ({{
+          streamSummary.dl1_delta.value
+        }}%{{ orMoreIf100Percent(streamSummary.dl1_delta.value) }}).
         <span v-if="isMax1DayFlowHighlyVariable">&#x26A0;&#xFE0F;</span>
       </li>
       <li>
         The mean number of high flood pulse events is projected to
         {{
           blurbFromEventCountOrDuration(
-            streamStats.summary.fh1_hist.value,
-            streamStats.summary.fh1_delta.value,
+            streamSummary.fh1_hist.value,
+            streamSummary.fh1_delta.value,
             'event'
           )
         }}, and the high flow pulse duration is projected to
         {{
           blurbFromEventCountOrDuration(
-            streamStats.summary.dh15_hist.value,
-            streamStats.summary.dh15_delta.value,
+            streamSummary.dh15_hist.value,
+            streamSummary.dh15_delta.value,
             'day'
           )
         }}.
@@ -158,15 +158,15 @@ function orMoreIf100Percent(amount: number): string {
         The mean number of low flood pulse events is projected to
         {{
           blurbFromEventCountOrDuration(
-            streamStats.summary.fl1_hist.value,
-            streamStats.summary.fl1_delta.value,
+            streamSummary.fl1_hist.value,
+            streamSummary.fl1_delta.value,
             'event'
           )
         }}, and the low flow pulse duration is projected to
         {{
           blurbFromEventCountOrDuration(
-            streamStats.summary.dl16_hist.value,
-            streamStats.summary.dl16_delta.value,
+            streamSummary.dl16_hist.value,
+            streamSummary.dl16_delta.value,
             'day'
           )
         }}.

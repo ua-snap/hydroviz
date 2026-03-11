@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { streamStats, streamHydrograph, hucId, segmentId } =
+let { streamStats, streamHydrograph, streamMonthlyFlow, hucId, segmentId } =
   storeToRefs(streamSegmentStore)
 
 onMounted(() => {
@@ -52,7 +52,7 @@ onUnmounted(() => {
     <section class="section">
       <div class="container">
         <h4 class="title is-4">Magnitude statistics</h4>
-        <VizMonthlyFlow :stream-stats="streamStats" />
+        <VizMonthlyFlow :stream-monthly-flow="streamMonthlyFlow" />
         <StatsTable :stream-stats="streamStats" category="magnitude" />
       </div>
     </section>
