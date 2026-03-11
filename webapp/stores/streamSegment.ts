@@ -4,6 +4,7 @@ import { ref, shallowRef } from 'vue'
 export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const isLoading = ref<boolean>(false)
   const segmentId = ref(null)
+  const segmentName = ref(null)
   const hucId = ref(null)
   const streamSummary = shallowRef(null)
   const streamHydrograph = shallowRef(null)
@@ -52,6 +53,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const fetchStreamStats = async (): Promise<void> => {
     // BUG: this causes the front end render to fail because
     // it still tries to render the chart (!)
+    segmentName.value = null
     streamSummary.value = null
     streamHydrograph.value = null
     streamMonthlyFlow.value = null
@@ -73,6 +75,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
       isLoading.value = false
     }
 
+    segmentName.value = dataResponse['name']
     streamSummary.value = dataResponse['summary']
     streamHydrograph.value = dataResponse['hydrograph']
     streamMonthlyFlow.value = dataResponse['monthly_flow']
@@ -80,15 +83,18 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   }
 
   const clearStats = (): void => {
+    segmentId.value = null
+    segmentName.value = null
     streamSummary.value = null
     streamHydrograph.value = null
     streamMonthlyFlow.value = null
     streamStats.value = null
-    segmentId.value = null
     hucId.value = null
   }
 
   return {
+    segmentId,
+    segmentName,
     streamSummary,
     streamHydrograph,
     streamMonthlyFlow,
@@ -96,7 +102,6 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     fetchStreamStats,
     fetchHucStats,
     clearStats,
-    segmentId,
     hucId,
     isLoading,
   }
