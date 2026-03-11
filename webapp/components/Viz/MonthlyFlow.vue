@@ -35,13 +35,8 @@ watch(props.streamMonthlyFlow, newValue => {
 })
 
 // stats is assumed to be non-null, raw, and only dynamic land cover now.
-const buildChart = stats => {
+const buildChart = () => {
   let traces: Data[] = []
-
-  // Remove the historical modeled dataset (Maurer) & build that data for hydrograph
-  let historicalMaurer: Record<string, any> = {}
-  historicalMaurer['Maurer'] = stats['Maurer']
-  delete stats['Maurer']
 
   // Create historical trace
   let historicalFlowData = props.streamMonthlyFlow['historical']
