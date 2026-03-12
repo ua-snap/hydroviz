@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { streamStats, streamHydrograph, hucId, segmentId } =
-  storeToRefs(streamSegmentStore)
+let {
+  streamStats,
+  streamHydrograph,
+  streamMonthlyFlow,
+  hucId,
+  segmentId,
+  segmentName,
+} = storeToRefs(streamSegmentStore)
 
 onMounted(() => {
   // Prefer HUC mode when both hucId and segmentId are set so behavior matches ReportMap
@@ -28,8 +34,8 @@ onUnmounted(() => {
     <section class="section">
       <div class="container">
         <h3 class="title is-3">
-          Statistics for {{ streamStats.name }}
-          <span class="segmentId">ID{{ streamStats.id }}</span>
+          Statistics for {{ segmentName }}
+          <span class="segmentId">ID{{ segmentId }}</span>
         </h3>
         <ReportMap class="my-6" />
         <div class="content is-size-5">
@@ -52,7 +58,7 @@ onUnmounted(() => {
     <section class="section">
       <div class="container">
         <h4 class="title is-4">Magnitude statistics</h4>
-        <VizMonthlyFlow :stream-stats="streamStats" />
+        <VizMonthlyFlow :stream-monthly-flow="streamMonthlyFlow" />
         <StatsTable :stream-stats="streamStats" category="magnitude" />
       </div>
     </section>

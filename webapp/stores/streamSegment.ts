@@ -4,9 +4,12 @@ import { ref, shallowRef } from 'vue'
 export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const isLoading = ref<boolean>(false)
   const segmentId = ref(null)
+  const segmentName = ref(null)
   const hucId = ref(null)
-  const streamStats = shallowRef(null)
+  const streamSummary = shallowRef(null)
   const streamHydrograph = shallowRef(null)
+  const streamMonthlyFlow = shallowRef(null)
+  const streamStats = shallowRef(null)
   const { $config } = useNuxtApp()
 
   // If we have a hucId but not a segmentId, set segmentId to HUC outlet.
@@ -50,47 +53,55 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const fetchStreamStats = async (): Promise<void> => {
     // BUG: this causes the front end render to fail because
     // it still tries to render the chart (!)
-    streamStats.value = null
+    segmentName.value = null
+    streamSummary.value = null
     streamHydrograph.value = null
-    var statsResponse, hydrographResponse
+    streamMonthlyFlow.value = null
+    streamStats.value = null
+    var dataResponse
 
-    let statsRequestUrl = `${$config.public.snapApiUrl}/conus_hydrology/stats/${segmentId.value}?models=Maurer,CCSM4`
-    let hydrographRequestUrl = `${$config.public.snapApiUrl}/conus_hydrology/modeled_climatology/${segmentId.value}?models=Maurer,CCSM4`
+    let dataUrl = `${$config.public.snapApiUrl}/conus_hydrology/hydroviz/${segmentId.value}/CCSM4`
 
     // Needs error checking, etc.
     isLoading.value = true
     try {
       if ($config.public.staticFixtures) {
         console.log('Using static fixtures for hydroviz API data')
-        statsResponse = await import('@/assets/fixtures/stats.json')
-        hydrographResponse = await import(
-          '@/assets/fixtures/modeled_climatology.json'
-        )
+        dataResponse = await import('@/assets/fixtures/api_output_example.json')
       } else {
-        statsResponse = await $fetch(statsRequestUrl)
-        hydrographResponse = await $fetch(hydrographRequestUrl)
+        dataResponse = await $fetch(dataUrl)
       }
     } finally {
       isLoading.value = false
     }
-    streamStats.value = statsResponse
-    streamHydrograph.value = hydrographResponse
+
+    segmentName.value = dataResponse['name']
+    streamSummary.value = dataResponse['summary']
+    streamHydrograph.value = dataResponse['hydrograph']
+    streamMonthlyFlow.value = dataResponse['monthly_flow']
+    streamStats.value = dataResponse['stats']
   }
 
   const clearStats = (): void => {
-    streamStats.value = null
-    streamHydrograph.value = null
     segmentId.value = null
+    segmentName.value = null
+    streamSummary.value = null
+    streamHydrograph.value = null
+    streamMonthlyFlow.value = null
+    streamStats.value = null
     hucId.value = null
   }
 
   return {
-    streamStats,
+    segmentId,
+    segmentName,
+    streamSummary,
     streamHydrograph,
+    streamMonthlyFlow,
+    streamStats,
     fetchStreamStats,
     fetchHucStats,
     clearStats,
-    segmentId,
     hucId,
     isLoading,
   }
