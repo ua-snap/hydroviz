@@ -10,8 +10,8 @@ onMounted(() => {
       src: async (query: string) => {
         // Escape single quotes for safe use inside CQL string literals
         const safeQuery = query.replace(/'/g, "''")
-        const segUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=seg_id_nat,GNIS_NAME,GAUGE_ID&cql_filter=GNIS_NAME%20ILIKE%20%27%25${safeQuery}%25%27`
-        const hucUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8_conus_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=%20huc8,name&cql_filter=name%20ILIKE%20%27%25${safeQuery}%25%27`
+        const segUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=seg_id_nat,GNIS_NAME,GAUGE_ID&cql_filter=GNIS_NAME%20ILIKE%20%27%25${safeQuery}%25%27%20OR%20GAUGE_ID%20ILIKE%20%27%25${safeQuery}%25%27`
+        const hucUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8_conus_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=huc8,name&cql_filter=name%20ILIKE%20%27%25${safeQuery}%25%27%20OR%20huc8%20LIKE%20%27%25${safeQuery}%25%27`
 
         let items: any[] = []
 
@@ -23,11 +23,17 @@ onMounted(() => {
 
           if (segRes && Array.isArray(segRes.features)) {
             segRes.features.forEach((feature: any) => {
-              let seg_id_nat = feature.properties.seg_id_nat
-              let name = `${feature.properties.GNIS_NAME} (${seg_id_nat})`
+              let segIdNat = feature.properties.seg_id_nat
+              let gaugeId = feature.properties.GAUGE_ID
+              let name = feature.properties.GNIS_NAME
+              if (gaugeId && gaugeId !== 'NA') {
+                name += ` (ID: ${segIdNat}, ${gaugeId})`
+              } else {
+                name += ` (ID: ${segIdNat})`
+              }
               items.push({
                 name: name,
-                id: seg_id_nat,
+                id: segIdNat,
                 category: 'stream segment',
               })
             })
