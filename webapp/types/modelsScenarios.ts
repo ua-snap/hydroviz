@@ -1,4 +1,4 @@
-type AppContext = 'mid' | 'extremes'
+export type AppContext = 'mid' | 'extremes'
 
 type LcsType = 'dynamic' | 'static'
 
