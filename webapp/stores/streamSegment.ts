@@ -61,7 +61,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     streamStats.value = null
     var dataResponse
 
-    let dataUrl = `${$config.public.snapApiUrl}/conus_hydrology/hydroviz/${segmentId.value}/CCSM4`
+    let dataUrl = `${$config.public.snapApiUrl}/conus_hydrology/hydroviz/${segmentId.value}`
 
     // Needs error checking, etc.
     isLoading.value = true
