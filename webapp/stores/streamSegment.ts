@@ -10,7 +10,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const streamHydrograph = shallowRef(null)
   const streamMonthlyFlow = shallowRef(null)
   const streamStats = shallowRef(null)
-  const appContext = ref<AppContext>('mid2')
+  const appContext = ref<AppContext>('mid')
   const { $config } = useNuxtApp()
 
   // If we have a hucId but not a segmentId, set segmentId to HUC outlet.
