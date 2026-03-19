@@ -1,4 +1,4 @@
-type appContext = 'mid' | 'extremes'
+type AppContext = 'mid' | 'extremes'
 
 type LcsType = 'dynamic' | 'static'
 
