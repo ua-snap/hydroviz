@@ -44,11 +44,10 @@ onUnmounted(() => {
           uncertainty and some succinct characterization of net change over
           time.
         </div>
-
         <DataSentences />
       </div>
     </section>
-
+    <StickyToggle />
     <section class="section">
       <div class="container">
         <h4 class="title is-4">Hydrograph</h4>
