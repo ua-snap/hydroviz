@@ -41,6 +41,7 @@ let { appContext } = storeToRefs(streamSegmentStore)
       </label>
     </span>
     in charts and graphs below.
+    <span>Value: {{ appContext }}</span>
   </div>
 </template>
 

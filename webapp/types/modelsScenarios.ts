@@ -1,3 +1,5 @@
+type appContext = 'mid' | 'extremes'
+
 type LcsType = 'dynamic' | 'static'
 
 export const lcs: Record<lcsType, string> = {
