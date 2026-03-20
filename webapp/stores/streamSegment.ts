@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, shallowRef } from 'vue'
 
 export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const isLoading = ref<boolean>(false)
@@ -8,31 +8,72 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
 
   const segmentId = ref(null)
   const segmentName = ref(null)
-  const streamStats = ref(null)
-  const streamHydrograph = ref(null)
+  const hucId = ref(null)
+  const streamSummary = shallowRef(null)
+  const streamHydrograph = shallowRef(null)
+  const streamMonthlyFlow = shallowRef(null)
+  const streamStats = shallowRef(null)
+  const appContext = ref<AppContext>('mid')
   const { $config } = useNuxtApp()
 
+  // If we have a hucId but not a segmentId, set segmentId to HUC outlet.
+  const fetchHucStats = async (): Promise<void> => {
+    isLoading.value = true
+    const hucBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=huc8=`
+    let hucUrl = hucBaseUrl + hucId.value
+    try {
+      const response = await fetch(hucUrl)
+      const data = await response.json()
+
+      apiFailed.value = false
+
+      const features = Array.isArray(data?.features) ? data.features : []
+      if (features.length === 0) {
+        console.error('No features returned for HUC:', hucId.value)
+        return
+      }
+
+      // Find the first feature in the response where properties.h8_outlet is 1.
+      // TODO: What do we do if there is more than 1 outlet stream segment?
+      const outletFeature = features.find(
+        (feature: any) => feature?.properties?.h8_outlet === 1
+      )
+
+      if (!outletFeature || !outletFeature.properties) {
+        console.error('No outlet feature found for HUC:', hucId.value)
+        return
+      }
+
+      segmentId.value = outletFeature.properties.seg_id_nat
+
+      if (segmentId.value != null) {
+        await fetchStreamStats()
+      }
+    } catch (error) {
+      console.error('Error fetching HUC data:', error)
+    } finally {
+      isLoading.value = false
+    }
+  }
+
   const fetchStreamStats = async (): Promise<void> => {
-    let statsRequestUrl = `${$config.public.snapApiUrl}/conus_hydrology/stats/${segmentId.value}`
-    let hydrographRequestUrl = `${$config.public.snapApiUrl}/conus_hydrology/modeled_climatology/${segmentId.value}`
-
-    apiFailed.value = false
-
     // BUG: this causes the front end render to fail because
     // it still tries to render the chart (!)
-    streamStats.value = null
+    segmentName.value = null
+    streamSummary.value = null
     streamHydrograph.value = null
-    var statsResponse, hydrographResponse
+    streamMonthlyFlow.value = null
+    streamStats.value = null
+    var dataResponse
+
+    let dataUrl = `${$config.public.snapApiUrl}/conus_hydrology/hydroviz/${segmentId.value}/CCSM4`
 
     // Needs error checking, etc.
     isLoading.value = true
     try {
       if ($config.public.staticFixtures) {
         console.log('Using static fixtures for hydroviz API data')
-        statsResponse = await import('@/assets/fixtures/stats.json')
-        hydrographResponse = await import(
-          '@/assets/fixtures/modeled_climatology.json'
-        )
+        dataResponse = await import('@/assets/fixtures/api_output_example.json')
       } else {
         try {
           // Used to track mildly slow data API responses that don't abort.
@@ -47,10 +88,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
           }, 60000)
 
           try {
-            statsResponse = await $fetch(statsRequestUrl, {
-              signal: controller.signal,
-            })
-            hydrographResponse = await $fetch(hydrographRequestUrl, {
+            dataResponse = await $fetch(dataUrl, {
               signal: controller.signal,
             })
           } finally {
@@ -72,24 +110,41 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
       apiSlow.value = false
     }
 
-    // Treat the failure of either API endpoint as a total data failure
-    // to avoid partial/unpredictable webapp states. In production, it's
-    // unlikely that one endpoint will succeed when the other fails, so
-    // it's probably not worth trying to handle them separately.
-    if ('data' in statsResponse && 'data' in hydrographResponse) {
-      streamStats.value = statsResponse
-      streamHydrograph.value = hydrographResponse
+    try {
+      segmentName.value = dataResponse['name']
+      streamSummary.value = dataResponse['summary']
+      streamHydrograph.value = dataResponse['hydrograph']
+      streamMonthlyFlow.value = dataResponse['monthly_flow']
+      streamStats.value = dataResponse['stats']
+    } catch {
+      console.error('API response does not contain expected data.')
     }
   }
 
+  const clearStats = (): void => {
+    segmentId.value = null
+    segmentName.value = null
+    streamSummary.value = null
+    streamHydrograph.value = null
+    streamMonthlyFlow.value = null
+    streamStats.value = null
+    hucId.value = null
+  }
+
   return {
-    streamStats,
-    streamHydrograph,
-    fetchStreamStats,
-    segmentName,
     segmentId,
+    segmentName,
+    streamSummary,
+    streamHydrograph,
+    streamMonthlyFlow,
+    streamStats,
+    fetchStreamStats,
+    fetchHucStats,
+    clearStats,
+    hucId,
     isLoading,
     apiSlow,
     apiFailed,
+    appContext,
   }
 })

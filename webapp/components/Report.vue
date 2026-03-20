@@ -1,8 +1,26 @@
 <script setup lang="ts">
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { streamStats, segmentName, streamHydrograph } =
-  storeToRefs(streamSegmentStore)
+let {
+  streamStats,
+  streamHydrograph,
+  streamMonthlyFlow,
+  hucId,
+  segmentId,
+  segmentName,
+} = storeToRefs(streamSegmentStore)
+
+onMounted(() => {
+  // Prefer HUC mode when both hucId and segmentId are set so behavior matches ReportMap
+  if (hucId.value !== null) {
+    streamSegmentStore.fetchHucStats()
+  } else if (segmentId.value !== null) {
+    streamSegmentStore.fetchStreamStats()
+  }
+})
+onUnmounted(() => {
+  streamSegmentStore.clearStats()
+})
 </script>
 
 <template>
@@ -15,16 +33,21 @@ let { streamStats, segmentName, streamHydrograph } =
   <div v-if="streamStats">
     <section class="section">
       <div class="container">
-        <h3 class="title is-3">Statistics for {{ segmentName }}</h3>
+        <h3 class="title is-3">
+          Statistics for {{ segmentName }}
+          <span class="segmentId">ID{{ segmentId }}</span>
+        </h3>
+        <ReportMap class="my-6" />
         <div class="content is-size-5">
           Introduction to the report goes here. We can pull some summarized info
           about the specific stream segment in order to highlight aspects of
           uncertainty and some succinct characterization of net change over
           time.
         </div>
+        <DataSentences />
       </div>
     </section>
-
+    <StickyToggle />
     <section class="section">
       <div class="container">
         <h4 class="title is-4">Hydrograph</h4>
@@ -34,7 +57,7 @@ let { streamStats, segmentName, streamHydrograph } =
     <section class="section">
       <div class="container">
         <h4 class="title is-4">Magnitude statistics</h4>
-        <VizMonthlyFlow :stream-stats="streamStats" />
+        <VizMonthlyFlow :stream-monthly-flow="streamMonthlyFlow" />
         <StatsTable :stream-stats="streamStats" category="magnitude" />
       </div>
     </section>

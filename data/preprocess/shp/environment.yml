@@ -1,0 +1,23 @@
+name: hydroviz_shp
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - black
+  - cartopy
+  - fiona
+  - gdal
+  - geopandas
+  - geos
+  - ipykernel
+  - ipython
+  - ipywidgets
+  - jupyterlab
+  - matplotlib
+  - notebook
+  - numpy
+  - pandas
+  - python
+  - shapely=2.1
+
+

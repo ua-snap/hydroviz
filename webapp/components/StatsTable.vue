@@ -28,19 +28,11 @@ var statsInCategory = $_.filter(streamflowStatistics, {
         </th>
         <td v-html="stat.description"></td>
         <td>
-          {{
-            Number(
-              streamStats.data['dynamic']['CCSM4']['historical']['1976-2005'][
-                stat.id
-              ]
-            )
-          }}
+          {{ Number(streamStats['historical']['1976-2005'][stat.id]) }}
           <span style="color: #888" v-html="stat.units_short"></span>
         </td>
         <td v-for="era in Object.keys(eras)" :key="era">
-          {{
-            Number(streamStats.data['dynamic']['CCSM4']['rcp85'][era][stat.id])
-          }}
+          {{ Number(streamStats['projected'][era][stat.id]) }}
           <span class="units" v-html="stat.units_short"></span>
         </td>
       </tr>

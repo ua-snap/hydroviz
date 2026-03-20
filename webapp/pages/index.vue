@@ -1,5 +1,5 @@
 <template>
   <Intro />
+  <Search />
   <Map />
-  <Report />
 </template>
