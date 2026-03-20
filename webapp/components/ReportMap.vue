@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const { $L, $config } = useNuxtApp()
 import { useStreamSegmentStore } from '~/stores/streamSegment'
+import { getHandleCoord } from '~/utils/map'
 const streamSegmentStore = useStreamSegmentStore()
 let { hucId } = storeToRefs(streamSegmentStore)
 
@@ -8,11 +9,6 @@ const hucBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&ver
 const segBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=`
 
 let map: any = null
-
-const getHandleCoord = (feature: any) => {
-  let firstCoord = feature.geometry.coordinates[0][0]
-  return $L.latLng(firstCoord[1], firstCoord[0])
-}
 
 const addHuc = () => {
   let hucUrl = hucBaseUrl + hucId.value
