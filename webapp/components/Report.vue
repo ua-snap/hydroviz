@@ -5,6 +5,7 @@ let {
   streamStats,
   streamHydrograph,
   streamMonthlyFlow,
+  streamMinMaxFlowDates,
   hucId,
   segmentId,
   segmentName,
@@ -37,7 +38,7 @@ onUnmounted(() => {
           Statistics for {{ segmentName }}
           <span class="segmentId">ID{{ segmentId }}</span>
         </h3>
-        <ReportMap class="my-6" />
+        <!-- <ReportMap class="my-6" /> -->
         <div class="content is-size-5">
           Introduction to the report goes here. We can pull some summarized info
           about the specific stream segment in order to highlight aspects of
@@ -51,38 +52,41 @@ onUnmounted(() => {
     <section class="section">
       <div class="container">
         <h4 class="title is-4">Hydrograph</h4>
-        <VizHydrograph :stream-hydrograph="streamHydrograph" />
+        <!-- <VizHydrograph :stream-hydrograph="streamHydrograph" /> -->
       </div>
     </section>
     <section class="section">
       <div class="container">
         <h4 class="title is-4">Magnitude statistics</h4>
-        <VizMonthlyFlow :stream-monthly-flow="streamMonthlyFlow" />
-        <StatsTable :stream-stats="streamStats" category="magnitude" />
+        <!-- <VizMonthlyFlow :stream-monthly-flow="streamMonthlyFlow" /> -->
+        <VizMinMaxFlowDates
+          :stream-min-max-flow-dates="streamMinMaxFlowDates"
+        />
+        <!-- <StatsTable :stream-stats="streamStats" category="magnitude" /> -->
       </div>
     </section>
     <section class="section">
       <div class="container">
         <h4 class="title is-4">Frequency statistics</h4>
-        <StatsTable :stream-stats="streamStats" category="frequency" />
+        <!-- <StatsTable :stream-stats="streamStats" category="frequency" /> -->
       </div>
     </section>
     <section class="section">
       <div class="container">
         <h4 class="title is-4">Duration statistics</h4>
-        <StatsTable :stream-stats="streamStats" category="duration" />
+        <!-- <StatsTable :stream-stats="streamStats" category="duration" /> -->
       </div>
     </section>
     <section class="section">
       <div class="container">
         <h4 class="title is-4">Timing statistics</h4>
-        <StatsTable :stream-stats="streamStats" category="timing" />
+        <!-- <StatsTable :stream-stats="streamStats" category="timing" /> -->
       </div>
     </section>
     <section class="section">
       <div class="container">
         <h4 class="title is-4">Rate of change statistics</h4>
-        <StatsTable :stream-stats="streamStats" category="rate_of_change" />
+        <!-- <StatsTable :stream-stats="streamStats" category="rate_of_change" /> -->
       </div>
     </section>
   </div>
