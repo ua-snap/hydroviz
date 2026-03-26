@@ -34,10 +34,6 @@ onMounted(() => {
   )
 })
 
-watch(props.streamMonthlyFlow, newValue => {
-  initializeChart($Plotly, 'monthly-flow', buildChart, toRaw(newValue))
-})
-
 watch(appContext, () => {
   initializeChart(
     $Plotly,

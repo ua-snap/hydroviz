@@ -20,10 +20,6 @@ onMounted(() => {
   )
 })
 
-watch(props.streamHydrograph, newValue => {
-  initializeChart($Plotly, 'hydrograph', buildChart, toRaw(newValue))
-})
-
 watch(appContext, () => {
   initializeChart(
     $Plotly,
