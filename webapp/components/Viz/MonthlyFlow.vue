@@ -59,17 +59,18 @@ const buildChart = () => {
     return historicalFlowData[monthKey]
   })
 
-  let projectedFlowData
-  if (appContext.value === 'mid') {
-    projectedFlowData = []
-    Object.keys(monthLabels).forEach(monthKey => {
-      projectedFlowData.push(
-        props.streamMonthlyFlow['projected'][appContext.value][monthKey]
-      )
-    })
-  } else {
-    projectedFlowData = props.streamMonthlyFlow['projected'][appContext.value]
-  }
+  const projectedFlowDataMid: number[] =
+    appContext.value === 'mid'
+      ? Object.keys(monthLabels).map(
+          monthKey =>
+            props.streamMonthlyFlow['projected'][appContext.value][monthKey]
+        )
+      : []
+
+  const projectedFlowDataExtremes: Record<string, number[]> =
+    appContext.value === 'extremes'
+      ? props.streamMonthlyFlow['projected'][appContext.value]
+      : {}
 
   // For "extremes" mode, show a boxplot populated by all values across all models
   // and scenarios for each month. For "mid" mode, show a single point of the mean
@@ -83,10 +84,10 @@ const buildChart = () => {
     let showLegend = true
     Object.keys(monthLabels).forEach(monthKey => {
       traces.push({
-        x: Array(projectedFlowData[monthKey].length).fill(
+        x: Array(projectedFlowDataExtremes[monthKey].length).fill(
           monthLabels[monthKey]
         ),
-        y: projectedFlowData[monthKey],
+        y: projectedFlowDataExtremes[monthKey],
         type: 'box',
         name: 'Projected (Modeled), 2046-2075',
         marker: { color: '#3182bd', size: 8 },
@@ -99,7 +100,7 @@ const buildChart = () => {
   } else {
     traces.push({
       x: Object.values(monthLabels),
-      y: projectedFlowData,
+      y: projectedFlowDataMid,
       type: 'scatter',
       mode: 'markers',
       name: 'Projected (Modeled), 2046-2075',
