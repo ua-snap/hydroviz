@@ -137,18 +137,18 @@ const buildChart = () => {
 
   const layout = getLayout(titleText, '')
 
-  let firstofMonthValues = [
+  let firstOfMonthValues = [
     1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335,
   ]
 
-  firstofMonthValues = firstofMonthValues.map((doy: number) => {
+  firstOfMonthValues = firstOfMonthValues.map((doy: number) => {
     return convertTo360(doy)
   })
 
   layout['polar'] = {
     angularaxis: {
       tickmode: 'array',
-      tickvals: firstofMonthValues,
+      tickvals: firstOfMonthValues,
       ticktext: [
         'Jan',
         'Feb',
