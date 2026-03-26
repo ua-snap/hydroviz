@@ -25,9 +25,15 @@ cd webapp
 npm run dev
 ```
 
-## Deploying to production
+## Deploying
 
-(work in progress)
+To deploy to our development S3 bucket, set environment variables if necessary, then run:
+
+```bash
+rm -fr .output
+npm run generate
+aws s3 sync .output/public s3://hydroviz-dev/ --acl public-read --delete
+```
 
 ### Enable website hosting on the AWS S3 bucket:
 
