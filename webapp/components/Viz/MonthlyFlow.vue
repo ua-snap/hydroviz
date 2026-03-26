@@ -59,7 +59,7 @@ const buildChart = () => {
     return historicalFlowData[monthKey]
   })
 
-  let projectedFlowData
+  let projectedFlowData: number[]
   if (appContext.value === 'mid') {
     projectedFlowData = []
     Object.keys(monthLabels).forEach(monthKey => {
