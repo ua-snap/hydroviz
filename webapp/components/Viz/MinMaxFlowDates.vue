@@ -172,7 +172,7 @@ const buildChart = () => {
     },
   }
 
-  const config = getConfig()
+  const config = getConfig('min-max-flow-dates')
 
   $Plotly.newPlot('min-max-flow-dates', traces, layout, config)
 }
