@@ -7,6 +7,10 @@ import type { Data } from 'plotly.js'
 
 const props = defineProps(['streamHydrograph'])
 
+import { useStreamSegmentStore } from '~/stores/streamSegment'
+const streamSegmentStore = useStreamSegmentStore()
+let { appContext } = storeToRefs(streamSegmentStore)
+
 onMounted(() => {
   initializeChart(
     $Plotly,
@@ -16,8 +20,13 @@ onMounted(() => {
   )
 })
 
-watch(props.streamHydrograph, newValue => {
-  initializeChart($Plotly, 'hydrograph', buildChart, toRaw(newValue))
+watch(appContext, () => {
+  initializeChart(
+    $Plotly,
+    'hydrograph',
+    buildChart,
+    toRaw(props.streamHydrograph)
+  )
 })
 
 // Round to significant digits.  Stub.
@@ -107,9 +116,7 @@ const buildChart = hg => {
     name: 'Historical Mean (Modeled), 1976-2005',
   })
 
-  // There's a gotcha here: two scenarios (ACCESS1-0, BNU-ESM) don't have RCP 2.6 or 6.0.
-  // Historical needs to have been removed.
-  let projectedFlowData = hg['projected']
+  let projectedFlowData = hg['projected'][appContext.value]
 
   let traceConfig = {
     doy_min: {
