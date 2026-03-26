@@ -2,9 +2,9 @@
 import { watch, toRaw } from 'vue'
 import { getLayout, getConfig, initializeChart } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
-import type { Data } from 'plotly.js-dist-min'
+import type { Data } from 'plotly.js'
 
-const props = defineProps(['streamStats'])
+const props = defineProps(['streamMonthlyFlow'])
 
 const monthLabels = {
   ma21: 'Oct',
@@ -26,72 +26,28 @@ onMounted(() => {
     $Plotly,
     'monthly-flow',
     buildChart,
-    toRaw(props.streamStats.data.static)
+    toRaw(props.streamMonthlyFlow)
   )
 })
 
-watch(props.streamStats, newValue => {
-  initializeChart(
-    $Plotly,
-    'monthly-flow',
-    buildChart,
-    toRaw(newValue.data.static)
-  )
+watch(props.streamMonthlyFlow, newValue => {
+  initializeChart($Plotly, 'monthly-flow', buildChart, toRaw(newValue))
 })
-
-// Returns an object with keys for each month, and values are arrays of flow
-// values across all projected models.
-function buildMonthlyFlowData(monthlyFlowData, scenario: Scenario, era: Era) {
-  if (!monthlyFlowData || !era) {
-    throw 'stream stats data missing or era missing'
-  }
-
-  // Initialize each month with an empty array.
-  let monthValues: Record<string, number[]> = {}
-  Object.keys(monthLabels).forEach(monthKey => {
-    monthValues[monthKey] = []
-  })
-
-  // Fill each month's array with values across all models.
-  Object.keys(monthlyFlowData).forEach(model => {
-    if (scenario in monthlyFlowData[model]) {
-      Object.keys(monthLabels).forEach(monthKey => {
-        monthValues[monthKey]!.push(
-          monthlyFlowData[model][scenario][era][monthKey]
-        )
-      })
-    }
-  })
-
-  return monthValues
-}
 
 // stats is assumed to be non-null, raw, and only dynamic land cover now.
-const buildChart = stats => {
+const buildChart = () => {
   let traces: Data[] = []
 
-  // Remove the historical modeled dataset (Maurer) & build that data for hydrograph
-  let historicalMaurer: Record<string, any> = {}
-  historicalMaurer['Maurer'] = stats['Maurer']
-  delete stats['Maurer']
-
   // Create historical trace
-  let historicalFlowData = buildMonthlyFlowData(
-    historicalMaurer,
-    'historical',
-    '1976-2005'
-  )
+  let historicalFlowData = props.streamMonthlyFlow['historical']
 
-  // Flatten object of arrays into just one array of historical monthly values.
-  let historicalFlowFlattened = $_.map(
-    Object.values(historicalFlowData),
-    (monthValues: number[]) => {
-      return monthValues[0]
-    }
-  )
+  // Convert historical data into an array in the order of monthLabels.
+  let historicalFlowDataArray = $_.map(Object.keys(monthLabels), monthKey => {
+    return historicalFlowData[monthKey]
+  })
 
   // Historical needs to have been removed.
-  let projectedFlowData = buildMonthlyFlowData(stats, 'rcp85', '2046-2075')
+  let projectedFlowData = props.streamMonthlyFlow['projected']
 
   // Each box plot needs to be its own trace (due to Plotly.js limitations),
   // and a new legend entry is added for each trace. To clean this up, show
@@ -116,7 +72,7 @@ const buildChart = stats => {
   let monthMarkers = Object.values(monthLabels)
   traces.push({
     x: monthMarkers,
-    y: historicalFlowFlattened,
+    y: historicalFlowDataArray,
     type: 'scatter',
     mode: 'markers',
     name: 'Historical (Modeled), 1976-2005',
