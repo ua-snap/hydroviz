@@ -50,7 +50,7 @@ const buildChart = () => {
       props.streamMinMaxFlowDates['historical'][stat]['flow'],
     ]
     let historicalFlowDate = [
-      convertTo360(props.streamMinMaxFlowDates['historical'][stat]['date']),
+      props.streamMinMaxFlowDates['historical'][stat]['date'],
     ]
 
     let projectedFlows =
@@ -66,9 +66,7 @@ const buildChart = () => {
 
     let customdataHistorical: string[][] = []
     historicalFlowDate.forEach((doy: number, index: number) => {
-      let dayString = doyToDateString(
-        props.streamMinMaxFlowDates['historical'][stat]['date']
-      )
+      let dayString = doyToDateString(doy)
 
       customdataHistorical.push([dayString])
       historicalFlowDate[index] = convertTo360(doy)
