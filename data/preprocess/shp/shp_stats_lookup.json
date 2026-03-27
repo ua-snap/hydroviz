@@ -12,9 +12,9 @@
             "maximum"
         ],
         "stat_descriptions": [
-            "difference between minimum of ensemble ma12 values and GCM historical ensemble mean",
-            "difference between mean of ensemble ma12 values and GCM historical ensemble mean",
-            "difference between maximum of ensemble ma12 values and GCM historical ensemble mean"
+            "difference between minimum of ensemble ma12 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between mean of ensemble ma12 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between maximum of ensemble ma12 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline"
         ],
         "units": "cfs",
         "difference": "percentage"
@@ -32,9 +32,9 @@
             "maximum"
         ],
         "stat_descriptions": [
-            "difference between minimum of ensemble ma13 values and GCM historical ensemble mean",
-            "difference between mean of ensemble ma13 values and GCM historical ensemble mean",
-            "difference between maximum of ensemble ma13 values and GCM historical ensemble mean"
+            "difference between minimum of ensemble ma13 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between mean of ensemble ma13 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between maximum of ensemble ma13 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline"
         ],
         "units": "cfs",
         "difference": "percentage"
@@ -52,9 +52,9 @@
             "maximum"
         ],
         "stat_descriptions": [
-            "difference between minimum of ensemble ma14 values and GCM historical ensemble mean",
-            "difference between mean of ensemble ma14 values and GCM historical ensemble mean",
-            "difference between maximum of ensemble ma14 values and GCM historical ensemble mean"
+            "difference between minimum of ensemble ma14 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between mean of ensemble ma14 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between maximum of ensemble ma14 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline"
         ],
         "units": "cfs",
         "difference": "percentage"
@@ -72,9 +72,9 @@
             "maximum"
         ],
         "stat_descriptions": [
-            "difference between minimum of ensemble ma15 values and GCM historical ensemble mean",
-            "difference between mean of ensemble ma15 values and GCM historical ensemble mean",
-            "difference between maximum of ensemble ma15 values and GCM historical ensemble mean"
+            "difference between minimum of ensemble ma15 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between mean of ensemble ma15 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between maximum of ensemble ma15 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline"
         ],
         "units": "cfs",
         "difference": "percentage"
@@ -92,9 +92,9 @@
             "maximum"
         ],
         "stat_descriptions": [
-            "difference between minimum of ensemble ma16 values and GCM historical ensemble mean",
-            "difference between mean of ensemble ma16 values and GCM historical ensemble mean",
-            "difference between maximum of ensemble ma16 values and GCM historical ensemble mean"
+            "difference between minimum of ensemble ma16 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between mean of ensemble ma16 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between maximum of ensemble ma16 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline"
         ],
         "units": "cfs",
         "difference": "percentage"
@@ -112,9 +112,9 @@
             "maximum"
         ],
         "stat_descriptions": [
-            "difference between minimum of ensemble ma17 values and GCM historical ensemble mean",
-            "difference between mean of ensemble ma17 values and GCM historical ensemble mean",
-            "difference between maximum of ensemble ma17 values and GCM historical ensemble mean"
+            "difference between minimum of ensemble ma17 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between mean of ensemble ma17 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between maximum of ensemble ma17 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline"
         ],
         "units": "cfs",
         "difference": "percentage"
@@ -132,9 +132,9 @@
             "maximum"
         ],
         "stat_descriptions": [
-            "difference between minimum of ensemble ma18 values and GCM historical ensemble mean",
-            "difference between mean of ensemble ma18 values and GCM historical ensemble mean",
-            "difference between maximum of ensemble ma18 values and GCM historical ensemble mean"
+            "difference between minimum of ensemble ma18 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between mean of ensemble ma18 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between maximum of ensemble ma18 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline"
         ],
         "units": "cfs",
         "difference": "percentage"
@@ -152,9 +152,9 @@
             "maximum"
         ],
         "stat_descriptions": [
-            "difference between minimum of ensemble ma19 values and GCM historical ensemble mean",
-            "difference between mean of ensemble ma19 values and GCM historical ensemble mean",
-            "difference between maximum of ensemble ma19 values and GCM historical ensemble mean"
+            "difference between minimum of ensemble ma19 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between mean of ensemble ma19 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between maximum of ensemble ma19 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline"
         ],
         "units": "cfs",
         "difference": "percentage"
@@ -172,9 +172,9 @@
             "maximum"
         ],
         "stat_descriptions": [
-            "difference between minimum of ensemble ma20 values and GCM historical ensemble mean",
-            "difference between mean of ensemble ma20 values and GCM historical ensemble mean",
-            "difference between maximum of ensemble ma20 values and GCM historical ensemble mean"
+            "difference between minimum of ensemble ma20 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between mean of ensemble ma20 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between maximum of ensemble ma20 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline"
         ],
         "units": "cfs",
         "difference": "percentage"
@@ -192,9 +192,9 @@
             "maximum"
         ],
         "stat_descriptions": [
-            "difference between minimum of ensemble ma21 values and GCM historical ensemble mean",
-            "difference between mean of ensemble ma21 values and GCM historical ensemble mean",
-            "difference between maximum of ensemble ma21 values and GCM historical ensemble mean"
+            "difference between minimum of ensemble ma21 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between mean of ensemble ma21 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between maximum of ensemble ma21 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline"
         ],
         "units": "cfs",
         "difference": "percentage"
@@ -212,9 +212,9 @@
             "maximum"
         ],
         "stat_descriptions": [
-            "difference between minimum of ensemble ma22 values and GCM historical ensemble mean",
-            "difference between mean of ensemble ma22 values and GCM historical ensemble mean",
-            "difference between maximum of ensemble ma22 values and GCM historical ensemble mean"
+            "difference between minimum of ensemble ma22 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between mean of ensemble ma22 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between maximum of ensemble ma22 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline"
         ],
         "units": "cfs",
         "difference": "percentage"
@@ -232,9 +232,9 @@
             "maximum"
         ],
         "stat_descriptions": [
-            "difference between minimum of ensemble ma23 values and GCM historical ensemble mean",
-            "difference between mean of ensemble ma23 values and GCM historical ensemble mean",
-            "difference between maximum of ensemble ma23 values and GCM historical ensemble mean"
+            "difference between minimum of ensemble ma23 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between mean of ensemble ma23 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between maximum of ensemble ma23 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline"
         ],
         "units": "cfs",
         "difference": "percentage"
@@ -250,8 +250,8 @@
             "maximum"
         ],
         "stat_descriptions": [
-            "difference between minimum of ensemble dh1 values and GCM historical ensemble mean",
-            "difference between maximum of ensemble dh1 values and GCM historical ensemble mean"
+            "difference between minimum of ensemble dh1 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between maximum of ensemble dh1 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline"
         ],
         "units": "cfs",
         "difference": "percentage"
@@ -267,8 +267,8 @@
             "maximum"
         ],
         "stat_descriptions": [
-            "difference between minimum of ensemble dl1 values and GCM historical ensemble mean",
-            "difference between maximum of ensemble dl1 values and GCM historical ensemble mean"
+            "difference between minimum of ensemble dl1 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between maximum of ensemble dl1 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline"
         ],
         "units": "cfs",
         "difference": "percentage"
@@ -406,9 +406,9 @@
             "maximum"
         ],
         "stat_descriptions": [
-            "difference between minimum of ensemble ma99 values and GCM historical ensemble mean",
-            "difference between mean of ensemble ma99 values and GCM historical ensemble mean",
-            "difference between maximum of ensemble ma99 values and GCM historical ensemble mean"
+            "difference between minimum of ensemble ma99 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between mean of ensemble ma99 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline",
+            "difference between maximum of ensemble ma99 values and GCM historical ensemble mean, expressed as a percentage of the Maurer historical baseline"
         ],
         "units": "cfs",
         "difference": "percentage"
