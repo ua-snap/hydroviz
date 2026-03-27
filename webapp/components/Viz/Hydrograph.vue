@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { toRaw } from 'vue'
 import lowess from '@stdlib/stats-lowess'
+import { doyToDateString } from '~/utils/general'
 import { getLayout, getConfig, initializeChart } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
@@ -32,14 +33,6 @@ watch(appContext, () => {
 // Round to significant digits.  Stub.
 function roundTo(num, sig = 3) {
   return Number(num.toPrecision(sig))
-}
-
-const doyToDateString = (doy: number) => {
-  const year = 2025 // Can be any year, but not a leap year.
-  const date = new Date(year, 0) // January 1st of the given year
-  date.setDate(doy) // Add DOY as days offset
-  const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' }
-  return date.toLocaleDateString('en-US', options)
 }
 
 // Shift a DOY-indexed dataset to hydro year (Oct 1 - Sept 30)

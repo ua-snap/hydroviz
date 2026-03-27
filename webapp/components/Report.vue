@@ -5,6 +5,7 @@ let {
   streamStats,
   streamHydrograph,
   streamMonthlyFlow,
+  streamMinMaxFlowDates,
   hucId,
   segmentId,
   segmentName,
@@ -76,6 +77,9 @@ onUnmounted(() => {
     <section class="section">
       <div class="container">
         <h4 class="title is-4">Timing statistics</h4>
+        <VizMinMaxFlowDates
+          :stream-min-max-flow-dates="streamMinMaxFlowDates"
+        />
         <StatsTable :stream-stats="streamStats" category="timing" />
       </div>
     </section>

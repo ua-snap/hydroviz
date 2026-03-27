@@ -12,6 +12,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const streamSummary = shallowRef(null)
   const streamHydrograph = shallowRef(null)
   const streamMonthlyFlow = shallowRef(null)
+  const streamMinMaxFlowDates = shallowRef(null)
   const streamStats = shallowRef(null)
   const appContext = ref<AppContext>('mid')
   const { $config } = useNuxtApp()
@@ -63,6 +64,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     streamSummary.value = null
     streamHydrograph.value = null
     streamMonthlyFlow.value = null
+    streamMinMaxFlowDates.value = null
     streamStats.value = null
     var dataResponse
 
@@ -116,6 +118,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
       streamHydrograph.value = dataResponse['hydrograph']
       streamMonthlyFlow.value = dataResponse['monthly_flow']
       streamStats.value = dataResponse['stats']
+      streamMinMaxFlowDates.value = dataResponse['min_max_flow_dates']
     } catch {
       console.error('API response does not contain expected data.')
     }
@@ -127,6 +130,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     streamSummary.value = null
     streamHydrograph.value = null
     streamMonthlyFlow.value = null
+    streamMinMaxFlowDates.value = null
     streamStats.value = null
     hucId.value = null
   }
@@ -137,6 +141,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     streamSummary,
     streamHydrograph,
     streamMonthlyFlow,
+    streamMinMaxFlowDates,
     streamStats,
     fetchStreamStats,
     fetchHucStats,
