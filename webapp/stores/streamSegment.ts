@@ -15,6 +15,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const streamMinMaxFlowDates = shallowRef(null)
   const streamStats = shallowRef(null)
   const appContext = ref<AppContext>('mid')
+  const appEra = ref<Era>('2046-2075')
   const { $config } = useNuxtApp()
 
   // If we have a hucId but not a segmentId, set segmentId to HUC outlet.
@@ -151,5 +152,6 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     apiSlow,
     apiFailed,
     appContext,
+    appEra,
   }
 })

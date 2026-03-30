@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { appContext } = storeToRefs(streamSegmentStore)
+let { appContext, appEra } = storeToRefs(streamSegmentStore)
 </script>
 
 <template>
@@ -40,8 +40,22 @@ let { appContext } = storeToRefs(streamSegmentStore)
         future extremes
       </label>
     </span>
-    in charts and graphs below.
-    <span>Value: {{ appContext }}</span>
+    in charts and graphs below.<br />
+    Show projected data for
+    <span class="control is-size-5">
+      <label class="radio">
+        <input type="radio" name="era" value="2016-2045" v-model="appEra" />
+        2016-2045 </label
+      >,
+      <label class="radio">
+        <input type="radio" name="era" value="2046-2075" v-model="appEra" />
+        2046-2075 </label
+      >, or
+      <label class="radio">
+        <input type="radio" name="era" value="2071-2100" v-model="appEra" />
+        2071-2100 </label
+      >.
+    </span>
   </div>
 </template>
 
