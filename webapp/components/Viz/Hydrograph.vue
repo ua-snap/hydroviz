@@ -10,7 +10,7 @@ const props = defineProps(['streamHydrograph'])
 
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { appContext } = storeToRefs(streamSegmentStore)
+let { appContext, appEra } = storeToRefs(streamSegmentStore)
 
 onMounted(() => {
   initializeChart(
@@ -21,7 +21,7 @@ onMounted(() => {
   )
 })
 
-watch(appContext, () => {
+watch([appContext, appEra], () => {
   initializeChart(
     $Plotly,
     'hydrograph',
@@ -109,7 +109,7 @@ const buildChart = hg => {
     name: 'Historical Mean (Modeled), 1976-2005',
   })
 
-  let projectedFlowData = hg['projected'][appContext.value]
+  let projectedFlowData = hg['projected'][appContext.value][appEra.value]
 
   let traceConfig = {
     doy_min: {
