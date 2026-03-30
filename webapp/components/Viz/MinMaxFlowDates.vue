@@ -7,7 +7,7 @@ import type { Data } from 'plotly.js'
 
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-const { appContext } = storeToRefs(streamSegmentStore)
+const { appContext, appEra } = storeToRefs(streamSegmentStore)
 
 const props = defineProps(['streamMinMaxFlowDates'])
 
@@ -20,7 +20,7 @@ onMounted(() => {
   )
 })
 
-watch(appContext, () => {
+watch([appContext, appEra], () => {
   initializeChart(
     $Plotly,
     'min-max-flow-dates',
@@ -37,9 +37,12 @@ const convertTo360 = (doy: number) => {
 
 const buildChart = () => {
   let allFlows = [props.streamMinMaxFlowDates['historical']['max']['flow']]
-  allFlows = allFlows.concat(
-    props.streamMinMaxFlowDates['projected']['extremes']['max']['flow']
-  )
+  let possibleEras = ['2016-2045', '2046-2075', '2071-2100']
+  possibleEras.forEach(era => {
+    allFlows = allFlows.concat(
+      props.streamMinMaxFlowDates['projected']['extremes'][era]['max']['flow']
+    )
+  })
   let upperLimit = $_.max(allFlows)
 
   let historicalTraces: Data[] = []
@@ -54,15 +57,14 @@ const buildChart = () => {
     ]
 
     let projectedFlows =
-      props.streamMinMaxFlowDates['projected'][appContext.value][stat]['flow']
+      props.streamMinMaxFlowDates['projected'][appContext.value][appEra.value][
+        stat
+      ]['flow']
     let projectedDates = $_.cloneDeep(
-      props.streamMinMaxFlowDates['projected'][appContext.value][stat]['date']
+      props.streamMinMaxFlowDates['projected'][appContext.value][appEra.value][
+        stat
+      ]['date']
     )
-
-    if (appContext.value === 'mid') {
-      projectedFlows = [projectedFlows]
-      projectedDates = [projectedDates]
-    }
 
     let customdataHistorical: string[][] = []
     historicalFlowDate.forEach((doy: number, index: number) => {
@@ -108,8 +110,9 @@ const buildChart = () => {
       mode: 'markers',
       name: historicalTraceLabel,
       marker: {
-        size: 8,
+        size: 9,
         color: historicalColor,
+        symbol: 'diamond',
       },
       customdata: customdataHistorical,
       hovertemplate: `%{customdata[0]}, 1976-2005<br />${historicalHovertextLabel}: %{r:,} cf/s<extra></extra>`,
@@ -123,7 +126,6 @@ const buildChart = () => {
       marker: {
         size: 8,
         color: projectedColor,
-        symbol: 'square',
       },
       customdata: customdataProjected,
       hovertemplate: `%{customdata[0]}, 2046-2075<br />${projectedHovertextLabel}: %{r:,} cf/s<extra></extra>`,
