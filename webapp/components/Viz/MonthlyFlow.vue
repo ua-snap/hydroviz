@@ -8,7 +8,7 @@ const props = defineProps(['streamMonthlyFlow'])
 
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { appContext } = storeToRefs(streamSegmentStore)
+let { appContext, appEra } = storeToRefs(streamSegmentStore)
 
 const monthLabels = {
   ma21: 'Oct',
@@ -25,6 +25,13 @@ const monthLabels = {
   ma20: 'Sep',
 }
 
+let xTickValOffsets = {
+  historical: 0,
+  rcp45: 0,
+  rcp60: 0,
+  rcp85: 0,
+}
+
 onMounted(() => {
   initializeChart(
     $Plotly,
@@ -34,7 +41,7 @@ onMounted(() => {
   )
 })
 
-watch(appContext, () => {
+watch([appContext, appEra], () => {
   initializeChart(
     $Plotly,
     'monthly-flow',
@@ -43,9 +50,25 @@ watch(appContext, () => {
   )
 })
 
+const getOffsetXTickVals = (scenario: string) => {
+  let xTickVals = $_.range(Object.values(monthLabels).length)
+  let offset = xTickValOffsets[scenario]
+  let offsetXTickVals = xTickVals.map(tickVal => {
+    return tickVal + offset
+  })
+  return offsetXTickVals
+}
+
 // stats is assumed to be non-null, raw, and only dynamic land cover now.
 const buildChart = () => {
   let traces: Data[] = []
+
+  let scenarios: string[]
+  if (appContext.value === 'mid') {
+    scenarios = ['rcp60']
+  } else {
+    scenarios = ['rcp45', 'rcp85']
+  }
 
   // Create historical trace
   let historicalFlowData = props.streamMonthlyFlow['historical']
@@ -55,74 +78,173 @@ const buildChart = () => {
     return historicalFlowData[monthKey]
   })
 
-  let projectedFlowData: number[]
-  if (appContext.value === 'mid') {
-    projectedFlowData = []
-    Object.keys(monthLabels).forEach(monthKey => {
-      projectedFlowData.push(
-        props.streamMonthlyFlow['projected'][appContext.value][monthKey]
-      )
-    })
-  } else {
-    projectedFlowData = props.streamMonthlyFlow['projected'][appContext.value]
+  // Plotly.js subplot axes
+  let axes = [
+    {
+      x: 'x',
+      y: 'y',
+    },
+    {
+      x: 'x2',
+      y: 'y2',
+    },
+  ]
+
+  let historicalTrace = {
+    x: getOffsetXTickVals('historical'),
+    y: historicalFlowDataArray,
+    type: 'scatter',
+    mode: 'markers',
+    name: 'Historical (Modeled), 1976-2005',
+    marker: {
+      size: 9,
+      symbol: 'diamond',
+      color: '#333333',
+    },
   }
 
-  // For "extremes" mode, show a boxplot populated by all values across all models
-  // and scenarios for each month. For "mid" mode, show a single point of the mean
-  // of all models at RCP 6.0 for each month.
   if (appContext.value === 'extremes') {
+    let showLegend = true
+    axes.forEach(axis => {
+      let historicalTraceCopy = $_.cloneDeep(historicalTrace)
+      historicalTraceCopy['xaxis'] = axis.x
+      historicalTraceCopy['yaxis'] = axis.y
+      historicalTraceCopy['showlegend'] = showLegend
+      traces.push(historicalTraceCopy)
+      showLegend = false
+    })
+  } else {
+    traces.push(historicalTrace)
+  }
+
+  let scenarioLabels = {
+    rcp45: 'RCP 4.5',
+    rcp60: 'RCP 6.0',
+    rcp85: 'RCP 8.5',
+  }
+
+  let plotLabels = {
+    rcp45: 'Stabilizing Emissions (RCP 4.5)',
+    rcp60: 'Stabilizing High Emissions (RCP 6.0)',
+    rcp85: 'Increasing Emissions (RCP 8.5)',
+  }
+
+  let scenarioColors = {
+    rcp45: {
+      stroke: '#4293d6',
+      fill: '#9ecae1',
+    },
+    rcp60: {
+      stroke: '#4Caf50',
+      fill: '#b6e5b6',
+    },
+    rcp85: {
+      stroke: '#e04a4a',
+      fill: '#f28b82',
+    },
+  }
+
+  scenarios.forEach(scenario => {
+    let projectedFlowData =
+      props.streamMonthlyFlow['projected'][appEra.value][scenario]
+
+    let xTickVals = getOffsetXTickVals(scenario)
+
     // Each box plot needs to be its own trace (due to Plotly.js limitations),
     // and a new legend entry is added for each trace. To clean this up, show
     // the legend for just the first box plot trace, hide the rest, and override
     // the name of the first legend entry to make it more general & apply to all
     // of the box plots. Also, make sure all box plots have the same color.
     let showLegend = true
-    Object.keys(monthLabels).forEach(monthKey => {
-      traces.push({
-        x: Array(projectedFlowData[monthKey].length).fill(
-          monthLabels[monthKey]
-        ),
+    Object.keys(monthLabels).forEach((monthKey, idx) => {
+      let trace = {
+        x0: xTickVals[idx],
         y: projectedFlowData[monthKey],
         type: 'box',
-        name: 'Projected (Modeled), 2046-2075',
-        marker: { color: '#3182bd', size: 8 },
-        line: { color: '#3182bd', width: 1.5 },
-        fillcolor: '#6baed6',
+        name: `Projected (Modeled), ${appEra.value}, ${scenarioLabels[scenario]}`,
+        marker: { color: scenarioColors[scenario].stroke, size: 8 },
+        line: { color: scenarioColors[scenario].stroke, width: 1.5 },
+        fillcolor: scenarioColors[scenario].fill,
         showlegend: showLegend,
-      })
+      }
+      if (appContext.value === 'extremes' && scenario === 'rcp85') {
+        trace['xaxis'] = 'x2'
+        trace['yaxis'] = 'y2'
+      }
+      traces.push(trace)
       showLegend = false
     })
-  } else {
-    traces.push({
-      x: Object.values(monthLabels),
-      y: projectedFlowData,
-      type: 'scatter',
-      mode: 'markers',
-      name: 'Projected (Modeled), 2046-2075',
-      marker: { color: '#3182bd', size: 8 },
-    })
-  }
-
-  let monthMarkers = Object.values(monthLabels)
-  traces.push({
-    x: monthMarkers,
-    y: historicalFlowDataArray,
-    type: 'scatter',
-    mode: 'markers',
-    name: 'Historical (Modeled), 1976-2005',
-    marker: {
-      size: 8,
-      symbol: 'square',
-      color: '#666666',
-    },
   })
 
   const titleText: string = 'Mean monthly modeled flow rate'
 
-  const layout = getLayout(titleText, 'Mean monthly flow, cf/s', {
-    type: 'category',
-    tickmode: 'array',
-  })
+  let xAxisSettings = {
+    tickvals: $_.range(Object.values(monthLabels).length),
+    ticktext: Object.values(monthLabels),
+    dtick: 1,
+  }
+
+  let layout = getLayout(titleText, 'Mean monthly flow, cf/s', xAxisSettings)
+
+  // Add a tiny bit of margin to the left of the plot
+  layout['margin']['l'] = 110
+
+  if (appContext.value === 'extremes') {
+    layout['xaxis2'] = $_.cloneDeep(layout['xaxis'])
+    layout['yaxis2'] = $_.cloneDeep(layout['yaxis'])
+    layout['height'] = 830
+    layout['grid'] = {
+      rows: 2,
+      columns: 1,
+      pattern: 'independent',
+      ygap: 0.18,
+    }
+  }
+
+  // Add annotations along the y-axis for each subplot, rotated vertically
+  if (appContext.value === 'extremes') {
+    layout['annotations'] = [
+      {
+        text: plotLabels['rcp45'],
+        x: -0.12,
+        y: 0.775,
+        showarrow: false,
+        font: { size: 14 },
+        textangle: -90,
+        xref: 'paper',
+        yref: 'paper',
+        xanchor: 'center',
+        yanchor: 'middle',
+      },
+      {
+        text: plotLabels['rcp85'],
+        x: -0.12,
+        y: 0.227,
+        showarrow: false,
+        font: { size: 14 },
+        textangle: -90,
+        xref: 'paper',
+        yref: 'paper',
+        xanchor: 'center',
+        yanchor: 'middle',
+      },
+    ]
+  } else {
+    layout['annotations'] = [
+      {
+        text: plotLabels['rcp60'],
+        x: -0.12,
+        y: 0.505,
+        showarrow: false,
+        font: { size: 14 },
+        textangle: -90,
+        xref: 'paper',
+        yref: 'paper',
+        xanchor: 'center',
+        yanchor: 'middle',
+      },
+    ]
+  }
 
   const config = getConfig()
 
