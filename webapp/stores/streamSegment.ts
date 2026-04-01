@@ -3,6 +3,9 @@ import { ref, shallowRef } from 'vue'
 
 export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const isLoading = ref<boolean>(false)
+  const apiSlow = ref<boolean>(false)
+  const apiFailed = ref<boolean>(false)
+
   const segmentId = ref(null)
   const segmentName = ref(null)
   const hucId = ref(null)
@@ -22,6 +25,8 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     try {
       const response = await fetch(hucUrl)
       const data = await response.json()
+
+      apiFailed.value = false
 
       const features = Array.isArray(data?.features) ? data.features : []
       if (features.length === 0) {
@@ -72,18 +77,51 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
         console.log('Using static fixtures for hydroviz API data')
         dataResponse = await import('@/assets/fixtures/api_output_example.json')
       } else {
-        dataResponse = await $fetch(dataUrl)
+        try {
+          // Used to track mildly slow data API responses that don't abort.
+          const slowTimer = setTimeout(() => {
+            apiSlow.value = true
+          }, 10000)
+
+          // Used to track very slow API responses that do abort.
+          const controller = new AbortController()
+          const timeout = setTimeout(() => {
+            controller.abort()
+          }, 60000)
+
+          try {
+            dataResponse = await $fetch(dataUrl, {
+              signal: controller.signal,
+            })
+          } finally {
+            clearTimeout(timeout)
+            clearTimeout(slowTimer)
+          }
+        } catch (error: any) {
+          // If API is unreachable, returns error, or times out.
+          if (
+            !error?.statusCode ||
+            (error?.statusCode >= 400 && error?.statusCode < 600)
+          ) {
+            apiFailed.value = true
+          }
+        }
       }
     } finally {
       isLoading.value = false
+      apiSlow.value = false
     }
 
-    segmentName.value = dataResponse['name']
-    streamSummary.value = dataResponse['summary']
-    streamHydrograph.value = dataResponse['hydrograph']
-    streamMonthlyFlow.value = dataResponse['monthly_flow']
-    streamMinMaxFlowDates.value = dataResponse['min_max_flow_dates']
-    streamStats.value = dataResponse['stats']
+    try {
+      segmentName.value = dataResponse['name']
+      streamSummary.value = dataResponse['summary']
+      streamHydrograph.value = dataResponse['hydrograph']
+      streamMonthlyFlow.value = dataResponse['monthly_flow']
+      streamMinMaxFlowDates.value = dataResponse['min_max_flow_dates']
+      streamStats.value = dataResponse['stats']
+    } catch {
+      console.error('API response does not contain expected data.')
+    }
   }
 
   const clearStats = (): void => {
@@ -110,6 +148,8 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     clearStats,
     hucId,
     isLoading,
+    apiSlow,
+    apiFailed,
     appContext,
   }
 })
