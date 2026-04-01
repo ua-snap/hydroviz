@@ -8,10 +8,10 @@ let { appContext, appEra } = storeToRefs(streamSegmentStore)
   <div class="container block content is-size-5">
     <p>
       This tool lets you explore this dataset in two modes: the
-      <strong>middle of the road</strong> shows the averages for a
-      middle-of-the-road climate future, and
-      <strong>future extremes</strong> show the size of variation between the
-      minimums and maximums for lower and higher emissions scenarios.
+      <strong>middle of the road</strong> shows the average across 13 climate
+      model futures, and <strong>future extremes</strong> show the size of
+      variation between the minimums and maximums for lower and higher emissions
+      scenarios.
       <NuxtLink to="/about/data"
         >Read more about how these are defined</NuxtLink
       >
