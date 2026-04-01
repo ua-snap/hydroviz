@@ -12,8 +12,10 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const streamSummary = shallowRef(null)
   const streamHydrograph = shallowRef(null)
   const streamMonthlyFlow = shallowRef(null)
+  const streamMinMaxFlowDates = shallowRef(null)
   const streamStats = shallowRef(null)
   const appContext = ref<AppContext>('mid')
+  const appEra = ref<Era>('2046-2075')
   const { $config } = useNuxtApp()
 
   // If we have a hucId but not a segmentId, set segmentId to HUC outlet.
@@ -63,10 +65,11 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     streamSummary.value = null
     streamHydrograph.value = null
     streamMonthlyFlow.value = null
+    streamMinMaxFlowDates.value = null
     streamStats.value = null
     var dataResponse
 
-    let dataUrl = `${$config.public.snapApiUrl}/conus_hydrology/hydroviz/${segmentId.value}/CCSM4`
+    let dataUrl = `${$config.public.snapApiUrl}/conus_hydrology/hydroviz/${segmentId.value}`
 
     // Needs error checking, etc.
     isLoading.value = true
@@ -115,6 +118,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
       streamSummary.value = dataResponse['summary']
       streamHydrograph.value = dataResponse['hydrograph']
       streamMonthlyFlow.value = dataResponse['monthly_flow']
+      streamMinMaxFlowDates.value = dataResponse['min_max_flow_dates']
       streamStats.value = dataResponse['stats']
     } catch {
       console.error('API response does not contain expected data.')
@@ -127,6 +131,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     streamSummary.value = null
     streamHydrograph.value = null
     streamMonthlyFlow.value = null
+    streamMinMaxFlowDates.value = null
     streamStats.value = null
     hucId.value = null
   }
@@ -137,6 +142,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     streamSummary,
     streamHydrograph,
     streamMonthlyFlow,
+    streamMinMaxFlowDates,
     streamStats,
     fetchStreamStats,
     fetchHucStats,
@@ -146,5 +152,6 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     apiSlow,
     apiFailed,
     appContext,
+    appEra,
   }
 })
