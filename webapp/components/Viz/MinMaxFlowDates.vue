@@ -238,6 +238,7 @@ const buildChart = () => {
         'Dec',
       ],
       direction: 'clockwise',
+      gridcolor: 'rgba(0,0,0,0.08)',
     },
     radialaxis: {
       angle: 90,
@@ -245,6 +246,7 @@ const buildChart = () => {
       ticksuffix: ' cf/s',
       tickmode: 'auto',
       nticks: 4,
+      gridcolor: 'rgba(0,0,0,0.08)',
     },
     domain: firstPlotDomain,
   }

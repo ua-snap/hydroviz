@@ -310,7 +310,6 @@ const buildChart = hg => {
       yAxisConfig,
       legendConfig
     )
-    layout2['margin']['t'] = 100
     $Plotly.newPlot('hydrograph2', traces2, layout2, config)
   }
 }
