@@ -91,7 +91,7 @@ const buildChart = () => {
     y: historicalFlowDataArray,
     type: 'scatter',
     mode: 'markers',
-    name: 'Historical (Modeled), 1976-2005',
+    name: 'Historical, 1976-2005',
     marker: {
       size: 9,
       symbol: 'diamond',
@@ -101,30 +101,10 @@ const buildChart = () => {
 
   traces.push(historicalTrace)
 
-  // if (appContext.value === 'extremes') {
-  //   let showLegend = true
-  //   axes.forEach(axis => {
-  //     let historicalTraceCopy = $_.cloneDeep(historicalTrace)
-  //     historicalTraceCopy['xaxis'] = axis.x
-  //     historicalTraceCopy['yaxis'] = axis.y
-  //     historicalTraceCopy['showlegend'] = showLegend
-  //     traces.push(historicalTraceCopy)
-  //     showLegend = false
-  //   })
-  // } else {
-  //   traces.push(historicalTrace)
-  // }
-
-  // let scenarioLabels = {
-  //   rcp45: 'RCP 4.5',
-  //   rcp60: 'RCP 6.0',
-  //   rcp85: 'RCP 8.5',
-  // }
-
   let scenarioLabels = {
-    rcp45: 'Stabilizing Emissions (RCP 4.5)',
-    rcp60: 'Stabilizing High Emissions (RCP 6.0)',
-    rcp85: 'Increasing Emissions (RCP 8.5)',
+    rcp45: 'stabilizing emissions (RCP 4.5)',
+    rcp60: 'stabilizing high emissions (RCP 6.0)',
+    rcp85: 'increasing emissions (RCP 8.5)',
   }
 
   let scenarioColors = {
@@ -161,7 +141,7 @@ const buildChart = () => {
         x0: xTickVals[idx],
         y: projectedFlowData[monthKey],
         type: 'box',
-        name: `Projected (Modeled), ${scenarioLabels[scenario]}`,
+        name: `Projected, ${scenarioLabels[scenario]}`,
         marker: { color: scenarioColors[scenario].stroke, size: 8 },
         line: { color: scenarioColors[scenario].stroke, width: 1.5 },
         fillcolor: scenarioColors[scenario].fill,
@@ -173,7 +153,7 @@ const buildChart = () => {
     })
   })
 
-  const titleText: string = 'Mean monthly modeled flow rate'
+  const titleText: string = `Mean monthly modeled flow rate, ${appEra.value}`
 
   let xAxisSettings = {
     tickvals: $_.range(Object.values(monthLabels).length),
@@ -196,66 +176,6 @@ const buildChart = () => {
     {},
     legendConfig
   )
-
-  // // Add a tiny bit of margin to the left of the plot
-  // layout['margin']['l'] = 110
-
-  // if (appContext.value === 'extremes') {
-  //   layout['xaxis2'] = $_.cloneDeep(layout['xaxis'])
-  //   layout['yaxis2'] = $_.cloneDeep(layout['yaxis'])
-  //   layout['height'] = 830
-  //   layout['grid'] = {
-  //     rows: 2,
-  //     columns: 1,
-  //     pattern: 'independent',
-  //     ygap: 0.18,
-  //   }
-  // }
-
-  // // Add annotations along the y-axis for each subplot, rotated vertically
-  // if (appContext.value === 'extremes') {
-  //   layout['annotations'] = [
-  //     {
-  //       text: plotLabels['rcp45'],
-  //       x: -0.12,
-  //       y: 0.775,
-  //       showarrow: false,
-  //       font: { size: 14 },
-  //       textangle: -90,
-  //       xref: 'paper',
-  //       yref: 'paper',
-  //       xanchor: 'center',
-  //       yanchor: 'middle',
-  //     },
-  //     {
-  //       text: plotLabels['rcp85'],
-  //       x: -0.12,
-  //       y: 0.227,
-  //       showarrow: false,
-  //       font: { size: 14 },
-  //       textangle: -90,
-  //       xref: 'paper',
-  //       yref: 'paper',
-  //       xanchor: 'center',
-  //       yanchor: 'middle',
-  //     },
-  //   ]
-  // } else {
-  //   layout['annotations'] = [
-  //     {
-  //       text: plotLabels['rcp60'],
-  //       x: -0.12,
-  //       y: 0.505,
-  //       showarrow: false,
-  //       font: { size: 14 },
-  //       textangle: -90,
-  //       xref: 'paper',
-  //       yref: 'paper',
-  //       xanchor: 'center',
-  //       yanchor: 'middle',
-  //     },
-  //   ]
-  // }
 
   const config = getConfig()
 

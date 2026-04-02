@@ -33,16 +33,10 @@ watch([appContext, appEra], () => {
   )
 })
 
-// let scenarioLabels = {
-//   rcp45: 'RCP 4.5',
-//   rcp60: 'RCP 6.0',
-//   rcp85: 'RCP 8.5',
-// }
-
 let scenarioLabels = {
-  rcp45: 'Stabilizing Emissions (RCP 4.5)',
-  rcp60: 'Stabilizing High Emissions (RCP 6.0)',
-  rcp85: 'Increasing Emissions (RCP 8.5)',
+  rcp45: 'stabilizing emissions (RCP 4.5)',
+  rcp60: 'stabilizing high emissions (RCP 6.0)',
+  rcp85: 'increasing emissions (RCP 8.5)',
 }
 
 let scenarioColors = {
@@ -54,16 +48,16 @@ let scenarioColors = {
     doy_max_max: '#08519c',
   },
   rcp60: {
-    fill: '#32cd3280', // softer green with transparency
-    doy_min_min: '#32cd32', // same as fill, solid
-    doy_mean_mean: '#28a428', // slightly darker than fill
-    doy_max_max: '#1e7a1e', // even darker green
+    fill: '#32cd3280',
+    doy_min_min: '#32cd32',
+    doy_mean_mean: '#28a428',
+    doy_max_max: '#1e7a1e',
   },
   rcp85: {
-    fill: '#e0666680', // lighter red with transparency
-    doy_min_min: '#e06666', // even lighter red
-    doy_mean_mean: '#ff4d4d', // lighter strong red
-    doy_max_max: '#a83232', // lighter dark red
+    fill: '#e0666680',
+    doy_min_min: '#e06666',
+    doy_mean_mean: '#ff4d4d',
+    doy_max_max: '#a83232',
   },
 }
 
@@ -131,7 +125,7 @@ const buildChart = hg => {
     type: 'scatter',
     mode: 'line',
     line: { color: scenarioColors['historical'].fill, width: 0 },
-    name: 'Historical minimum (modeled), 1976-2005',
+    name: 'Minimum historical, 1976-2005',
     showlegend: false,
   }
 
@@ -155,13 +149,13 @@ const buildChart = hg => {
   }
 
   traces.push(historicalMinTrace)
-  traces.push(historicalMeanTrace)
   traces.push(historicalMaxTrace)
+  traces.push(historicalMeanTrace)
 
   if (appContext.value === 'extremes') {
     traces2.push(historicalMinTrace)
-    traces2.push(historicalMeanTrace)
     traces2.push(historicalMaxTrace)
+    traces2.push(historicalMeanTrace)
   }
 
   scenarios.forEach(scenario => {
@@ -269,8 +263,8 @@ const buildChart = hg => {
     scenarioLabel2 = scenarioLabels['rcp85']
   }
 
-  let titleBase = `Minimum, mean, and maximum projected flow rate, ${appEra.value}`
-  let titleText = `${titleBase}<br />${scenarioLabel}`
+  let titleBase = `Modeled flow rate, ${appEra.value}`
+  let titleText = `${titleBase}, ${scenarioLabel}`
 
   let yAxisLabel = 'Flow rate, cf/s'
 
@@ -302,15 +296,13 @@ const buildChart = hg => {
     legendConfig
   )
 
-  layout['margin']['t'] = 100
-
   const config = getConfig()
 
   $Plotly.newPlot('hydrograph', traces, layout, config)
 
   if (appContext.value === 'extremes') {
     let scenarioLabel2 = scenarioLabels['rcp85']
-    let titleText2 = `${titleBase}<br />${scenarioLabel2}`
+    let titleText2 = `${titleBase}, ${scenarioLabel2}`
     let layout2 = getLayout(
       titleText2,
       yAxisLabel,
