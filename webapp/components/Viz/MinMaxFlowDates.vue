@@ -215,6 +215,8 @@ const buildChart = () => {
     }
   }
 
+  let axisColor = 'rgba(0,0,0,0.08)'
+
   layout['polar'] = {
     title: {
       text: 'Minimum flow date',
@@ -238,7 +240,7 @@ const buildChart = () => {
         'Dec',
       ],
       direction: 'clockwise',
-      gridcolor: 'rgba(0,0,0,0.08)',
+      gridcolor: axisColor,
     },
     radialaxis: {
       angle: 90,
@@ -246,7 +248,7 @@ const buildChart = () => {
       ticksuffix: ' cf/s',
       tickmode: 'auto',
       nticks: 4,
-      gridcolor: 'rgba(0,0,0,0.08)',
+      gridcolor: axisColor,
     },
     domain: firstPlotDomain,
   }
@@ -272,6 +274,7 @@ const buildChart = () => {
           'Dec',
         ],
         direction: 'clockwise',
+        gridcolor: axisColor,
       },
       radialaxis: {
         angle: 90,
@@ -279,6 +282,7 @@ const buildChart = () => {
         ticksuffix: ' cf/s',
         tickmode: 'auto',
         nticks: 4,
+        gridcolor: axisColor,
       },
       domain: { x: [0.55, 1], y: [0, 1] }, // Make sure domain is set here, not below
     }
