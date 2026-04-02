@@ -25,13 +25,6 @@ const monthLabels = {
   ma20: 'Sep',
 }
 
-let xTickValOffsets = {
-  historical: 0,
-  rcp45: 0,
-  rcp60: 0,
-  rcp85: 0,
-}
-
 onMounted(() => {
   initializeChart(
     $Plotly,
@@ -49,6 +42,8 @@ watch([appContext, appEra], () => {
     toRaw(props.streamMonthlyFlow)
   )
 })
+
+let xTickValOffsets: Record<string, number> = {}
 
 const getOffsetXTickVals = (scenario: string) => {
   let xTickVals = $_.range(Object.values(monthLabels).length)
@@ -70,6 +65,19 @@ const buildChart = () => {
     scenarios = ['rcp45', 'rcp85']
   }
 
+  if (appContext.value === 'mid') {
+    xTickValOffsets = {
+      historical: -0.11,
+      rcp60: 0.2,
+    }
+  } else {
+    xTickValOffsets = {
+      historical: -0.2,
+      rcp45: 0,
+      rcp85: 0.25,
+    }
+  }
+
   // Create historical trace
   let historicalFlowData = props.streamMonthlyFlow['historical']
 
@@ -77,18 +85,6 @@ const buildChart = () => {
   let historicalFlowDataArray = $_.map(Object.keys(monthLabels), monthKey => {
     return historicalFlowData[monthKey]
   })
-
-  // Plotly.js subplot axes
-  let axes = [
-    {
-      x: 'x',
-      y: 'y',
-    },
-    {
-      x: 'x2',
-      y: 'y2',
-    },
-  ]
 
   let historicalTrace = {
     x: getOffsetXTickVals('historical'),
@@ -103,27 +99,29 @@ const buildChart = () => {
     },
   }
 
-  if (appContext.value === 'extremes') {
-    let showLegend = true
-    axes.forEach(axis => {
-      let historicalTraceCopy = $_.cloneDeep(historicalTrace)
-      historicalTraceCopy['xaxis'] = axis.x
-      historicalTraceCopy['yaxis'] = axis.y
-      historicalTraceCopy['showlegend'] = showLegend
-      traces.push(historicalTraceCopy)
-      showLegend = false
-    })
-  } else {
-    traces.push(historicalTrace)
-  }
+  traces.push(historicalTrace)
+
+  // if (appContext.value === 'extremes') {
+  //   let showLegend = true
+  //   axes.forEach(axis => {
+  //     let historicalTraceCopy = $_.cloneDeep(historicalTrace)
+  //     historicalTraceCopy['xaxis'] = axis.x
+  //     historicalTraceCopy['yaxis'] = axis.y
+  //     historicalTraceCopy['showlegend'] = showLegend
+  //     traces.push(historicalTraceCopy)
+  //     showLegend = false
+  //   })
+  // } else {
+  //   traces.push(historicalTrace)
+  // }
+
+  // let scenarioLabels = {
+  //   rcp45: 'RCP 4.5',
+  //   rcp60: 'RCP 6.0',
+  //   rcp85: 'RCP 8.5',
+  // }
 
   let scenarioLabels = {
-    rcp45: 'RCP 4.5',
-    rcp60: 'RCP 6.0',
-    rcp85: 'RCP 8.5',
-  }
-
-  let plotLabels = {
     rcp45: 'Stabilizing Emissions (RCP 4.5)',
     rcp60: 'Stabilizing High Emissions (RCP 6.0)',
     rcp85: 'Increasing Emissions (RCP 8.5)',
@@ -150,26 +148,25 @@ const buildChart = () => {
 
     let xTickVals = getOffsetXTickVals(scenario)
 
-    // Each box plot needs to be its own trace (due to Plotly.js limitations),
-    // and a new legend entry is added for each trace. To clean this up, show
-    // the legend for just the first box plot trace, hide the rest, and override
-    // the name of the first legend entry to make it more general & apply to all
-    // of the box plots. Also, make sure all box plots have the same color.
+    let boxWidth: number
+    if (appContext.value === 'extremes') {
+      boxWidth = 0.2
+    } else {
+      boxWidth = 0.3
+    }
+
     let showLegend = true
     Object.keys(monthLabels).forEach((monthKey, idx) => {
       let trace = {
         x0: xTickVals[idx],
         y: projectedFlowData[monthKey],
         type: 'box',
-        name: `Projected (Modeled), ${appEra.value}, ${scenarioLabels[scenario]}`,
+        name: `Projected (Modeled), ${scenarioLabels[scenario]}`,
         marker: { color: scenarioColors[scenario].stroke, size: 8 },
         line: { color: scenarioColors[scenario].stroke, width: 1.5 },
         fillcolor: scenarioColors[scenario].fill,
         showlegend: showLegend,
-      }
-      if (appContext.value === 'extremes' && scenario === 'rcp85') {
-        trace['xaxis'] = 'x2'
-        trace['yaxis'] = 'y2'
+        width: boxWidth, // Add width property to make boxes wider
       }
       traces.push(trace)
       showLegend = false
@@ -184,67 +181,81 @@ const buildChart = () => {
     dtick: 1,
   }
 
-  let layout = getLayout(titleText, 'Mean monthly flow, cf/s', xAxisSettings)
-
-  // Add a tiny bit of margin to the left of the plot
-  layout['margin']['l'] = 110
-
-  if (appContext.value === 'extremes') {
-    layout['xaxis2'] = $_.cloneDeep(layout['xaxis'])
-    layout['yaxis2'] = $_.cloneDeep(layout['yaxis'])
-    layout['height'] = 830
-    layout['grid'] = {
-      rows: 2,
-      columns: 1,
-      pattern: 'independent',
-      ygap: 0.18,
-    }
+  let legendConfig = {
+    orientation: 'h',
+    yanchor: 'top',
+    y: -0.2,
+    xanchor: 'center',
+    x: 0.5,
   }
 
-  // Add annotations along the y-axis for each subplot, rotated vertically
-  if (appContext.value === 'extremes') {
-    layout['annotations'] = [
-      {
-        text: plotLabels['rcp45'],
-        x: -0.12,
-        y: 0.775,
-        showarrow: false,
-        font: { size: 14 },
-        textangle: -90,
-        xref: 'paper',
-        yref: 'paper',
-        xanchor: 'center',
-        yanchor: 'middle',
-      },
-      {
-        text: plotLabels['rcp85'],
-        x: -0.12,
-        y: 0.227,
-        showarrow: false,
-        font: { size: 14 },
-        textangle: -90,
-        xref: 'paper',
-        yref: 'paper',
-        xanchor: 'center',
-        yanchor: 'middle',
-      },
-    ]
-  } else {
-    layout['annotations'] = [
-      {
-        text: plotLabels['rcp60'],
-        x: -0.12,
-        y: 0.505,
-        showarrow: false,
-        font: { size: 14 },
-        textangle: -90,
-        xref: 'paper',
-        yref: 'paper',
-        xanchor: 'center',
-        yanchor: 'middle',
-      },
-    ]
-  }
+  let layout = getLayout(
+    titleText,
+    'Mean monthly flow, cf/s',
+    xAxisSettings,
+    {},
+    legendConfig
+  )
+
+  // // Add a tiny bit of margin to the left of the plot
+  // layout['margin']['l'] = 110
+
+  // if (appContext.value === 'extremes') {
+  //   layout['xaxis2'] = $_.cloneDeep(layout['xaxis'])
+  //   layout['yaxis2'] = $_.cloneDeep(layout['yaxis'])
+  //   layout['height'] = 830
+  //   layout['grid'] = {
+  //     rows: 2,
+  //     columns: 1,
+  //     pattern: 'independent',
+  //     ygap: 0.18,
+  //   }
+  // }
+
+  // // Add annotations along the y-axis for each subplot, rotated vertically
+  // if (appContext.value === 'extremes') {
+  //   layout['annotations'] = [
+  //     {
+  //       text: plotLabels['rcp45'],
+  //       x: -0.12,
+  //       y: 0.775,
+  //       showarrow: false,
+  //       font: { size: 14 },
+  //       textangle: -90,
+  //       xref: 'paper',
+  //       yref: 'paper',
+  //       xanchor: 'center',
+  //       yanchor: 'middle',
+  //     },
+  //     {
+  //       text: plotLabels['rcp85'],
+  //       x: -0.12,
+  //       y: 0.227,
+  //       showarrow: false,
+  //       font: { size: 14 },
+  //       textangle: -90,
+  //       xref: 'paper',
+  //       yref: 'paper',
+  //       xanchor: 'center',
+  //       yanchor: 'middle',
+  //     },
+  //   ]
+  // } else {
+  //   layout['annotations'] = [
+  //     {
+  //       text: plotLabels['rcp60'],
+  //       x: -0.12,
+  //       y: 0.505,
+  //       showarrow: false,
+  //       font: { size: 14 },
+  //       textangle: -90,
+  //       xref: 'paper',
+  //       yref: 'paper',
+  //       xanchor: 'center',
+  //       yanchor: 'middle',
+  //     },
+  //   ]
+  // }
 
   const config = getConfig()
 
