@@ -46,10 +46,22 @@ export const scenarios: Record<Scenario, string> = {
   rcp85: 'RCP 8.5',
 }
 
+export const scenarioFullNames: Record<Scenario, string> = {
+  rcp45: 'Stabilizing (RCP 4.5)',
+  rcp60: 'Stabilizing High Emissions (RCP 6.0)',
+  rcp85: 'Increasing Emissions (RCP 8.5)',
+}
+
 type Era = '2016-2045' | '2046-2075' | '2071-2100'
 
 export const eras: Record<Era, string> = {
   '2016-2045': '2016&ndash;2045',
   '2046-2075': '2046&ndash;2075',
   '2071-2100': '2071&ndash;2100',
+}
+
+export const eraFullNamesHtml: Record<Era, string> = {
+  '2016-2045': 'Early-Century (2016-2045)',
+  '2046-2075': 'Mid-Century (2046-2075)',
+  '2071-2100': 'Late-Century (2071-2100)',
 }
