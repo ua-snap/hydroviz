@@ -102,9 +102,9 @@ const buildChart = () => {
   traces.push(historicalTrace)
 
   let scenarioLabels = {
-    rcp45: 'stabilizing emissions (RCP 4.5)',
-    rcp60: 'stabilizing high emissions (RCP 6.0)',
-    rcp85: 'increasing emissions (RCP 8.5)',
+    rcp45: 'Stabilizing Emissions (RCP 4.5)',
+    rcp60: 'Stabilizing High Emissions (RCP 6.0)',
+    rcp85: 'Increasing Emissions (RCP 8.5)',
   }
 
   let scenarioColors = {

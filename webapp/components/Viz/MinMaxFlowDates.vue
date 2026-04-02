@@ -67,9 +67,9 @@ const buildChart = () => {
   }
 
   let plotLabels = {
-    rcp45: 'Stabilizing emissions (RCP 4.5)',
-    rcp60: 'Stabilizing high emissions (RCP 6.0)',
-    rcp85: 'Increasing emissions (RCP 8.5)',
+    rcp45: 'Stabilizing Emissions (RCP 4.5)',
+    rcp60: 'Stabilizing High Emissions (RCP 6.0)',
+    rcp85: 'Increasing Emissions (RCP 8.5)',
   }
 
   scenarios.forEach(scenario => {
