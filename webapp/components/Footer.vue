@@ -65,8 +65,4 @@ const year = computed(() => {
   </footer>
 </template>
 
-<style lang="scss" scoped>
-footer {
-  background-color: oklch(0.951 0.2417 113.82);
-}
-</style>
+<style lang="scss" scoped></style>
