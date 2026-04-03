@@ -3,6 +3,19 @@ export const fnc = (number: number): string => {
   return new Intl.NumberFormat().format(number)
 }
 
+// round to sig)nificant fig)ures
+export const roundSigFig = (number: number): number => {
+  let precision = 3
+  if (number > 100000) {
+    precision = 4
+  }
+  if (number < 100) {
+    precision = 2
+  }
+
+  return Number(number.toPrecision(precision))
+}
+
 export const doyToDateString = (doy: number, monthOnly: boolean = false) => {
   const year = 2025 // Can be any year, but not a leap year.
   const date = new Date(year, 0) // January 1st of the given year

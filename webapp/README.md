@@ -13,7 +13,6 @@ For static-only local development (no interaction with an API, using fixtures ta
 
 ```
 export HYDROVIZ_USE_STATIC_FIXTURES=true
-
 ```
 
 For development with a backend API, export the `SNAP_API_URL` env var to the desired location (local or remote, defaults to `https://earthmaps.io`).

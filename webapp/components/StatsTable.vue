@@ -1,47 +1,169 @@
 <script setup lang="ts">
-import { eras } from '~/types/modelsScenarios'
+import { eraFullNamesHtml, scenarioFullNames } from '~/types/modelsScenarios'
+import { fnc, roundSigFig } from '~/utils/general'
+import { computed } from 'vue'
 
 import { streamflowStatistics } from '~/types/statsVars'
 const { $_ } = useNuxtApp()
-
-const props = defineProps(['streamStats', 'category'])
+import { useStreamSegmentStore } from '~/stores/streamSegment'
+const streamSegmentStore = useStreamSegmentStore()
+let { appContext, appEra } = storeToRefs(streamSegmentStore)
+const props = defineProps(['streamStats', 'category', 'tableTitle'])
 
 var statsInCategory = $_.filter(streamflowStatistics, {
   category: props.category,
 })
+
+const tableCaptionHtml = computed(() => {
+  return props.tableTitle + ', ' + eraFullNamesHtml[appEra.value]
+})
 </script>
 
 <template>
-  <table class="table" v-if="streamStats">
-    <thead>
-      <tr>
-        <th>Statistic</th>
-        <th>Description</th>
-        <th>1976&ndash;2005</th>
-        <th v-for="era in eras" :key="era" v-html="era"></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="stat in statsInCategory" :key="stat.id">
-        <th scope="row">
-          <code>{{ stat.id }}</code>
-        </th>
-        <td v-html="stat.description"></td>
-        <td>
-          {{ Number(streamStats['historical']['1976-2005'][stat.id]) }}
-          <span style="color: #888" v-html="stat.units_short"></span>
-        </td>
-        <td v-for="era in Object.keys(eras)" :key="era">
-          {{ Number(streamStats['projected'][era][stat.id]) }}
-          <span class="units" v-html="stat.units_short"></span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div v-if="streamStats">
+    <table class="table" v-if="appContext == 'mid'">
+      <caption class="mb-4" v-html="tableCaptionHtml"></caption>
+      <thead>
+        <tr>
+          <th scope="col" width="10%">Statistic</th>
+          <th scope="col" width="30%">Description</th>
+          <th scope="col" width="20%">Units</th>
+          <th scope="col" width="20%">
+            Modeled Historical<br />(1976&ndash;2005)
+          </th>
+          <th scope="col" width="20%">
+            Median, {{ scenarioFullNames['rcp60'] }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="stat in statsInCategory" :key="stat.id">
+          <th scope="row">
+            <code>{{ stat.id }}</code>
+          </th>
+          <td v-html="stat.description"></td>
+          <td v-html="stat.units_short"></td>
+          <td>
+            <span class="number">{{
+              fnc(
+                roundSigFig(
+                  Number(streamStats['historical']['1976-2005'][stat.id])
+                )
+              )
+            }}</span>
+          </td>
+          <td>
+            <span class="number">
+              {{
+                fnc(
+                  roundSigFig(
+                    Number(streamStats['projected'][appEra].mid[stat.id])
+                  )
+                )
+              }}
+            </span>
+            <Diff
+              :past="
+                roundSigFig(
+                  Number(streamStats['historical']['1976-2005'][stat.id])
+                )
+              "
+              :future="
+                roundSigFig(
+                  Number(streamStats['projected'][appEra].mid[stat.id])
+                )
+              "
+            />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <table class="table" v-if="appContext == 'extremes'">
+      <caption class="mb-4" v-html="tableCaptionHtml"></caption>
+      <thead>
+        <tr>
+          <th scope="col" width="10%">Statistic</th>
+          <th scope="col" width="25%">Description</th>
+          <th scope="col" width="10%">Units</th>
+          <th scope="col" width="15%">
+            Modeled Historical<br />(1976&ndash;2005)
+          </th>
+
+          <th scope="col">Minimum, {{ scenarioFullNames['rcp45'] }}</th>
+          <th scope="col">Maximum, {{ scenarioFullNames['rcp85'] }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="stat in statsInCategory" :key="stat.id">
+          <th scope="row">
+            <code>{{ stat.id }}</code>
+          </th>
+          <td v-html="stat.description"></td>
+          <td v-html="stat.units_short"></td>
+          <td>
+            <span class="number">{{
+              fnc(
+                roundSigFig(
+                  Number(streamStats['historical']['1976-2005'][stat.id])
+                )
+              )
+            }}</span>
+          </td>
+          <td>
+            <span class="number">
+              {{
+                fnc(
+                  roundSigFig(
+                    Number(streamStats['projected'][appEra].min[stat.id])
+                  )
+                )
+              }}
+            </span>
+            <Diff
+              :past="
+                roundSigFig(
+                  Number(streamStats['historical']['1976-2005'][stat.id])
+                )
+              "
+              :future="
+                roundSigFig(
+                  Number(streamStats['projected'][appEra].min[stat.id])
+                )
+              "
+            />
+          </td>
+          <td>
+            <span class="number">
+              {{
+                fnc(
+                  roundSigFig(
+                    Number(streamStats['projected'][appEra].max[stat.id])
+                  )
+                )
+              }}
+            </span>
+            <Diff
+              :past="
+                roundSigFig(
+                  Number(streamStats['historical']['1976-2005'][stat.id])
+                )
+              "
+              :future="
+                roundSigFig(
+                  Number(streamStats['projected'][appEra].max[stat.id])
+                )
+              "
+            />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <style lang="scss" scoped>
-.units {
-  color: #888;
+table caption {
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 </style>
