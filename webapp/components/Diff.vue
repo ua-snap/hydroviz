@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { roundSigFig, fnc } from '~/utils/general'
-const { $_ } = useNuxtApp()
+import { fnc } from '~/utils/general'
 
 const props = defineProps({
   future: {
