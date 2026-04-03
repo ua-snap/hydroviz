@@ -46,12 +46,6 @@ const buildChart = () => {
     scenarios = ['rcp45', 'rcp85']
   }
 
-  let scenarioLabels = {
-    rcp45: 'RCP 4.5',
-    rcp60: 'RCP 6.0',
-    rcp85: 'RCP 8.5',
-  }
-
   let scenarioColors = {
     historical: '#333333',
     rcp45: '#6baed6',
@@ -99,14 +93,14 @@ const buildChart = () => {
 
       if (stat == 'min') {
         historicalTraceLabel = 'Minimum flow date, historical, 1976-2005'
-        projectedTraceLabel = 'Minimum flow date, modeled, ' + appEra.value
+        projectedTraceLabel = 'Minimum flow, projected, ' + appEra.value
         historicalHovertextLabel = 'Min historical flow'
         projectedHovertextLabel = 'Min projected flow'
         historicalColor = '#888888'
         projectedColor = '#6baed6'
       } else {
-        historicalTraceLabel = 'Maximum flow date, historical, 1976-2005'
-        projectedTraceLabel = 'Maximum flow date, modeled, ' + appEra.value
+        historicalTraceLabel = 'Historical, 1976-2005'
+        projectedTraceLabel = 'Projected, ' + appEra.value
         historicalHovertextLabel = 'Max historical flow'
         projectedHovertextLabel = 'Max projected flow'
         historicalColor = '#333333'
@@ -158,7 +152,7 @@ const buildChart = () => {
         projectedDates[index] = convertTo360(doy)
       })
 
-      let traceLabel = projectedTraceLabel + `, ${scenarioLabels[scenario]}`
+      let traceLabel = projectedTraceLabel + `, ${plotLabels[scenario]}`
 
       let trace = {
         r: projectedFlows,
@@ -190,9 +184,17 @@ const buildChart = () => {
   })
 
   let traces = historicalTraces.concat(projectedTraces)
-  const titleText = 'Flow rate at date of annual maximum daily flow'
+  const titleText = 'Modeled flow rate at date of annual maximum daily flow'
 
-  const layout = getLayout(titleText, '')
+  let legendConfig = {
+    orientation: 'h',
+    yanchor: 'top',
+    y: -0.2,
+    xanchor: 'center',
+    x: 0.5,
+  }
+
+  const layout = getLayout(titleText, '', {}, {}, legendConfig)
 
   let firstOfMonthValues = [
     1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335,
@@ -210,7 +212,7 @@ const buildChart = () => {
     }
   } else {
     firstPlotDomain = {
-      x: [0, 0.45],
+      x: [0, 0.58],
       y: [0, 1],
     }
   }
@@ -218,10 +220,6 @@ const buildChart = () => {
   let axisColor = 'rgba(0,0,0,0.08)'
 
   layout['polar'] = {
-    title: {
-      text: 'Minimum flow date',
-      font: { size: 14 },
-    },
     angularaxis: {
       tickmode: 'array',
       tickvals: firstOfMonthValues,
@@ -254,69 +252,12 @@ const buildChart = () => {
   }
 
   if (appContext.value === 'extremes') {
-    // Ensure polar2 axis settings are applied to the "polar2" subplot
-    layout['polar2'] = {
-      angularaxis: {
-        tickmode: 'array',
-        tickvals: firstOfMonthValues,
-        ticktext: [
-          'Jan',
-          'Feb',
-          'Mar',
-          'Apr',
-          'May',
-          'Jun',
-          'Jul',
-          'Aug',
-          'Sep',
-          'Oct',
-          'Nov',
-          'Dec',
-        ],
-        direction: 'clockwise',
-        gridcolor: axisColor,
-      },
-      radialaxis: {
-        angle: 90,
-        tickangle: 90,
-        ticksuffix: ' cf/s',
-        tickmode: 'auto',
-        nticks: 4,
-        gridcolor: axisColor,
-      },
-      domain: { x: [0.55, 1], y: [0, 1] }, // Make sure domain is set here, not below
-    }
+    layout['polar2'] = $_.cloneDeep(layout['polar'])
+    layout['polar2']['domain'] = { x: [0.42, 1], y: [0, 1] }
   }
 
-  // Add an annotation (title) below each subplot
-  if (appContext.value === 'extremes') {
-    layout['annotations'] = [
-      {
-        text: plotLabels['rcp45'],
-        x: 0.062,
-        y: -0.15,
-        showarrow: false,
-        font: { size: 14 },
-      },
-      {
-        text: plotLabels['rcp85'],
-        x: 0.946,
-        y: -0.15,
-        showarrow: false,
-        font: { size: 14 },
-      },
-    ]
-  } else {
-    layout['annotations'] = [
-      {
-        text: plotLabels['rcp60'],
-        x: 0.505,
-        y: -0.15,
-        showarrow: false,
-        font: { size: 14 },
-      },
-    ]
-  }
+  layout['margin'] = { t: 100 }
+  layout['height'] = 500
 
   const config = getConfig('min-max-flow-dates')
 
