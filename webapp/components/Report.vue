@@ -63,7 +63,7 @@ onUnmounted(() => {
         <div class="mt-6 block content is-size-5">
           <p v-if="appContext == 'mid'">
             The projected values in the table below show the median values
-            across the Stabilizing High (RCP6.0) climate scenario for 13 climate
+            across the Stabilizing High (RCP 6.0) climate scenario for 13 climate
             models. This represents the middle-of-the-road for future model
             projections in the CMIP5 family of datasets.
           </p>
