@@ -39,11 +39,11 @@ export const getLayout = (
   },
   xaxis: {
     automargin: true,
-    gridcolor: '#aaaaaa',
+    gridcolor: 'rgba(0,0,0,0.08)',
     ...xAxisConfig,
   },
   yaxis: {
-    gridcolor: '#aaaaaa',
+    gridcolor: 'rgba(0,0,0,0.08)',
     automargin: true,
     title: {
       text: yAxisLabel,

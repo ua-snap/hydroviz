@@ -22,6 +22,9 @@ onMounted(() => {
 })
 
 watch([appContext, appEra], () => {
+  if (appContext.value === 'mid') {
+    $Plotly.purge('hydrograph2')
+  }
   initializeChart(
     $Plotly,
     'hydrograph',
@@ -31,12 +34,6 @@ watch([appContext, appEra], () => {
 })
 
 let scenarioLabels = {
-  rcp45: 'RCP 4.5',
-  rcp60: 'RCP 6.0',
-  rcp85: 'RCP 8.5',
-}
-
-let plotLabels = {
   rcp45: 'Stabilizing Emissions (RCP 4.5)',
   rcp60: 'Stabilizing High Emissions (RCP 6.0)',
   rcp85: 'Increasing Emissions (RCP 8.5)',
@@ -51,16 +48,16 @@ let scenarioColors = {
     doy_max_max: '#08519c',
   },
   rcp60: {
-    fill: '#32cd3280', // softer green with transparency
-    doy_min_min: '#32cd32', // same as fill, solid
-    doy_mean_mean: '#28a428', // slightly darker than fill
-    doy_max_max: '#1e7a1e', // even darker green
+    fill: '#32cd3280',
+    doy_min_min: '#32cd32',
+    doy_mean_mean: '#28a428',
+    doy_max_max: '#1e7a1e',
   },
   rcp85: {
-    fill: '#e0666680', // lighter red with transparency
-    doy_min_min: '#ff9999', // even lighter red
-    doy_mean_mean: '#ff4d4d', // lighter strong red
-    doy_max_max: '#a83232', // lighter dark red
+    fill: '#e0666680',
+    doy_min_min: '#e06666',
+    doy_mean_mean: '#ff4d4d',
+    doy_max_max: '#a83232',
   },
 }
 
@@ -73,7 +70,6 @@ function roundTo(num, sig = 3) {
 function convertDoysToHydroYearDoys(series) {
   let octDec = series.slice(273) // through end of array (366)
   let janSept = series.slice(0, 273)
-  let joined = octDec.concat(janSept)
   return octDec.concat(janSept)
 }
 const doys = $_.range(1, 366 + 1)
@@ -101,6 +97,7 @@ function processLowessAndHydroYear(traceData) {
 // hg is assumed to be non-null, raw, and only dynamic land cover now.
 const buildChart = hg => {
   let traces: Data[] = []
+  let traces2: Data[] = []
 
   let scenarios: string[]
   if (appContext.value === 'mid') {
@@ -122,25 +119,13 @@ const buildChart = hg => {
     historicalFlowData['doy_max']
   )
 
-  // Plotly.js subplot axes
-  let axes = [
-    {
-      x: 'x',
-      y: 'y',
-    },
-    {
-      x: 'x2',
-      y: 'y2',
-    },
-  ]
-
   let historicalMinTrace = {
     x: hydroDoys,
     y: hydroYearHistoricalDataMin,
     type: 'scatter',
     mode: 'line',
     line: { color: scenarioColors['historical'].fill, width: 0 },
-    name: 'Historical minimum (modeled), 1976-2005',
+    name: 'Minimum historical, 1976-2005',
     showlegend: false,
   }
 
@@ -151,7 +136,7 @@ const buildChart = hg => {
     fill: 'tonexty',
     mode: 'none',
     fillcolor: scenarioColors['historical'].fill,
-    name: 'Max/min historical flow (modeled), 1976-2005',
+    name: 'Minimum/maximum historical, 1976-2005',
   }
 
   let historicalMeanTrace = {
@@ -160,26 +145,17 @@ const buildChart = hg => {
     type: 'scatter',
     mode: 'line',
     line: { color: '#f0f0f0', width: 3 },
-    name: 'Mean historical flow (modeled), 1976-2005',
+    name: 'Mean historical, 1976-2005',
   }
 
+  traces.push(historicalMinTrace)
+  traces.push(historicalMaxTrace)
+  traces.push(historicalMeanTrace)
+
   if (appContext.value === 'extremes') {
-    let showLegend = true
-    axes.forEach(axis => {
-      let historicalMinTraceCopy = $_.cloneDeep(historicalMinTrace)
-      let historicalMaxTraceCopy = $_.cloneDeep(historicalMaxTrace)
-      historicalMinTraceCopy['xaxis'] = axis.x
-      historicalMinTraceCopy['yaxis'] = axis.y
-      historicalMaxTraceCopy['xaxis'] = axis.x
-      historicalMaxTraceCopy['yaxis'] = axis.y
-      historicalMaxTraceCopy['showlegend'] = showLegend
-      traces.push(historicalMinTraceCopy)
-      traces.push(historicalMaxTraceCopy)
-      showLegend = false
-    })
-  } else {
-    traces.push(historicalMinTrace)
-    traces.push(historicalMaxTrace)
+    traces2.push(historicalMinTrace)
+    traces2.push(historicalMaxTrace)
+    traces2.push(historicalMeanTrace)
   }
 
   scenarios.forEach(scenario => {
@@ -210,47 +186,32 @@ const buildChart = hg => {
       fill: 'tonexty',
       line: { color: scenarioColors['historical'].fill, width: 0 },
       fillcolor: scenarioColors[scenario].fill,
-      name:
-        'Min/max mean modeled future flow, ' +
-        appEra.value +
-        ', ' +
-        scenarioLabels[scenario],
+      name: 'Minimum/maximum of model means',
     }
 
-    if (appContext.value === 'extremes' && scenario === 'rcp85') {
-      meanMinTrace['xaxis'] = 'x2'
-      meanMinTrace['yaxis'] = 'y2'
-      meanMaxTrace['xaxis'] = 'x2'
-      meanMaxTrace['yaxis'] = 'y2'
+    if (appContext.value === 'extremes') {
+      if (scenario === 'rcp45') {
+        traces.push(meanMinTrace)
+        traces.push(meanMaxTrace)
+      } else {
+        traces2.push(meanMinTrace)
+        traces2.push(meanMaxTrace)
+      }
+    } else {
+      traces.push(meanMinTrace)
+      traces.push(meanMaxTrace)
     }
-
-    traces.push(meanMinTrace)
-    traces.push(meanMaxTrace)
   })
-
-  if (appContext.value === 'extremes') {
-    let showLegend = true
-    axes.forEach(axis => {
-      let historicalMeanTraceCopy = $_.cloneDeep(historicalMeanTrace)
-      historicalMeanTraceCopy['xaxis'] = axis.x
-      historicalMeanTraceCopy['yaxis'] = axis.y
-      historicalMeanTraceCopy['showlegend'] = showLegend
-      traces.push(historicalMeanTraceCopy)
-      showLegend = false
-    })
-  } else {
-    traces.push(historicalMeanTrace)
-  }
 
   let traceConfig = {
     doy_min_min: {
-      label: 'Minimum modeled future flow',
+      label: 'Minimum projected',
     },
     doy_mean_mean: {
-      label: 'Mean modeled future flow',
+      label: 'Mean projected',
     },
     doy_max_max: {
-      label: 'Maximum modeled future flow',
+      label: 'Maximum projected',
     },
   }
 
@@ -259,12 +220,7 @@ const buildChart = hg => {
 
     Object.keys(traceConfig).forEach(key => {
       let traceData = projectedFlowData[key]
-      let traceName =
-        traceConfig[key].label +
-        ', ' +
-        appEra.value +
-        ', ' +
-        scenarioLabels[scenario]
+      let traceName = traceConfig[key].label
 
       let hydroOrderedSmoothedY = processLowessAndHydroYear(traceData)
       let trace = {
@@ -278,11 +234,15 @@ const buildChart = hg => {
         },
         name: traceName,
       }
-      if (appContext.value === 'extremes' && scenario === 'rcp85') {
-        trace['xaxis'] = 'x2'
-        trace['yaxis'] = 'y2'
+      if (appContext.value === 'extremes') {
+        if (scenario === 'rcp45') {
+          traces.push(trace)
+        } else {
+          traces2.push(trace)
+        }
+      } else {
+        traces.push(trace)
       }
-      traces.push(trace)
     })
   })
 
@@ -290,98 +250,75 @@ const buildChart = hg => {
   // oriented by the hydro year.
   let xTickVals = [274, 305, 335, 1, 32, 60, 91, 121, 152, 182, 213, 244]
   let xTickLabels = xTickVals.map((doy: number) => {
-    return doyToDateString(doy)
+    return doyToDateString(doy, true)
   })
 
-  const titleText: string =
-    'Minimum, mean and maximum modeled projected flow rate'
+  let scenarioLabel: string
+  let scenarioLabel2: string
+
+  if (appContext.value === 'mid') {
+    scenarioLabel = scenarioLabels['rcp60']
+  } else {
+    scenarioLabel = scenarioLabels['rcp45']
+    scenarioLabel2 = scenarioLabels['rcp85']
+  }
+
+  let titleBase = `Modeled flow rate, ${appEra.value}`
+  let titleText = `${titleBase}, ${scenarioLabel}`
+
+  let yAxisLabel = 'Flow rate, cf/s'
+
+  let xAxisConfig = {
+    type: 'category',
+    tickmode: 'array',
+    tickvals: xTickVals,
+    ticktext: xTickLabels,
+  }
+
+  let yAxisConfig = {
+    type: 'log',
+    autorange: true,
+  }
+
+  let legendConfig = {
+    orientation: 'h',
+    yanchor: 'top',
+    y: -0.2,
+    xanchor: 'center',
+    x: 0.5,
+  }
 
   let layout = getLayout(
     titleText,
-    'Flow rate, cf/s',
-    {
-      type: 'category',
-      tickmode: 'array',
-      tickvals: xTickVals,
-      ticktext: xTickLabels,
-    },
-    {
-      type: 'log',
-      autorange: true,
-    },
-    {
-      traceorder: 'reversed',
-    }
+    yAxisLabel,
+    xAxisConfig,
+    yAxisConfig,
+    legendConfig
   )
-
-  // Add a tiny bit of margin to the left of the plot
-  layout['margin']['l'] = 110
-
-  if (appContext.value === 'extremes') {
-    layout['xaxis2'] = $_.cloneDeep(layout['xaxis'])
-    layout['yaxis2'] = $_.cloneDeep(layout['yaxis'])
-    layout['height'] = 830
-    layout['grid'] = {
-      rows: 2,
-      columns: 1,
-      pattern: 'independent',
-      ygap: 0.18,
-    }
-  }
-
-  // Add annotations along the y-axis for each subplot, rotated vertically
-  if (appContext.value === 'extremes') {
-    layout['annotations'] = [
-      {
-        text: plotLabels['rcp45'],
-        x: -0.12,
-        y: 0.778,
-        showarrow: false,
-        font: { size: 14 },
-        textangle: -90,
-        xref: 'paper',
-        yref: 'paper',
-        xanchor: 'center',
-        yanchor: 'middle',
-      },
-      {
-        text: plotLabels['rcp85'],
-        x: -0.12,
-        y: 0.228,
-        showarrow: false,
-        font: { size: 14 },
-        textangle: -90,
-        xref: 'paper',
-        yref: 'paper',
-        xanchor: 'center',
-        yanchor: 'middle',
-      },
-    ]
-  } else {
-    layout['annotations'] = [
-      {
-        text: plotLabels['rcp60'],
-        x: -0.12,
-        y: 0.505,
-        showarrow: false,
-        font: { size: 14 },
-        textangle: -90,
-        xref: 'paper',
-        yref: 'paper',
-        xanchor: 'center',
-        yanchor: 'middle',
-      },
-    ]
-  }
 
   const config = getConfig()
 
   $Plotly.newPlot('hydrograph', traces, layout, config)
+
+  if (appContext.value === 'extremes') {
+    let scenarioLabel2 = scenarioLabels['rcp85']
+    let titleText2 = `${titleBase}, ${scenarioLabel2}`
+    let layout2 = getLayout(
+      titleText2,
+      yAxisLabel,
+      xAxisConfig,
+      yAxisConfig,
+      legendConfig
+    )
+    $Plotly.newPlot('hydrograph2', traces2, layout2, config)
+  }
 }
 </script>
 
 <template>
   <div id="hydrograph"></div>
+  <div v-if="appContext === 'extremes'" class="mt-6"></div>
+  <div id="hydrograph2"></div>
 </template>
 
 <style lang="scss" scoped></style>
