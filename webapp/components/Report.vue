@@ -26,12 +26,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section class="section">
-    <div class="container">
-      <Loading />
-    </div>
-  </section>
-
+  <Loading />
   <div v-if="streamStats">
     <section class="section">
       <div class="container">
