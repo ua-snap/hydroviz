@@ -4,7 +4,7 @@ export const fnc = (number: number): string => {
 }
 
 // round to sig)nificant fig)ures
-export const roundSigFig = (number: number): string => {
+export const roundSigFig = (number: number): number => {
   let precision = 3
   if (number > 100000) {
     precision = 4
