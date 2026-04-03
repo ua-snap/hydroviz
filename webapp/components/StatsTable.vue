@@ -4,6 +4,8 @@ import {
   eraFullNamesHtml,
   scenarioFullNames,
 } from '~/types/modelsScenarios'
+import { fnc, roundSigFig } from '~/utils/general'
+
 import { streamflowStatistics } from '~/types/statsVars'
 const { $_ } = useNuxtApp()
 import { useStreamSegmentStore } from '~/stores/streamSegment'
@@ -49,16 +51,34 @@ var statsInCategory = $_.filter(streamflowStatistics, {
           <td v-html="stat.units_short"></td>
           <td>
             <span class="number">{{
-              Number(streamStats['historical']['1976-2005'][stat.id])
+              fnc(
+                roundSigFig(
+                  Number(streamStats['historical']['1976-2005'][stat.id])
+                )
+              )
             }}</span>
           </td>
           <td>
             <span class="number">
-              {{ Number(streamStats['projected'][appEra].mid[stat.id]) }}
+              {{
+                fnc(
+                  roundSigFig(
+                    Number(streamStats['projected'][appEra].mid[stat.id])
+                  )
+                )
+              }}
             </span>
             <Diff
-              :past="streamStats['historical']['1976-2005'][stat.id]"
-              :future="streamStats['projected'][appEra].mid[stat.id]"
+              :past="
+                roundSigFig(
+                  Number(streamStats['historical']['1976-2005'][stat.id])
+                )
+              "
+              :future="
+                roundSigFig(
+                  Number(streamStats['projected'][appEra].mid[stat.id])
+                )
+              "
             />
           </td>
         </tr>
@@ -95,25 +115,57 @@ var statsInCategory = $_.filter(streamflowStatistics, {
           <td v-html="stat.units_short"></td>
           <td>
             <span class="number">{{
-              Number(streamStats['historical']['1976-2005'][stat.id])
+              fnc(
+                roundSigFig(
+                  Number(streamStats['historical']['1976-2005'][stat.id])
+                )
+              )
             }}</span>
           </td>
           <td>
             <span class="number">
-              {{ Number(streamStats['projected'][appEra].min[stat.id]) }}
+              {{
+                fnc(
+                  roundSigFig(
+                    Number(streamStats['projected'][appEra].min[stat.id])
+                  )
+                )
+              }}
             </span>
             <Diff
-              :past="streamStats['historical']['1976-2005'][stat.id]"
-              :future="streamStats['projected'][appEra].min[stat.id]"
+              :past="
+                roundSigFig(
+                  Number(streamStats['historical']['1976-2005'][stat.id])
+                )
+              "
+              :future="
+                roundSigFig(
+                  Number(streamStats['projected'][appEra].min[stat.id])
+                )
+              "
             />
           </td>
           <td>
             <span class="number">
-              {{ Number(streamStats['projected'][appEra].max[stat.id]) }}
+              {{
+                fnc(
+                  roundSigFig(
+                    Number(streamStats['projected'][appEra].max[stat.id])
+                  )
+                )
+              }}
             </span>
             <Diff
-              :past="streamStats['historical']['1976-2005'][stat.id]"
-              :future="streamStats['projected'][appEra].max[stat.id]"
+              :past="
+                roundSigFig(
+                  Number(streamStats['historical']['1976-2005'][stat.id])
+                )
+              "
+              :future="
+                roundSigFig(
+                  Number(streamStats['projected'][appEra].max[stat.id])
+                )
+              "
             />
           </td>
         </tr>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { roundSigFig, fnc } from '~/utils/general'
 const { $_ } = useNuxtApp()
 
 const props = defineProps({
@@ -36,11 +37,11 @@ const isMore = computed(() => {
 })
 
 const diff = computed(() => {
-  let diff = $_.round(props.future - props.past, 2)
+  let diff = props.future - props.past
   if (diff > 0) {
-    diff = '&plus;' + diff
+    diff = '&plus;' + fnc(diff)
   } else if (diff < 0) {
-    diff = '&minus;' + Math.abs(diff)
+    diff = '&minus;' + fnc(Math.abs(diff))
   } else {
     diff = '0'
   }
