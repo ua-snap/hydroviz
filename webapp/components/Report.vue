@@ -63,17 +63,17 @@ onUnmounted(() => {
         <div class="mt-6 block content is-size-5">
           <p v-if="appContext == 'mid'">
             The projected values in the table below show the median values
-            across the Stabilizing High (RCP 6.0) climate scenario for 13 climate
-            models. This represents the middle-of-the-road for future model
-            projections in the CMIP5 family of datasets.
+            across the Stabilizing High (RCP 6.0) climate scenario for 13
+            climate models. This represents the middle-of-the-road for future
+            model projections in the CMIP5 family of datasets.
           </p>
           <p v-if="appContext == 'extremes'">
             The projected values in the table below show the extreme values
             across two climate scenarios for 13 climate models. The values in
             the &lsquo;Minimum, Stabilizing (RCP 4.5)&rsquo; column are the
-            minimum values across all 13 climate models, and the values in
-            the &lsquo;Maximum, Increasing Emissions (RCP 8.5)&rsquo; column are
-            the maximum values across all 13 climate models.
+            minimum values across all 13 climate models, and the values in the
+            &lsquo;Maximum, Increasing Emissions (RCP 8.5)&rsquo; column are the
+            maximum values across all 13 climate models.
           </p>
         </div>
         <StatsTable
@@ -119,7 +119,11 @@ onUnmounted(() => {
     <section class="section">
       <div class="container">
         <h4 class="title is-4">Rate of change statistics</h4>
-        <!-- <StatsTable :stream-stats="streamStats" category="rate_of_change" /> -->
+        <StatsTable
+          :stream-stats="streamStats"
+          category="rate_of_change"
+          tableTitle="Rate of Change Statistics"
+        />
       </div>
     </section>
   </div>
