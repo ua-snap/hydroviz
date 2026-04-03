@@ -18,7 +18,7 @@ const pct = computed(() => {
   return (((props.future - props.past) / props.past) * 100).toFixed(0)
 })
 
-// True if the difference is less than 10%, or 10mm
+// True if the absolute percentage difference is less than 25%
 const isWeak = computed(() => {
   return Math.abs(pct.value) < 25
 })
