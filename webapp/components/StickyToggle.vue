@@ -23,48 +23,70 @@ let { appContext, appEra } = storeToRefs(streamSegmentStore)
     </p>
   </div>
   <div class="sticky-toggle block content is-size-5 py-3 container">
-    Show
-    <span class="control is-size-5">
-      <label class="radio">
-        <input type="radio" name="scenario" value="mid" v-model="appContext" />
-        middle of the road
-      </label>
-      or
-      <label class="radio">
-        <input
-          type="radio"
-          name="scenario"
-          value="extremes"
-          v-model="appContext"
-        />
-        future extremes
-      </label>
-    </span>
-    in charts and graphs below.<br />
-    Show projected data for
-    <span class="control is-size-5">
-      <label class="radio">
-        <input type="radio" name="era" value="2016-2045" v-model="appEra" />
-        2016-2045 </label
-      >,
-      <label class="radio">
-        <input type="radio" name="era" value="2046-2075" v-model="appEra" />
-        2046-2075 </label
-      >, or
-      <label class="radio">
-        <input type="radio" name="era" value="2071-2100" v-model="appEra" />
-        2071-2100 </label
-      >.
-    </span>
+    <p>
+      Show
+      <span class="control is-size-5">
+        <label class="radio">
+          <input
+            type="radio"
+            name="scenario"
+            value="mid"
+            v-model="appContext"
+          />
+          <span>middle of the road</span>
+        </label>
+        or
+        <label class="radio">
+          <input
+            type="radio"
+            name="scenario"
+            value="extremes"
+            v-model="appContext"
+          />
+          <span>future extremes</span>
+        </label>
+      </span>
+      in charts and graphs below.
+    </p>
+    <p style="margin-top: -1rem">
+      Show projected data for
+      <span class="control is-size-5">
+        <label class="radio">
+          <input type="radio" name="era" value="2016-2045" v-model="appEra" />
+          <span>early-century</span> (2016&ndash;2045),</label
+        >
+        <label class="radio">
+          <input type="radio" name="era" value="2046-2075" v-model="appEra" />
+          <span>mid-century</span> (2046&ndash;2075)</label
+        >
+        or
+        <label class="radio">
+          <input type="radio" name="era" value="2071-2100" v-model="appEra" />
+          <span>late-century</span> (2071&ndash;2100).</label
+        >
+      </span>
+    </p>
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .sticky-toggle {
   position: sticky;
   top: 0;
   background: white;
   z-index: 10000;
   border-bottom: 1px solid #eee;
+}
+
+label.radio {
+  display: inline-block;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+  span {
+    font-weight: 500;
+    display: inline-block;
+    margin-left: 0.4rem;
+    border-bottom: 2px solid #ccc;
+  }
 }
 </style>

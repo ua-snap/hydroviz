@@ -11,6 +11,8 @@ if (path) {
 </script>
 
 <template>
+  <NavBar />
   <NuxtRouteAnnouncer />
   <NuxtPage />
+  <Footer />
 </template>

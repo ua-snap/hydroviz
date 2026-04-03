@@ -5,9 +5,17 @@ let { isLoading, apiSlow, apiFailed } = storeToRefs(streamSegmentStore)
 </script>
 <template>
   <div v-if="isLoading" class="content is-size-4">
-    <p v-if="apiSlow">This is taking longer than usual. Still trying&hellip;</p>
-    <p v-else>Loading data&hellip; this usually takes about 10-15 seconds.</p>
-    <progress class="progress" />
+    <section class="section">
+      <div class="container">
+        <p v-if="apiSlow">
+          This is taking longer than usual. Still trying&hellip;
+        </p>
+        <p v-else>
+          Loading data&hellip; this usually takes about 10-15 seconds.
+        </p>
+        <progress class="progress" />
+      </div>
+    </section>
   </div>
   <div v-else-if="apiFailed" class="content is-size-4">
     <p>

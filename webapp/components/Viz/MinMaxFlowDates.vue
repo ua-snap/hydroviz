@@ -245,5 +245,5 @@ const buildChart = () => {
 </script>
 
 <template>
-  <div id="min-max-flow-dates"></div>
+  <div id="min-max-flow-dates" class="mb-5"></div>
 </template>

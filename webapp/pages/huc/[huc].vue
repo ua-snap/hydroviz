@@ -16,8 +16,13 @@ if (!/^\d{8}$/.test(huc)) {
 </script>
 
 <template>
-  <h1 class="title is-3">HUC ID {{ huc }}</h1>
-  <NuxtLink to="/">Go back, pick another place</NuxtLink>
+  <section class="section">
+    <div class="container">
+      <NuxtLink class="content is-size-5" to="/"
+        >Go back, pick another place</NuxtLink
+      >
+    </div>
+  </section>
   <Report />
 </template>
 
