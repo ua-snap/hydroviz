@@ -69,7 +69,7 @@ let { appContext, appEra } = storeToRefs(streamSegmentStore)
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .sticky-toggle {
   position: sticky;
   top: 0;
