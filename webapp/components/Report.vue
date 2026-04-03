@@ -71,9 +71,9 @@ onUnmounted(() => {
             The projected values in the table below show the extreme values
             across two climate scenarios for 13 climate models. The values in
             the &lsquo;Minimum, Stabilizing (RCP 4.5)&rsquo; column are the
-            minimum values across all 13 climate scenarios, and the values in
+            minimum values across all 13 climate models, and the values in
             the &lsquo;Maximum, Increasing Emissions (RCP 8.5)&rsquo; column are
-            the maximum values across all 13 climate scenarios.
+            the maximum values across all 13 climate models.
           </p>
         </div>
         <StatsTable
