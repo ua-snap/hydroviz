@@ -13,7 +13,7 @@ import { NuxtLink } from '#components'
         <div class="navbar-start">
           <NuxtLink to="/" class="navbar-item">Home</NuxtLink>
           <NuxtLink to="/about" class="navbar-item">About</NuxtLink>
-          <NuxtLink to="/how-to" class="navbar-item">How-To</NuxtLink>
+          <NuxtLink to="/how-to" class="navbar-item">How-To Guide</NuxtLink>
           <NuxtLink to="/models-and-uncertainty" class="navbar-item"
             >Models and Uncertainty</NuxtLink
           >
