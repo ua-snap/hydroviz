@@ -61,7 +61,7 @@ export const eras: Record<Era, string> = {
 }
 
 export const eraFullNamesHtml: Record<Era, string> = {
-  '2016-2045': 'Early-Century (2016-2045)',
-  '2046-2075': 'Mid-Century (2046-2075)',
-  '2071-2100': 'Late-Century (2071-2100)',
+  '2016-2045': 'Early-Century (2016&ndash;2045)',
+  '2046-2075': 'Mid-Century (2046&ndash;2075)',
+  '2071-2100': 'Late-Century (2071&ndash;2100)',
 }

@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import {
-  eraFullNamesHtml,
-  scenarioFullNames,
-} from '~/types/modelsScenarios'
+import { eraFullNamesHtml, scenarioFullNames } from '~/types/modelsScenarios'
 import { fnc, roundSigFig } from '~/utils/general'
+import { computed } from 'vue'
 
 import { streamflowStatistics } from '~/types/statsVars'
 const { $_ } = useNuxtApp()
@@ -15,19 +13,16 @@ const props = defineProps(['streamStats', 'category', 'tableTitle'])
 var statsInCategory = $_.filter(streamflowStatistics, {
   category: props.category,
 })
+
+const tableCaptionHtml = computed(() => {
+  return props.tableTitle + ', ' + eraFullNamesHtml[appEra.value]
+})
 </script>
 
 <template>
   <div v-if="streamStats">
     <table class="table" v-if="appContext == 'mid'">
-      <caption class="mb-4">
-        {{
-          tableTitle
-        }},
-        {{
-          eraFullNamesHtml[appEra]
-        }}
-      </caption>
+      <caption class="mb-4" v-html="tableCaptionHtml"></caption>
       <thead>
         <tr>
           <th scope="col" width="10%">Statistic</th>
@@ -84,14 +79,7 @@ var statsInCategory = $_.filter(streamflowStatistics, {
       </tbody>
     </table>
     <table class="table" v-if="appContext == 'extremes'">
-      <caption class="mb-4">
-        {{
-          tableTitle
-        }},
-        {{
-          eraFullNamesHtml[appEra]
-        }}
-      </caption>
+      <caption class="mb-4" v-html="tableCaptionHtml"></caption>
       <thead>
         <tr>
           <th scope="col" width="10%">Statistic</th>
