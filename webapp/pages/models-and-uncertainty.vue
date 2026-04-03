@@ -1,7 +1,7 @@
 <template>
-  <section>
+  <section class="section">
     <div class="container">
-      <h1 class="title is-1 mt-6">Models and Uncertainty</h1>
+      <h1 class="title is-1">Models and Uncertainty</h1>
       <div class="content is-size-4">
         <div class="mb-5">
           <h2 class="title is-4">

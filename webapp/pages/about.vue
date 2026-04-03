@@ -1,7 +1,7 @@
 <template>
-  <section>
+  <section class="section">
     <div class="container">
-      <h1 class="title is-1 mt-6">About</h1>
+      <h1 class="title is-1">About</h1>
       <div class="content is-size-4">
         <h3 class="title is-3">Hydrologic Outlooks</h3>
         <ul>
