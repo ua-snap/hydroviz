@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {
-  eras,
   eraFullNamesHtml,
   scenarioFullNames,
 } from '~/types/modelsScenarios'
