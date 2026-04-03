@@ -67,120 +67,99 @@ const buildChart = () => {
   }
 
   scenarios.forEach(scenario => {
-    let stats = ['max']
-    stats.forEach(stat => {
-      let historicalFlow = [
-        props.streamMinMaxFlowDates['historical'][stat]['flow'],
-      ]
-      let historicalFlowDate = [
-        props.streamMinMaxFlowDates['historical'][stat]['date'],
-      ]
+    let historicalFlow = [
+      props.streamMinMaxFlowDates['historical']['max']['flow'],
+    ]
+    let historicalFlowDate = [
+      props.streamMinMaxFlowDates['historical']['max']['date'],
+    ]
 
-      let customdataHistorical: string[][] = []
-      historicalFlowDate.forEach((doy: number, index: number) => {
-        let dayString = doyToDateString(doy)
+    let customdataHistorical: string[][] = []
+    historicalFlowDate.forEach((doy: number, index: number) => {
+      let dayString = doyToDateString(doy)
 
-        customdataHistorical.push([dayString])
-        historicalFlowDate[index] = convertTo360(doy)
-      })
-
-      let historicalTraceLabel: string
-      let projectedTraceLabel: string
-      let historicalColor: string
-      let projectedColor: string
-      let historicalHovertextLabel: string
-      let projectedHovertextLabel: string
-
-      if (stat == 'min') {
-        historicalTraceLabel = 'Minimum flow date, historical, 1976-2005'
-        projectedTraceLabel = 'Minimum flow, projected, ' + appEra.value
-        historicalHovertextLabel = 'Min historical flow'
-        projectedHovertextLabel = 'Min projected flow'
-        historicalColor = '#888888'
-        projectedColor = '#6baed6'
-      } else {
-        historicalTraceLabel = 'Historical, 1976-2005'
-        projectedTraceLabel = 'Projected, ' + appEra.value
-        historicalHovertextLabel = 'Max historical flow'
-        projectedHovertextLabel = 'Max projected flow'
-        historicalColor = '#333333'
-        projectedColor = '#3182bd'
-      }
-
-      let showLegend = false
-      if (
-        (appContext.value === 'extremes' && scenario === 'rcp45') ||
-        appContext.value === 'mid'
-      ) {
-        showLegend = true
-      }
-
-      let historicalTrace = {
-        r: historicalFlow,
-        theta: historicalFlowDate,
-        type: 'scatterpolar',
-        mode: 'markers',
-        name: historicalTraceLabel,
-        marker: {
-          size: 9,
-          color: scenarioColors['historical'],
-          symbol: scenarioSymbols['historical'],
-        },
-        customdata: customdataHistorical,
-        hovertemplate: `%{customdata[0]}, 1976-2005<br />${historicalHovertextLabel}: %{r:,} cf/s<extra></extra>`,
-        showlegend: showLegend,
-      }
-      if (appContext.value === 'extremes' && scenario === 'rcp45') {
-        historicalTrace['subplot'] = 'polar2'
-      }
-      historicalTraces.push(historicalTrace)
-
-      let projectedFlows =
-        props.streamMinMaxFlowDates['projected'][appEra.value][scenario][stat][
-          'flow'
-        ]
-      let projectedDates = $_.cloneDeep(
-        props.streamMinMaxFlowDates['projected'][appEra.value][scenario][stat][
-          'date'
-        ]
-      )
-
-      let customdataProjected: string[][] = []
-      projectedDates.forEach((doy: number, index: number) => {
-        let dayString = doyToDateString(doy)
-        customdataProjected.push([dayString])
-        projectedDates[index] = convertTo360(doy)
-      })
-
-      let traceLabel = projectedTraceLabel + `, ${plotLabels[scenario]}`
-
-      let trace = {
-        r: projectedFlows,
-        theta: projectedDates,
-        type: 'scatterpolar',
-        mode: 'markers',
-        name: traceLabel,
-        marker: {
-          size: 8,
-          color: scenarioColors[scenario],
-          symbol: scenarioSymbols[scenario],
-        },
-        customdata: customdataProjected,
-        hovertemplate: `%{customdata[0]}, 2046-2075<br />${projectedHovertextLabel}: %{r:,} cf/s<extra></extra>`,
-      }
-
-      if (appContext.value === 'mid') {
-        trace['subplot'] = 'polar'
-      } else {
-        if (scenario === 'rcp45') {
-          trace['subplot'] = 'polar'
-        } else if (scenario === 'rcp85') {
-          trace['subplot'] = 'polar2'
-        }
-      }
-
-      projectedTraces.push(trace)
+      customdataHistorical.push([dayString])
+      historicalFlowDate[index] = convertTo360(doy)
     })
+
+    const historicalTraceLabel = 'Historical, 1976-2005'
+    const projectedTraceLabel = 'Projected, ' + appEra.value
+    const historicalHovertextLabel = 'Max historical flow'
+    const projectedHovertextLabel = 'Max projected flow'
+
+    let showLegend = false
+    if (
+      (appContext.value === 'extremes' && scenario === 'rcp45') ||
+      appContext.value === 'mid'
+    ) {
+      showLegend = true
+    }
+
+    let historicalTrace = {
+      r: historicalFlow,
+      theta: historicalFlowDate,
+      type: 'scatterpolar',
+      mode: 'markers',
+      name: historicalTraceLabel,
+      marker: {
+        size: 9,
+        color: scenarioColors['historical'],
+        symbol: scenarioSymbols['historical'],
+      },
+      customdata: customdataHistorical,
+      hovertemplate: `%{customdata[0]}, 1976-2005<br />${historicalHovertextLabel}: %{r:,} cf/s<extra></extra>`,
+      showlegend: showLegend,
+    }
+    if (appContext.value === 'extremes' && scenario === 'rcp45') {
+      historicalTrace['subplot'] = 'polar2'
+    }
+    historicalTraces.push(historicalTrace)
+
+    let projectedFlows =
+      props.streamMinMaxFlowDates['projected'][appEra.value][scenario]['max'][
+        'flow'
+      ]
+    let projectedDates = $_.cloneDeep(
+      props.streamMinMaxFlowDates['projected'][appEra.value][scenario]['max'][
+        'date'
+      ]
+    )
+
+    let customdataProjected: string[][] = []
+    projectedDates.forEach((doy: number, index: number) => {
+      let dayString = doyToDateString(doy)
+      customdataProjected.push([dayString])
+      projectedDates[index] = convertTo360(doy)
+    })
+
+    let traceLabel = projectedTraceLabel + `, ${plotLabels[scenario]}`
+
+    let trace = {
+      r: projectedFlows,
+      theta: projectedDates,
+      type: 'scatterpolar',
+      mode: 'markers',
+      name: traceLabel,
+      marker: {
+        size: 8,
+        color: scenarioColors[scenario],
+        symbol: scenarioSymbols[scenario],
+      },
+      customdata: customdataProjected,
+      hovertemplate: `%{customdata[0]}, 2046-2075<br />${projectedHovertextLabel}: %{r:,} cf/s<extra></extra>`,
+    }
+
+    if (appContext.value === 'mid') {
+      trace['subplot'] = 'polar'
+    } else {
+      if (scenario === 'rcp45') {
+        trace['subplot'] = 'polar'
+      } else if (scenario === 'rcp85') {
+        trace['subplot'] = 'polar2'
+      }
+    }
+
+    projectedTraces.push(trace)
   })
 
   let traces = historicalTraces.concat(projectedTraces)
@@ -189,7 +168,7 @@ const buildChart = () => {
   let legendConfig = {
     orientation: 'h',
     yanchor: 'top',
-    y: -0.2,
+    y: -0.15,
     xanchor: 'center',
     x: 0.5,
   }
