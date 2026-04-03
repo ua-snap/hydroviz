@@ -15,7 +15,14 @@ const props = defineProps({
 
 // Assuming future and past are defined as props
 const pct = computed(() => {
-  return (((props.future - props.past) / props.past) * 100).toFixed(0)
+  if (props.past === 0) {
+    if (props.future === 0) {
+      return 0
+    }
+    return props.future > 0 ? 100 : -100
+  }
+
+  return Math.round(((props.future - props.past) / props.past) * 100)
 })
 
 // True if the absolute percentage difference is less than 25%
