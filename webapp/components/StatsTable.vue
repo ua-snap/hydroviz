@@ -20,7 +20,7 @@ const tableCaptionHtml = computed(() => {
 </script>
 
 <template>
-  <div v-if="streamStats">
+  <div v-if="streamStats" class="my-6">
     <table class="table" v-if="appContext == 'mid'">
       <caption class="mb-4" v-html="tableCaptionHtml"></caption>
       <thead>

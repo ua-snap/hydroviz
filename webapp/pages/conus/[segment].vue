@@ -18,8 +18,9 @@ segmentId.value = segment
 <template>
   <section class="section">
     <div class="container">
-      <h1 class="title is-3">Stream Segment ID {{ segment }}</h1>
-      <NuxtLink to="/">Go back, pick another place</NuxtLink>
+      <NuxtLink class="content is-size-5" to="/"
+        >Go back, pick another place</NuxtLink
+      >
     </div>
   </section>
   <Report />
