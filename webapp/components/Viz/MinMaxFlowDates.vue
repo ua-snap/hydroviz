@@ -83,7 +83,7 @@ const buildChart = () => {
     })
 
     const historicalTraceLabel = 'Historical, 1976-2005'
-    const projectedTraceLabel = 'Projected, ' + appEra.value
+    const projectedTraceLabel = 'Projected'
     const historicalHovertextLabel = 'Max historical flow'
     const projectedHovertextLabel = 'Max projected flow'
 
@@ -162,8 +162,12 @@ const buildChart = () => {
     projectedTraces.push(trace)
   })
 
-  let traces = historicalTraces.concat(projectedTraces)
-  const titleText = 'Modeled flow rate at date of annual maximum daily flow'
+  // Reverse projected traces because the legend gets reversed later.
+  // This will ultimately keep the legend order the same as the subplot order.
+  projectedTraces.reverse()
+
+  let traces = projectedTraces.concat(historicalTraces)
+  const titleText = `Modeled flow rate at date of annual maximum daily flow, ${appEra.value}`
 
   let legendConfig = {
     orientation: 'h',
@@ -171,6 +175,7 @@ const buildChart = () => {
     y: -0.15,
     xanchor: 'center',
     x: 0.5,
+    traceorder: 'reversed',
   }
 
   const layout = getLayout(titleText, '', {}, {}, legendConfig)
