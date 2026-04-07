@@ -53,8 +53,8 @@ onUnmounted(() => {
           </p>
           <p v-if="appContext == 'extremes'">
             The charts below are hydrographs that show the modeled historical
-            mean (white line in center) and range of variation (gray band) with
-            for two climate scenarios: Stabilizing Emissions (RCP 4.5) and
+            mean (white line in center) and range of variation (gray band) for
+            two climate scenarios: Stabilizing Emissions (RCP 4.5) and
             Increasing Emissions (RCP 8.5). The minimum and maximum across all
             climate models are shown in each chart (top and bottom lines), and
             the range of variation for the means are shown as a shaded ribbon.
@@ -90,6 +90,21 @@ onUnmounted(() => {
     </section>
     <section class="section">
       <div class="container">
+        <div class="content clamp is-size-5 mb-6">
+          <p v-if="appContext == 'mid'">
+            The chart below shows the modeled annual maximum daily flow rate and
+            the date of its occurrence for the historical modeled value
+            (diamond) and with the projected middle-of-the-road climate
+            scenario, Stabilizing High Emissions (RCP 6.0), for all climate
+            models.
+          </p>
+          <p v-if="appContext == 'extremes'">
+            The charts below show the modeled annual maximum daily flow rate and
+            the date of its occurrence for the historical modeled value
+            (diamond) and for two climate scenarios, Stabilizing Emissions (RCP
+            4.5) and Increasing Emissions (RCP 8.5), for all climate models.
+          </p>
+        </div>
         <VizMinMaxFlowDates
           :stream-min-max-flow-dates="streamMinMaxFlowDates"
         />
