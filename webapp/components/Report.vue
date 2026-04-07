@@ -42,11 +42,49 @@ onUnmounted(() => {
     <StickyToggle />
     <section class="section">
       <div class="container">
+        <div class="content clamp is-size-5 mb-6">
+          <p v-if="appContext == 'mid'">
+            The chart below is a hydrograph that shows the modeled historical
+            mean (white line in center) and range of variation (gray band) with
+            the projected middle-of-the-road climate scenario&mdash;Stabilizing
+            High Emissions (RCP 6.0). The minimum and maximum across all climate
+            models are shown (the top and bottom lines), and the range of
+            variation for the means are shown as a shaded ribbon.
+          </p>
+          <p v-if="appContext == 'extremes'">
+            The charts below are hydrographs that show the modeled historical
+            mean (white line in center) and range of variation (gray band) with
+            for two climate scenarios: Stabilizing Emissions (RCP 4.5) and
+            Increasing Emissions (RCP 8.5). The minimum and maximum across all
+            climate models are shown in each chart (top and bottom lines), and
+            the range of variation for the means are shown as a shaded ribbon.
+          </p>
+        </div>
         <VizHydrograph :stream-hydrograph="streamHydrograph" />
       </div>
     </section>
     <section class="section">
       <div class="container">
+        <div class="content clamp is-size-5 mb-6">
+          <p v-if="appContext == 'mid'">
+            The chart below shows the mean modeled monthly flow rate for the
+            historical modeled value (diamond) and with the projected
+            middle-of-the-road climate scenario&mdash;Stabilizing High Emissions
+            (RCP 6.0). Each box plot spans from quartile 1 to quartile 3, which
+            is the interquartile range (IQR). The second quartile&mdash;the
+            median&mdash;is marked by a line inside the box. The whiskers span
+            &#177;1.5 times the interquartile range.
+          </p>
+          <p v-if="appContext == 'extremes'">
+            The charts below show the mean modeled monthly flow rate for the
+            historical modeled value (diamond) with two climate scenarios:
+            Stabilizing Emissions (RCP 4.5) and Increasing Emissions (RCP 8.5).
+            Each box plot spans from quartile 1 to quartile 3, which is the
+            interquartile range (IQR). The second quartile&mdash;the
+            median&mdash;is marked by a line inside the box. The whiskers span
+            &#177;1.5 times the interquartile range.
+          </p>
+        </div>
         <VizMonthlyFlow :stream-monthly-flow="streamMonthlyFlow" />
       </div>
     </section>

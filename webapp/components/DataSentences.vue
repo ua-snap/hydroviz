@@ -110,7 +110,7 @@ function orMoreIf100Percent(amount: number): string {
 </script>
 
 <template>
-  <div class="content is-size-5">
+  <div class="content clamp is-size-5">
     <p v-if="lowFlow">
       <strong>Note: this stream segment has a low mean annual flow.</strong>
       Headwaters and other small or intermittent streams have high statistical

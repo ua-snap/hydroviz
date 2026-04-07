@@ -6,21 +6,23 @@ let { appContext, appEra } = storeToRefs(streamSegmentStore)
 
 <template>
   <div class="container block content is-size-5">
-    <p>
-      This tool lets you explore this dataset in two modes: the
-      <strong>middle of the road</strong> shows the averages for a
-      middle-of-the-road climate future, and
-      <strong>future extremes</strong> show the size of variation between the
-      minimums and maximums for lower and higher emissions scenarios.
-      <NuxtLink to="/about/data"
-        >Read more about how these are defined</NuxtLink
-      >
-      and learn how to apply them in your work.
-    </p>
-    <p>
-      The full dataset for this stream location may be downloaded as a CSV file,
-      below, for further analysis.
-    </p>
+    <div class="content clamp">
+      <p>
+        This tool lets you explore this dataset in two modes: the
+        <strong>middle of the road</strong> shows the averages for a
+        middle-of-the-road climate future, and
+        <strong>future extremes</strong> show the size of variation between the
+        minimums and maximums for lower and higher emissions scenarios.
+        <NuxtLink to="/about/data"
+          >Read more about how these are defined</NuxtLink
+        >
+        and learn how to apply them in your work.
+      </p>
+      <p>
+        The full dataset for this stream location may be downloaded as a CSV
+        file, below, for further analysis.
+      </p>
+    </div>
   </div>
   <div class="sticky-toggle block content is-size-5 py-3 container">
     <p>
