@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
 const { $config } = useNuxtApp()
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
@@ -20,7 +19,7 @@ const props = defineProps({
         <ul>
           <li><CsvDownload /></li>
           <li>
-            <a href="https://earthmaps.io/conus_hydrology"
+            <a :href="$config.public.snapApiUrl + '/conus_hydrology'"
               >Access this data programmatically</a
             >
             with downloads ready for R and Python analysis.
