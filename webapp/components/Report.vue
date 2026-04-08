@@ -35,10 +35,17 @@ onUnmounted(() => {
           <span class="segmentId">ID{{ segmentId }}</span>
         </h3>
         <ReportMap class="my-6" />
-
         <DataSentences />
       </div>
+      <div class="container content is-size-5 mt-6">
+        <p>
+          <strong>This web tool shows summarized information</strong> to convey
+          trends shown in the data.
+          <CsvDownload />
+        </p>
+      </div>
     </section>
+    <!-- StickyToggle must be outside of section/container wrappers -->
     <StickyToggle />
     <section class="section">
       <div class="container">
@@ -166,6 +173,7 @@ onUnmounted(() => {
         />
       </div>
     </section>
+    <GetAndUse />
   </div>
 </template>
 
