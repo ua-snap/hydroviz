@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const { $L, $config } = useNuxtApp()
 import { useStreamSegmentStore } from '~/stores/streamSegment'
+import { getHandleCoord } from '~/utils/map'
 const streamSegmentStore = useStreamSegmentStore()
 let { hucId } = storeToRefs(streamSegmentStore)
 
@@ -19,13 +20,11 @@ const addHuc = () => {
           style: {
             weight: 0,
             color: '#111111',
-            fillOpacity: 0.25,
             interactive: false,
           },
-          interactive: false,
         })
         .addTo(map)
-      map.fitBounds(geoJsonLayer.getBounds())
+      map.fitBounds(geoJsonLayer.getBounds(), { padding: [25, 25] })
     })
     .catch(error => {
       console.error('Error fetching HUC GeoJSON data:', error)
@@ -35,22 +34,53 @@ const addHuc = () => {
   fetch(segUrl)
     .then(response => response.json())
     .then(data => {
-      data.features.forEach(feature => {
-        let segmentColor: string
-        if (feature.properties.h8_outlet === 1) {
-          segmentColor = '#ff0000' // Red for outlet segments
-        } else {
-          segmentColor = '#0000ff' // Blue for non-outlet segments
-        }
-        let line = $L
-          .geoJSON(feature, {
-            style: {
-              weight: 3,
-              color: segmentColor,
-              interactive: false,
-            },
-          })
-          .addTo(map)
+      let regularSegments = data.features.filter(
+        (feature: any) => feature.properties.h8_outlet === 0
+      )
+      let outletSegments = data.features.filter(
+        (feature: any) => feature.properties.h8_outlet === 1
+      )
+
+      // Add regular segments to the map first.
+      regularSegments.forEach(feature => {
+        $L.geoJSON(feature, {
+          style: {
+            weight: 3,
+            color: '#0000ff',
+            interactive: false,
+          },
+        }).addTo(map)
+
+        let latlng = getHandleCoord(feature)
+        $L.circleMarker(latlng, {
+          radius: 4,
+          color: '#0000ff',
+          fillColor: '#0000ff',
+          fillOpacity: 1,
+        }).addTo(map)
+      })
+
+      // Add outlet segments next so they effectively have a higher z-index.
+      outletSegments.forEach(feature => {
+        $L.geoJSON(feature, {
+          style: {
+            weight: 3,
+            color: '#ff0000',
+            interactive: false,
+          },
+        }).addTo(map)
+
+        let latlng = getHandleCoord(feature)
+        $L.circleMarker(latlng, {
+          radius: 4,
+          color: '#ff0000',
+          fillColor: '#ff0000',
+          fillOpacity: 1,
+        }).addTo(map)
+
+        // Place a pin at the same coordinate for outlet segments.
+        // It's sometimes too hard to see them otherwise.
+        $L.marker(latlng).addTo(map)
       })
     })
     .catch(error => {
@@ -87,6 +117,7 @@ const initializeMap = () => {
       scrollWheelZoom: false,
       dragging: false,
       zoomControl: false,
+      zoomSnap: 0.1,
     })
     .setView([37.8, -96], 8)
 
@@ -95,6 +126,7 @@ const initializeMap = () => {
     {
       maxZoom: 13,
       attribution: 'Map data © USGS',
+      opacity: 0.75,
     }
   ).addTo(map)
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { $L, $config } = useNuxtApp()
+import { getHandleCoord } from '~/utils/map'
 
 const segBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=`
 const hucBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=huc8=`
@@ -206,11 +207,8 @@ const addSegmentsGeoJson = async (data: any) => {
       })
       .addTo(map)
 
-    // Extract the first coordinate to place the handle.
-    let firstCoord = feature.geometry.coordinates[0][0]
-    let latlng = $L.latLng(firstCoord[1], firstCoord[0])
-
     // Add a circle marker as a handle.
+    let latlng = getHandleCoord(feature)
     let handle = $L
       .circleMarker(latlng, {
         radius: 4,
