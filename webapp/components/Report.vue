@@ -37,12 +37,15 @@ onUnmounted(() => {
         <ReportMap class="my-6" />
         <DataSentences />
       </div>
-      <div class="container content is-size-5 mt-6">
-        <p>
-          <strong>This web tool shows summarized information</strong> to convey
-          trends shown in the data.
-          <CsvDownload />
-        </p>
+
+      <div class="container">
+        <div class="content clamp is-size-5 mt-6">
+          <p>
+            <strong>This web tool shows summarized information</strong> to
+            convey trends shown in the data.
+            <CsvDownload />
+          </p>
+        </div>
       </div>
     </section>
     <!-- StickyToggle must be outside of section/container wrappers -->
