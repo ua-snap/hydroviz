@@ -113,6 +113,7 @@ onUnmounted(() => {
         />
       </div>
     </section>
+    <GetAndUse />
   </div>
 </template>
 
