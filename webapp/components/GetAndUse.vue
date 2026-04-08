@@ -1,14 +1,5 @@
 <script setup lang="ts">
 const { $config } = useNuxtApp()
-import { useStreamSegmentStore } from '~/stores/streamSegment'
-const streamSegmentStore = useStreamSegmentStore()
-let { segmentId } = storeToRefs(streamSegmentStore)
-const props = defineProps({
-  streamId: {
-    type: Number,
-    required: true,
-  },
-})
 </script>
 
 <template>

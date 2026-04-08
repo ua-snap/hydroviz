@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
 const { $config } = useNuxtApp()
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
