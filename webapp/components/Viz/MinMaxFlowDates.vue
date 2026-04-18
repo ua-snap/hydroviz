@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { watch, toRaw } from 'vue'
 import { doyToDateString } from '~/utils/general'
-import { getLayout, getConfig, initializeChart } from '~/utils/chart'
+import {
+  getLayout,
+  getConfig,
+  initializeChart,
+  getDataRange,
+} from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
 
@@ -203,6 +208,9 @@ const buildChart = () => {
 
   let axisColor = 'rgba(0,0,0,0.08)'
 
+  let keysToExclude = ['date']
+  let { yMin, yMax } = getDataRange(props.streamMinMaxFlowDates, keysToExclude)
+
   layout['polar'] = {
     angularaxis: {
       tickmode: 'array',
@@ -231,6 +239,7 @@ const buildChart = () => {
       tickmode: 'auto',
       nticks: 4,
       gridcolor: axisColor,
+      range: [yMin, yMax],
     },
     domain: firstPlotDomain,
   }

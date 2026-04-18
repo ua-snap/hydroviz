@@ -2,7 +2,12 @@
 import { toRaw } from 'vue'
 import lowess from '@stdlib/stats-lowess'
 import { doyToDateString } from '~/utils/general'
-import { getLayout, getConfig, initializeChart } from '~/utils/chart'
+import {
+  getLayout,
+  getConfig,
+  initializeChart,
+  getDataRange,
+} from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
 
@@ -275,9 +280,21 @@ const buildChart = hg => {
     ticktext: xTickLabels,
   }
 
+  // Min/max need to be logarithmic to work with Plotly.js log chart type.
+  let { yMin, yMax } = getDataRange(hg)
+
+  // Log of 0 is undefined.
+  if (yMin <= 0) {
+    yMin = 0.001
+  }
+
+  let yMinLog = Math.log10(yMin)
+  let yMaxLog = Math.log10(yMax)
+
   let yAxisConfig = {
     type: 'log',
-    autorange: true,
+    autorange: false,
+    range: [yMinLog, yMaxLog],
   }
 
   let legendConfig = {
