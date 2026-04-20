@@ -1,0 +1,2776 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<metadata>
+  <idinfo>
+    <citation>
+      <citeinfo>
+        <origin>Catherine A. Nikiel</origin>
+        <pubdate>20260219</pubdate>
+        <title>Supplementary Data Spanning 1951-2100 to Support the PRMS CONUS Futures Portal</title>
+        <geoform>tabular digital data</geoform>
+        <pubinfo>
+          <pubplace>USGS National Climate Adaptation Science Center</pubplace>
+          <publish>U.S. Geological Survey</publish>
+        </pubinfo>
+        <onlink>https://doi.org/10.5066/P13TU2P4</onlink>
+        <lworkcit>
+          <citeinfo>
+            <origin>Catherine A. Nikiel</origin>
+            <origin>Elizabeth Paulukonis</origin>
+            <origin>Marta Lyons</origin>
+            <pubdate>20260228</pubdate>
+            <title>PRMS CONUS Futures Portal</title>
+            <geoform>application/service</geoform>
+            <pubinfo>
+              <pubplace>N/A</pubplace>
+              <publish>U.S. Geological Survey</publish>
+            </pubinfo>
+            <onlink>https://doi.org/10.5066/P1JQZOFR</onlink>
+            <onlink>https://code.usgs.gov/casc/cats/ecosystems-prms-futures-portal</onlink>
+          </citeinfo>
+        </lworkcit>
+      </citeinfo>
+    </citation>
+    <descript>
+      <abstract>This data release contains data used within the PRMS CONUS Futures Portal including descriptions of data layers in the Uncertainty Analysis section, reference model performance at stream gage locations, and model performance metrics for climate model based simulations. 1) The description of variables available in the Uncertainty Analysis tab include variable short name, variable long name, description, methodology, caveats, additional user information, and references; 2) stream gage validation metrics calculated at 8720 USGS stream gages for 1951-2009 with observed flow compared to reference model flow (Maurer). Information provided at each gage location includes corresponding PRMS segment ID, reference or non-reference gage status, drainage basin area comparison, Nash-Sutcliffe Efficiency (NSE), Percent Bias (Pbias), Root Mean Standard Deviation Ratio (RSR), a cumulative gage score summing NSE, Pbias, and RSR suitability, and Disturbance Index (DI); and 3) ensemble model performance metrics calculated using the Kolmogorov-Smirnov statistical test. Values are provided for the reference model simulation versus the historical global climate model simulations (1976-2005) and for the historical versus future global climate model simulations at three future time periods (2015-2045, 2046-2075, and 2071-2100) versus the historical period (1976-2005).</abstract>
+      <purpose>This data is being made available to support the PRMS CONUS Futures Portal to provide access to data that is either 1) not currently available or 2) not easily reproduced by other publicly available code without significant computing resources.</purpose>
+      <supplinf>For more information about preparation of these data, please see the open-source software project here: https://code.usgs.gov/casc/cats/ecosystems-prms-futures-portal-supplementary. Please note that this software is preliminary or provisional and is subject to revision. It is being provided to meet the need for timely best science. The software has not received final approval by the U.S. Geological Survey (USGS). No warranty, expressed or implied, is made by the USGS or the U.S. Government as to the functionality of the software and related material nor shall the fact of release constitute any such warranty. The software is provided on the condition that neither the USGS nor the U.S. Government shall be held liable for any damages resulting from the authorized or unauthorized use of the software.</supplinf>
+    </descript>
+    <timeperd>
+      <timeinfo>
+        <rngdates>
+          <begdate>19510101</begdate>
+          <enddate>21001231</enddate>
+        </rngdates>
+      </timeinfo>
+      <current>publication date</current>
+    </timeperd>
+    <status>
+      <progress>Complete</progress>
+      <update>None planned</update>
+    </status>
+    <spdom>
+      <bounding>
+        <westbc>-125.6836</westbc>
+        <eastbc>-66.2695</eastbc>
+        <northbc>49.4967</northbc>
+        <southbc>24.2069</southbc>
+      </bounding>
+    </spdom>
+    <keywords>
+      <theme>
+        <themekt>ISO 19115 Topic Category</themekt>
+        <themekey>environment</themekey>
+      </theme>
+      <theme>
+        <themekt>USGS Thesaurus</themekt>
+        <themekey>hydrology</themekey>
+        <themekey>streamflow</themekey>
+        <themekey>datasets</themekey>
+        <themekey>statistical analysis</themekey>
+        <themekey>stream-gage measurement</themekey>
+      </theme>
+      <theme>
+        <themekt>None</themekt>
+        <themekey>Kolmogorov-Smirnov</themekey>
+        <themekey>Nash-Sutcliffe Efficiency</themekey>
+        <themekey>Percent Bias</themekey>
+        <themekey>Root Mean Standard Deviation Ratio (RSR)</themekey>
+      </theme>
+      <theme>
+        <themekt>USGS Metadata Identifier</themekt>
+        <themekey>USGS:693b1e6dd4be0227fbb59ecb</themekey>
+      </theme>
+      <place>
+        <placekt>Common geographic areas</placekt>
+        <placekey>United States</placekey>
+      </place>
+    </keywords>
+    <accconst>No access constraints. Please see 'Distribution Information' for details.</accconst>
+    <useconst>These data are marked with a Creative Common CC0 1.0 Universal License. These data are in the public domain and do not have any use constraints. Users are advised to read the dataset's metadata thoroughly to understand appropriate use and data limitations.</useconst>
+    <ptcontac>
+      <cntinfo>
+        <cntperp>
+          <cntper>Catherine A. Nikiel</cntper>
+          <cntorg>USGS - ECOSYSTEMS</cntorg>
+        </cntperp>
+        <cntpos>Physical Scientist (TERM) - HQ NCASC</cntpos>
+        <cntaddr>
+          <addrtype>mailing and physical</addrtype>
+          <address>3916 Sunset Ridge Rd, Geological Surv Bldg</address>
+          <city>Raleigh</city>
+          <state>NC</state>
+          <postal>27607</postal>
+        </cntaddr>
+        <cntvoice>NA</cntvoice>
+        <cntemail>cnikiel@usgs.gov</cntemail>
+      </cntinfo>
+    </ptcontac>
+    <datacred>The development of this data was supported by Jacob H. LaFontaine.</datacred>
+    <native>The dataset was created using MATLAB  (R2024b; The MathWorks Inc.), high-performance computing resources (Falgout et al. n.d.), and R Statistical Software (v4.5.0; R Core Team 2025).</native>
+    <crossref>
+      <citeinfo>
+        <origin>Jeff T Falgout</origin>
+        <origin>Janice Gordon</origin>
+        <origin>R. Lopaka Lee</origin>
+        <pubdate>2023</pubdate>
+        <title>USGS Hovenweep Supercomputer</title>
+        <geoform>dataset</geoform>
+        <pubinfo>
+          <pubplace>https://www.sciencebase.gov</pubplace>
+          <publish>U.S. Geological Survey</publish>
+        </pubinfo>
+        <onlink>https://doi.org/10.5066/p927bi7r</onlink>
+      </citeinfo>
+    </crossref>
+    <crossref>
+      <citeinfo>
+        <origin>R Core Team</origin>
+        <pubdate>20250902</pubdate>
+        <title>R: A Language and Environment for Statistical Computing</title>
+        <geoform>application/service</geoform>
+        <pubinfo>
+          <pubplace>Vienna, Austria</pubplace>
+          <publish>R Foundation for Statistical Computing</publish>
+        </pubinfo>
+        <onlink>https://www.R-project.org/</onlink>
+      </citeinfo>
+    </crossref>
+    <crossref>
+      <citeinfo>
+        <origin>The MathWorks Inc.</origin>
+        <pubdate>20250328</pubdate>
+        <title>MATLAB</title>
+        <edition>R2024b</edition>
+        <geoform>application/service</geoform>
+        <pubinfo>
+          <pubplace>Natick, Massachusetts</pubplace>
+          <publish>The MathWorks Inc.</publish>
+        </pubinfo>
+        <onlink>https://www.mathworks.com</onlink>
+      </citeinfo>
+    </crossref>
+    <crossref>
+      <citeinfo>
+        <origin>Jacob H. LaFontaine</origin>
+        <origin>Rheannon M. Hart</origin>
+        <origin>Lauren E. Hay</origin>
+        <origin>William H. Farmer</origin>
+        <origin>Andy R. Bock</origin>
+        <origin>Roland J. Viger</origin>
+        <origin>Steven L. Markstrom</origin>
+        <origin>R. Steve Regan</origin>
+        <origin>Jessica M. Driscoll</origin>
+        <pubdate>20190619</pubdate>
+        <title>Simulation of water availability in the Southeastern United States for historical and potential future climate and land-cover conditions</title>
+        <geoform>publication</geoform>
+        <serinfo>
+          <sername>U.S. Geological Survey Scientific Investigations Report</sername>
+          <issue>2019-5039</issue>
+        </serinfo>
+        <pubinfo>
+          <pubplace>South Atlantic Water Science Center</pubplace>
+          <publish>U.S. Geological Survey</publish>
+        </pubinfo>
+        <onlink>https://pubs.usgs.gov/publication/sir20195039</onlink>
+      </citeinfo>
+    </crossref>
+    <crossref>
+      <citeinfo>
+        <origin>Daniel Moriasi</origin>
+        <origin>Jeff Arnold</origin>
+        <origin>Michael W. Van Liew</origin>
+        <origin>Ron Bingner</origin>
+        <origin>R. D. Harmel</origin>
+        <origin>Tamie L. Veith</origin>
+        <pubdate>20070501</pubdate>
+        <title>Model Evaluation Guidelines for Systematic Quantification of Accuracy in Watershed Simulations</title>
+        <geoform>publication</geoform>
+        <pubinfo>
+          <pubplace>N/A</pubplace>
+          <publish>Transactions of the American Society of Agricultural and Biological Engineers</publish>
+        </pubinfo>
+        <othercit>Vol. 50(3): 885-900</othercit>
+        <onlink>https://doi.org/10.13031/2013.23153</onlink>
+      </citeinfo>
+    </crossref>
+    <crossref>
+      <citeinfo>
+        <origin>James Falcone</origin>
+        <pubdate>20111012</pubdate>
+        <title>GAGES-II: Geospatial Attributes of Gages for Evaluating Streamflow</title>
+        <geoform>tabular digital data</geoform>
+        <pubinfo>
+          <pubplace>Earth System Processes Division</pubplace>
+          <publish>U.S. Geological Survey</publish>
+        </pubinfo>
+        <onlink>https://doi.org/10.5066/P96CPHOT</onlink>
+      </citeinfo>
+    </crossref>
+    <crossref>
+      <citeinfo>
+        <origin>M. Abouali</origin>
+        <origin>F. Daneshvar</origin>
+        <origin>A. P. Nejadhashemi</origin>
+        <pubdate>20160317</pubdate>
+        <title>MATLAB Hydrological Index Tool (MHIT): A high performance library to calculate 171 ecologically relvant hydrological indices</title>
+        <geoform>publication</geoform>
+        <pubinfo>
+          <pubplace>N/A</pubplace>
+          <publish>Ecological Informatics</publish>
+        </pubinfo>
+        <othercit>Software is available at https://github.com/mabouali/MHIT</othercit>
+        <onlink>https://doi.org/10.1016/j.ecoinf.2016.03.004</onlink>
+      </citeinfo>
+    </crossref>
+    <crossref>
+      <citeinfo>
+        <origin>Mauricio Zambrano-Bigiarini</origin>
+        <pubdate>20241104</pubdate>
+        <title>hydroGOF: Goodness-of-fit functions for comparison of simulated and observed hydrological time series</title>
+        <edition>0.6-0</edition>
+        <geoform>application/service</geoform>
+        <othercit>https://cran.r-project.org/package=hydroGOF</othercit>
+        <onlink>https://doi.org/10.5281/zenodo.839854</onlink>
+      </citeinfo>
+    </crossref>
+  </idinfo>
+  <dataqual>
+    <attracc>
+      <attraccr>The files were subject to USGS peer review but no formal attribute accuracy tests were conducted. Underlying datasets cited here also underwent USGS peer review and approval processes. Data was plotted and inspected for accuracy. This data continues to undergo analytical checks and validation, and the code used for production is available for review and reproduction.</attraccr>
+    </attracc>
+    <logic>No formal logical accuracy tests were conducted. The values have been checked for missing values and abnormalities/anomalies. Data ranges were also checked for consistency and realism. Data are as expected with no identified duplicates or outliers. Missing values and ranges are described in the metadata record.</logic>
+    <complete>Data set is considered complete for the information presented, as described in the abstract. Users are advised to read the rest of the metadata record carefully for additional details. Data are available for 8270 stream gage locations and other analysis is available for 56,460 stream segments.</complete>
+    <posacc>
+      <horizpa>
+        <horizpar>A formal accuracy assessment of the horizontal positional information in the data set has not been conducted.</horizpar>
+      </horizpa>
+      <vertacc>
+        <vertaccr>A formal accuracy assessment of the vertical positional information in the data set has either not been conducted, or is not applicable.</vertaccr>
+      </vertacc>
+    </posacc>
+    <lineage>
+      <srcinfo>
+        <srccite>
+          <citeinfo>
+            <origin>Lauren E Hay</origin>
+            <origin>Jacob H. LaFontaine</origin>
+            <pubdate>20200512</pubdate>
+            <title>Application of the National Hydrologic Model Infrastructure with the Precipitation-Runoff Modeling System (NHM-PRMS),1980-2016, Daymet Version 3 calibration</title>
+            <geoform>dataset</geoform>
+            <pubinfo>
+              <pubplace>https://www.sciencebase.gov</pubplace>
+              <publish>U.S. Geological Survey</publish>
+            </pubinfo>
+            <onlink>https://doi.org/10.5066/p9pgze0s</onlink>
+          </citeinfo>
+        </srccite>
+        <typesrc>Digital and/or Hardcopy</typesrc>
+        <srctime>
+          <timeinfo>
+            <rngdates>
+              <begdate>19801001</begdate>
+              <enddate>20161231</enddate>
+            </rngdates>
+          </timeinfo>
+          <srccurr>publication date</srccurr>
+        </srctime>
+        <srccitea>Table_4_Streamgage_Info_8274.csv</srccitea>
+        <srccontr>Data used as input</srccontr>
+      </srcinfo>
+      <srcinfo>
+        <srccite>
+          <citeinfo>
+            <origin>Jacob H. LaFontaine</origin>
+            <origin>Lauren E. Hay</origin>
+            <origin>Jeffrey R. Riley</origin>
+            <pubdate>20230822</pubdate>
+            <title>Application of the National Hydrologic Model Infrastructure with the Precipitation-Runoff Modeling System (NHM-PRMS), 1950-2010, Maurer Calibration</title>
+            <geoform>tabular digital data</geoform>
+            <pubinfo>
+              <pubplace>https://www.sciencebase.gov</pubplace>
+              <publish>U.S. Geological Survey</publish>
+            </pubinfo>
+            <onlink>https://doi.org/10.5066/P9CVHLMB.</onlink>
+          </citeinfo>
+        </srccite>
+        <typesrc>Digital and/or Hardcopy</typesrc>
+        <srctime>
+          <timeinfo>
+            <rngdates>
+              <begdate>19500101</begdate>
+              <enddate>20101231</enddate>
+            </rngdates>
+          </timeinfo>
+          <srccurr>publication date</srccurr>
+        </srctime>
+        <srccitea>npoigages_segment_crosswalk</srccitea>
+        <srccontr>Uses parameter files from child item Input Data for Hydrologic Simulations of the CONUS using the NHM-PRMS, 1950-2010, Maurer Calibration as information for stream gage correspondence with PRMS stream segments.</srccontr>
+      </srcinfo>
+      <srcinfo>
+        <srccite>
+          <citeinfo>
+            <origin>Jacob H. LaFontaine</origin>
+            <origin>Jeffrey R. Riley</origin>
+            <pubdate>20230823</pubdate>
+            <title>Model Input and Output for Hydrologic Simulations for the Conterminous United States for Historical and Future Conditions Using the National Hydrologic Model Infrastructure (NHM) and the Coupled Model Intercomparison Project Phase 5 (CMIP5), 1950-2100</title>
+            <geoform>tabular digital data</geoform>
+            <pubinfo>
+              <pubplace>https://www.sciencebase.gov</pubplace>
+              <publish>U.S. Geological Survey</publish>
+            </pubinfo>
+            <onlink>https://doi.org/10.5066/P9EBKREQ</onlink>
+          </citeinfo>
+        </srccite>
+        <typesrc>Digital and/or Hardcopy</typesrc>
+        <srctime>
+          <timeinfo>
+            <rngdates>
+              <begdate>19500101</begdate>
+              <enddate>21001231</enddate>
+            </rngdates>
+          </timeinfo>
+          <srccurr>publication date</srccurr>
+        </srctime>
+        <srccitea>Daily Streamflow Output</srccitea>
+        <srccontr>Daily streamflow data is used to calculate gage performance and annual streamflow statistics for Kolmogorov-Smirnov testing.
+Streamflow variables are defined in "streamflow_statistics_description_table.csv"</srccontr>
+      </srcinfo>
+      <procstep>
+        <procdesc>Development of Stat_gage_performance_conus_new_1951_2009 and Dyn_gage_performance_conus_new_1951_2009 files: 
+
+Gage performance uses daily reference (Maurer) streamflow data from LaFontaine and Riley, 2023a, stream gage information from LaFontaine et al. 2023b, and stream gage information from Hay et al. 2020.
+
+Calculations also require daily streamflow and information from USGS gages, downloaded using the dataRetrieval R package (De Cicco, L.A., Hirsch, R.M., Lorenz, D., Watkins, W.D., Johnson, M., 2025, dataRetrieval: R packages for discovering and retrieving water data available from Federal hydrologic web services, v.2.7.20, doi:10.5066/P9X4L3GE).
+
+Daily Streamflow from stream gages and daily (Maurer) reference streamflow data is used to calculate Nash-Sutcliffe Efficiency, Percent Bias, and Root Mean Standard Deviation Ratio (RSR) using the HydroGOF package in R (Zambrano-Bigiarini, 2024). Values are assessed using thresholds in Lafontaine et al. 2019 and Moriasi et al. 2007 and assigned a 1 (Satisfactory) or 0 (Un-Satisfactory). An overall gage score is calculated by summing the three individual scores. 
+
+More information and code can be found with the PRMS CONUS Futures Portal Supplementary Code Open-Source Software Project at https://code.usgs.gov/casc/cats/ecosystems-prms-futures-portal-supplementary.</procdesc>
+        <srcused>Daily Streamflow Output</srcused>
+        <srcused>npoigages_segment_crosswalk</srcused>
+        <srcused>Table_4_Streamgage_Info_8274.csv</srcused>
+        <procdate>20251215</procdate>
+      </procstep>
+      <procstep>
+        <procdesc>Development of files in child items Historical_KS and Future KS: 
+
+Annual values of each PRMS Streamflow Statistics using daily output data in MATLAB (LaFontaine and Riley, 2023a). 
+
+Two sample KS testing was performed using ks.test (stats package) in R. Segments with missing data during the period of analysis are omitted and receive an NA value. Date ranges for calculation are included in the title of the files. KS testing was performed on each time period, emissions scenario, stream segment, PRMS Streamflow Statistic, simulation type (static and dynamic) and global climate model combination. Final files are summed across all 13 global climate models for each time period, emissions scenario, stream segment, PRMS Streamflow Statistic, and simulation type (static and dynamic).
+
+More information and code can be found with the PRMS CONUS Futures Portal Supplementary Code Open-Source Software Project at https://code.usgs.gov/casc/cats/ecosystems-prms-futures-portal-supplementary.</procdesc>
+        <srcused>Daily Streamflow Output</srcused>
+        <procdate>20250905</procdate>
+      </procstep>
+    </lineage>
+  </dataqual>
+  <eainfo>
+    <detailed>
+      <enttyp>
+        <enttypl>Uncertainty_Var_Description.csv</enttypl>
+        <enttypd>Comma Separated Value (CSV) file containing information about data layers included in the PRMS CONUS Futures Portal.</enttypd>
+        <enttypds>Producer Defined</enttypds>
+      </enttyp>
+      <attr>
+        <attrlabl>Variable_Name</attrlabl>
+        <attrdef>Variable short name used in code</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <udom>text describing the variable short name used in the code</udom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Variable</attrlabl>
+        <attrdef>Variable long name</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <udom>text describing the variable long name</udom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Variable_Description</attrlabl>
+        <attrdef>Description of the variable including ranges, time periods, references, and definitions.</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <udom>text describing the variable including ranges, time periods, references, and definitions.</udom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Variable_Methodology</attrlabl>
+        <attrdef>Description of the calculation methodology for each variable if applicable. Source data and method citations are also included.</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <udom>text describing calculation methodology for each variable if applicable. Source data and method citations are also included.</udom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Variable_Caveats</attrlabl>
+        <attrdef>Description of potential caveats for variable calculation, assumptions in methodology, and issues that potential users should be aware of.</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>N/A</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <udom>text describing potential caveats for variable calculation, assumptions in methodology, and issues that potential users should be aware of.</udom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Additional_User_Information</attrlabl>
+        <attrdef>Any additional information helpful to users that is not included in other columns.</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>N/A</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <udom>text describing any additional information helpful to users that is not included in other columns.</udom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Variable_References</attrlabl>
+        <attrdef>Full reference information for in-text citations in other columns.</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>N/A</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <udom>text with full reference information for in-text citations in other columns.</udom>
+        </attrdomv>
+      </attr>
+    </detailed>
+    <detailed>
+      <enttyp>
+        <enttypl>Dyn_gage_performance_conus_new_1951_2009.csv</enttypl>
+        <enttypd>Comma Separated Value (CSV) file containing data comparing observed flow data at USGS streamgages to reference (Maurer) simulation data. This record description also applies to Stat_gage_performance_conus_new_1951_2009.csv. The first term in the filename refers to the simulation type (Dyn = Dynamic, Stat = Static). The dates (1951-2009) refer to the period of calculation.</enttypd>
+        <enttypds>Producer Defined</enttypds>
+      </enttyp>
+      <attr>
+        <attrlabl>gage_id</attrlabl>
+        <attrdef>USGS stream gage ID</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <rdom>
+            <rdommin>01011000</rdommin>
+            <rdommax>810464660</rdommax>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>seg_id</attrlabl>
+        <attrdef>PRMS segment ID</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <rdom>
+            <rdommin>15</rdommin>
+            <rdommax>56458</rdommax>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>RefNonRef</attrlabl>
+        <attrdef>Reference or Non-Reference status of gage based on the GAGES-II dataset (Falcone, 2011). This data is ingested from Hay et al. 2020.</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No value in the underlying source data, originally marked as -999.</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>Ref</edomv>
+            <edomvd>Reference gage</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>NonRef</edomv>
+            <edomvd>Non-reference gage</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Area</attrlabl>
+        <attrdef>Percent difference in drainage basin area of areas associated with gages between the USGS National Water Information System (NWISda) and the USGS NHM Geospatial Fabric (GFda). Original drainage area data from Hay et al. 2020. Values can range from negative infinity to infinity.</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data. Values are either missing in the underlying data or input drainage areas are 0 or -999.</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>-195.0487137</rdommin>
+            <rdommax>1458233.333</rdommax>
+            <attrunit>percent</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>NSE</attrlabl>
+        <attrdef>Nash-Sutcliffe Efficiency. Values can range from negative infinity to 1.</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data. Value was not able to be calculated from the flow record due to missing data.</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>-1233325.18</rdommin>
+            <rdommax>0.914470963</rdommax>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>Pbias</attrlabl>
+        <attrdef>Percent Bias. Values can range from -100 to infinity.</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data. Value was not able to be calculated from the flow record due to missing data.</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>-100.0</rdommin>
+            <rdommax>32081.8</rdommax>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>RSR</attrlabl>
+        <attrdef>Root Mean Standard Deviation Ratio (RSR). Values can range from 0 to infinity.</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data. Value was not able to be calculated from the flow record due to missing data.</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0.292440996</rdommin>
+            <rdommax>1110.485002</rdommax>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>AbsPbias</attrlabl>
+        <attrdef>Absolute value of percent bias. Values can range from 0 to infinity.</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data. Value was not able to be calculated from the flow record due to missing data.</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0.0</rdommin>
+            <rdommax>32081.8</rdommax>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>NSEeval</attrlabl>
+        <attrdef>Evaluation score of Nash-Sutcliffe Efficiency calculation. Thresholds based on LaFontaine et al. 2019 and Moriasi et al. 2007.</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>1</edomv>
+            <edomvd>Satisfactory performance. Gage value greater than or equal to 0.50</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>0</edomv>
+            <edomvd>Un-Satisfactory performance. Gage value less than 0.50 or NA</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>AbsPbiaseval</attrlabl>
+        <attrdef>Evaluation score of Absolute bias calculation. Thresholds based on LaFontaine et al. 2019 and Moriasi et al. 2007.</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>1</edomv>
+            <edomvd>Satisfactory performance. Gage value less than 25.</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>0</edomv>
+            <edomvd>Un-Satisfactory performance. Gage value greater than or equal to 25 or NA</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>RSReval</attrlabl>
+        <attrdef>Evaluation score of RSR calculation. Thresholds based on LaFontaine et al. 2019 and Moriasi et al. 2007.</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>1</edomv>
+            <edomvd>Satisfactory performance. Gage value less than 0.7000000.</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <edom>
+            <edomv>0</edomv>
+            <edomvd>Un-Satisfactory performance. Gage value greater than or equal to 0.7000000 or NA</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>SumScore</attrlabl>
+        <attrdef>Sum of individual score columns  NWEeval, AbsPbiaseval, and RSReval.</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>3</rdommax>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>DI</attrlabl>
+        <attrdef>Disturbance Index as defined in GAGES-II (Falcone, 2011). Original drainage area data from Hay et al. 2020. Values can range from 1 to 42.</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No value in the underlying source data, originally marked as -999.</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>1</rdommin>
+            <rdommax>42</rdommax>
+          </rdom>
+        </attrdomv>
+      </attr>
+    </detailed>
+    <detailed>
+      <enttyp>
+        <enttypl>dynamic_KSHistSig_historical_r1i1p1_1976_2005_1976_2005_diff.csv</enttypl>
+        <enttypd>Comma Separated Value (CSV) file. Values contain the number of models in the ensemble (n=13) where a comparison between the reference (Maurer) simulation data and the historical global climate model (GCM) data from 1976-2005 failed to reject the null hypothesis in a two-sample Kolmogorov-Smirnov test. These record descriptions apply to all files with "KSHistSig" including 1) dynamic_KSHistSig_historical_r1i1p1_1976_2005_1976_2005_diff.csv; 2) static_KSHistSig_historical_r1i1p1_1976_2005_1976_2005_diff.csv.
+
+The terms in the filename separated by underscores (_) detail:
+1. The simulation type, static or dynamic
+2. the period of analysis, historical
+3. the realization, r1i1p1
+4. the time period of analysis, 1976-2005</enttypd>
+        <enttypds>Producer Defined</enttypds>
+      </enttyp>
+      <attr>
+        <attrlabl>seg_id</attrlabl>
+        <attrdef>PRMS segment ID</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <rdom>
+            <rdommin>1</rdommin>
+            <rdommax>56460</rdommax>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma3</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma3 (Coefficient of variation (standard deviation/mean) for each year).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma4</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma4 (Standard deviation of the percentiles of the logs of the entire flow record divided by the mean of percentiles of the logs).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma12</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma12 (Mean of monthly flow values for January).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma13</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma13 (Mean of monthly flow values for February).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma14</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma14 (Mean of monthly flow values for March).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma15</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma15 (Mean of monthly flow values for April).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma16</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma16 (Mean of monthly flow values for May).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma17</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma17 (Mean of monthly flow values for June).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma18</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma18 (Mean of monthly flow values for July).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma19</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma19 (Mean of monthly flow values for August).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma20</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma20 (Mean of monthly flow values for September).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma21</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma21 (Mean of monthly flow values for October).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma22</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma22 (Mean of monthly flow values for November).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma23</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma23 (Mean of monthly flow values for December).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>mh14</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic mh14 (Median of annual maximum flows).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>mh20</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic mh20 (Specific mean annual maximum flow).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ml17</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ml17 (Base flow).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dh1</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dh1 (Annual maximum daily flow).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dh2</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dh2 (Annual maximum of 3-day moving average flows).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dh3</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dh3 (Annual maximum of 7-day moving average flows).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dh4</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dh4 (Annual maximum of 30-day moving average flows).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dh5</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dh5 (Annual maximum of 90-day moving average flows).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dh15</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dh15 (High flow pulse duration)</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dl1</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dl1 (Annual minimum daily flow).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dl2</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dl2 (Annual minimum of 3-day moving average flow).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dl3</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dl3 (Annual minimum of 7-day moving average flow).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dl4</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dl4 (Annual minimum of 30-day moving average flow).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dl5</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dl5 (Annual minimum of 90-day moving average flow)</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dl16</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dl16 (Low flow pulse duration)</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>fh1</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic fh1 (High flood pulse count).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>fh5</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic fh5 (Flood frequency. Compute the average number of flow events with flows above a threshold equal to the median flow value for the entire flow record).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>fh6</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic fh6 (Flood frequency. Compute the average number of flow events with flows above a threshold equal to three times the median flow value for the entire flow record.).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>fh7</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic fh7 (Flood frequency. Compute the average number of flow events with flows above a threshold equal to seven times the median flow value for the entire flow record.).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>fl1</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic fl1 (Low flood pulse count. Compute the average number of flow events with flows below a threshold equal to the 25th percentile value for the entire flow record.).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>fl3</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic fl3 (Frequency of low pulse spells. Compute the average number of flow events with flows below a threshold equal to 5 percent of the mean flow value for the entire flow record).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>th1</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic th1 (Julian date of annual maximum).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>tl1</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic tl1 (Julian date of annual minimum)</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ra1</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ra1 (Rise rate. The change in flow for days in which the change is positive for the entire flow record.)</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ra3</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ra3 (Fall rate. The change in flow for days in which the change is negative for the entire flow record).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ra8</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ra8 (Number of reversals).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>spr_mag</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic spr_mag (Specific mean spring (April-June) maximum flow).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>spr_dur3v2</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic spr_dur3v2 (Spring (April-June) maximum of 3-day moving average flows).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>spr_dur7v2</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic spr_dur7v2 (Spring (April-June) maximum of 7-day moving average flows).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>spr_freq</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic spr_freq (Flood frequency for April-June)</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>spr_ord</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic spr_ord (Julian date of spring (April-June) maximum).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>sum_mag</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic sum_mag (Minimum of the summer (July-September) flows divided by the drainage area (cubic feet per second/square mile - temporal)).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>sum_dur3v2</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic sum_dur3v2 (Summer (July-September) minimum of 3-day moving average flow).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>sum_dur7v2</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic sum_dur7v2 (Summer (July-September) minimum of 7-day moving average flow).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>sum_freq</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic sum_freq (Flood frequency for July-September).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>sum_ord</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic sum_ord (Julian date of summer (July-September) minimum).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>sum_cv</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic sum_cv (Coefficient of variation (standard deviation/mean) for each year for the summer (July-September)).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>lf1</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic lf1 (Number of days per year below a threshold of 0.1 cubic feet per second per square mile)</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+    </detailed>
+    <detailed>
+      <enttyp>
+        <enttypl>dynamic_KSFutureSig_rcp45_r1i1p1_2016_2045_1976_2005_diff.csv</enttypl>
+        <enttypd>Comma Separated Value (CSV) file. Values contain the number of models in the ensemble (n=13) where a comparison between the  historical global climate model (GCM) data and the future GCM data rejected the null hypothesis in a two-sample Kolmogorov-Smirnov test. These record descriptions apply to all files with "KSFutSig" including 1)dynamic_KSFutureSig_rcp45_r1i1p1_2016_2045_1976_2005_diff.csv; 2) dynamic_KSFutureSig_rcp45_r1i1p1_2046_2075_1976_2005_diff.csv; 3) dynamic_KSFutureSig_rcp45_r1i1p1_2071_2100_1976_2005_diff.csv; 4) dynamic_KSFutureSig_rcp85_r1i1p1_2016_2045_1976_2005_diff.csv; 5) dynamic_KSFutureSig_rcp85_r1i1p1_2046_2075_1976_2005_diff.csv; 6) dynamic_KSFutureSig_rcp85_r1i1p1_2071_2100_1976_2005_diff.csv; 7) static_KSFutureSig_rcp45_r1i1p1_2016_2045_1976_2005_diff.csv 8) static_KSFutureSig_rcp45_r1i1p1_2046_2075_1976_2005_diff.csv; 9) static_KSFutureSig_rcp45_r1i1p1_2071_2100_1976_2005_diff.csv; 10) static_KSFutureSig_rcp85_r1i1p1_2016_2045_1976_2005_diff.csv; 11) static_KSFutureSig_rcp85_r1i1p1_2046_2075_1976_2005_diff.csv; 12) static_KSFutureSig_rcp85_r1i1p1_2071_2100_1976_2005_diff.csv
+
+The terms in the filename separated by underscores (_) detail:
+1. The simulation type, static or dynamic
+2. The information provided, KSFutureSig
+3. The emissions scenario, rcp45 or rcp85
+4. the realization, r1i1p1
+5. the future time period of analysis, 2016-2045, 2046-2075, or 2071-2100
+6. The historical reference period, 1976-2005
+7. Indication that results show the significance of the difference between the two periods, diff.</enttypd>
+        <enttypds>Producer Defined</enttypds>
+      </enttyp>
+      <attr>
+        <attrlabl>seg_id</attrlabl>
+        <attrdef>PRMS segment ID</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <rdom>
+            <rdommin>1</rdommin>
+            <rdommax>56460</rdommax>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma3</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma3 (Coefficient of variation (standard deviation/mean) for each year).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma4</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma4 (Standard deviation of the percentiles of the logs of the entire flow record divided by the mean of percentiles of the logs).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma12</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma12 (Mean of monthly flow values for January).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma13</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma13 (Mean of monthly flow values for February).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma14</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma14 (Mean of monthly flow values for March).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma15</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma15 (Mean of monthly flow values for April).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma16</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma16 (Mean of monthly flow values for May).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma17</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma17 (Mean of monthly flow values for June).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma18</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma18 (Mean of monthly flow values for July).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma19</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma19 (Mean of monthly flow values for August).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma20</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma20 (Mean of monthly flow values for September).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma21</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma21 (Mean of monthly flow values for October).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma22</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma22 (Mean of monthly flow values for November).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ma23</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ma23 (Mean of monthly flow values for December).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>mh14</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic mh14 (Median of annual maximum flows).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>mh20</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic mh20 (Specific mean annual maximum flow).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ml17</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ml17 (Base flow).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dh1</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dh1 (Annual maximum daily flow).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dh2</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dh2 (Annual maximum of 3-day moving average flows).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dh3</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dh3 (Annual maximum of 7-day moving average flows).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dh4</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dh4 (Annual maximum of 30-day moving average flows).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dh5</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dh5 (Annual maximum of 90-day moving average flows).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dh15</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dh15 (High flow pulse duration).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dl1</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dl1 (Annual minimum daily flow).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dl2</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dl2 (Annual minimum of 3-day moving average flow).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dl3</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dl3 (Annual minimum of 7-day moving average flow).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dl4</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dl4 (Annual minimum of 30-day moving average flow)</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dl5</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dl5 (Annual minimum of 90-day moving average flow)</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>dl16</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic dl16 (Low flow pulse duration)</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>fh1</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic fh1 (High flood pulse count).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>fh5</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic fh5 (Flood frequency. Compute the average number of flow events with flows above a threshold equal to the median flow value for the entire flow record)</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>fh6</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic fh6 (Flood frequency. Compute the average number of flow events with flows above a threshold equal to three times the median flow value for the entire flow record.).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>fh7</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic fh7 (Flood frequency. Compute the average number of flow events with flows above a threshold equal to seven times the median flow value for the entire flow record.).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>fl1</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic fl1 (Low flood pulse count. Compute the average number of flow events with flows below a threshold equal to the 25th percentile value for the entire flow record.).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>fl3</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic fl3 (Frequency of low pulse spells. Compute the average number of flow events with flows below a threshold equal to 5 percent of the mean flow value for the entire flow record).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>th1</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic th1 (Julian date of annual maximum).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>tl1</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic tl1 (Julian date of annual minimum)</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ra1</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ra1 (Rise rate. The change in flow for days in which the change is positive for the entire flow record.)</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ra3</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ra3 (Fall rate. The change in flow for days in which the change is negative for the entire flow record).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>ra8</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic ra8 (Number of reversals).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>spr_mag</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic spr_mag (Specific mean spring (April-June) maximum flow).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>spr_dur3v2</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic spr_dur3v2 (Spring (April-June) maximum of 3-day moving average flows)</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>spr_dur7v2</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic spr_dur7v2 (Spring (April-June) maximum of 7-day moving average flows).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>spr_freq</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic spr_freq (Flood frequency for April-June).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>spr_ord</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic spr_ord (Julian date of spring (April-June) maximum).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>sum_mag</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic sum_mag (Minimum of the summer (July-September) flows divided by the drainage area (cubic feet per second/square mile - temporal)).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>sum_dur3v2</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic sum_dur3v2 (Summer (July-September) minimum of 3-day moving average flow).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>sum_dur7v2</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic sum_dur7v2 (Summer (July-September) minimum of 7-day moving average flow).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>sum_freq</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic sum_freq (Flood frequency for July-September).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>sum_ord</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic sum_ord (Julian date of summer (July-September) minimum).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>sum_cv</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic sum_cv (Coefficient of variation (standard deviation/mean) for each year for the summer (July-September)).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+      <attr>
+        <attrlabl>lf1</attrlabl>
+        <attrdef>Models meeting criteria in dataset description for PRMS streamflow statistic lf1 (Number of days per year below a threshold of 0.1 cubic feet per second per square mile).</attrdef>
+        <attrdefs>Producer Defined</attrdefs>
+        <attrdomv>
+          <edom>
+            <edomv>NA</edomv>
+            <edomvd>No Data</edomvd>
+            <edomvds>Producer defined</edomvds>
+          </edom>
+        </attrdomv>
+        <attrdomv>
+          <rdom>
+            <rdommin>0</rdommin>
+            <rdommax>13</rdommax>
+            <attrunit>models</attrunit>
+          </rdom>
+        </attrdomv>
+      </attr>
+    </detailed>
+    <overview>
+      <eaover>The zipped folder Historical_KS contains two files with the historical model versus reference Kolmogorov-Smirnov ensemble totals for the two simulation types: dynamic and static for the period 1976-2005. The zipped folder Future_KS contains twelve files with the historical (1976-2005) versus future model Kolmogorov-Smirnov ensemble totals for the two simulation types (dynamic and static), two emissions scenarios (rcp4.5 and rcp8.5) and three future time periods (2016-2045, 2046-2075, and 2071-2100). The files Stat_gage_performance_conus_new_1951_2009 and Dyn_gage_performance_conus_new_1951_2009 contain the gage performance information from 1951-2009 between observed flow and historical reference simulation for the static and dynamic simulation type respectively. The file Uncertainty_Var_Description.csv contains variable information about data layers included in the PRMS CONUS Futures Portal.</eaover>
+      <eadetcit>Nikiel, C. A., 2026, Supplementary Data Spanning 1951-2100 to Support the PRMS CONUS Futures Portal, U.S. Geological Survey data release, https://doi.org/10.5066/P13TU2P4.</eadetcit>
+    </overview>
+  </eainfo>
+  <distinfo>
+    <distrib>
+      <cntinfo>
+        <cntorgp>
+          <cntorg>U.S. Geological Survey - ScienceBase</cntorg>
+        </cntorgp>
+        <cntaddr>
+          <addrtype>mailing address</addrtype>
+          <address>Denver Federal Center</address>
+          <address>Building 810</address>
+          <address>Mail Stop 302</address>
+          <city>Denver</city>
+          <state>CO</state>
+          <postal>80225</postal>
+        </cntaddr>
+        <cntvoice>1-888-275-8747</cntvoice>
+        <cntemail>sciencebase@usgs.gov</cntemail>
+      </cntinfo>
+    </distrib>
+    <distliab>Unless otherwise stated, all data, metadata and related materials are considered to satisfy the quality standards relative to the purpose for which the data were collected. Although these data and associated metadata have been reviewed for accuracy and completeness and approved for release by the U.S. Geological Survey (USGS), no warranty expressed or implied is made regarding the display or utility of the data for other purposes, nor on all computer systems, nor shall the act of distribution constitute any such warranty.</distliab>
+    <stdorder>
+      <digform>
+        <digtinfo>
+          <formname>Digital Data</formname>
+        </digtinfo>
+        <digtopt>
+          <onlinopt>
+            <computer>
+              <networka>
+                <networkr>https://doi.org/10.5066/P13TU2P4</networkr>
+              </networka>
+            </computer>
+          </onlinopt>
+        </digtopt>
+      </digform>
+      <fees>None</fees>
+    </stdorder>
+  </distinfo>
+  <metainfo>
+    <metd>20260219</metd>
+    <metc>
+      <cntinfo>
+        <cntorgp>
+          <cntorg>Climate Adaptation Science Centers</cntorg>
+          <cntper>CASC Data Management Team</cntper>
+        </cntorgp>
+        <cntpos>NA</cntpos>
+        <cntaddr>
+          <addrtype>mailing and physical</addrtype>
+          <address>12201 Sunrise Valley Drive</address>
+          <city>Reston</city>
+          <state>VA</state>
+          <postal>20192</postal>
+        </cntaddr>
+        <cntvoice>NA</cntvoice>
+        <cntemail>casc-data@usgs.gov</cntemail>
+      </cntinfo>
+    </metc>
+    <metstdn>FGDC Content Standard for Digital Geospatial Metadata</metstdn>
+    <metstdv>FGDC-STD-001-1998</metstdv>
+  </metainfo>
+</metadata>
