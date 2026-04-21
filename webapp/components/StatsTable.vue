@@ -118,7 +118,7 @@ const tableCaptionHtml = computed(() => {
                 fnc(
                   roundSigFig(
                     Number(
-                      streamStats['projected'][appEra]['rcp45'][stat.id].median
+                      streamStats['projected'][appEra]['rcp45'][stat.id].min
                     )
                   )
                 )
@@ -132,9 +132,7 @@ const tableCaptionHtml = computed(() => {
               "
               :future="
                 roundSigFig(
-                  Number(
-                    streamStats['projected'][appEra]['rcp45'][stat.id].median
-                  )
+                  Number(streamStats['projected'][appEra]['rcp45'][stat.id].min)
                 )
               "
             />
@@ -145,7 +143,7 @@ const tableCaptionHtml = computed(() => {
                 fnc(
                   roundSigFig(
                     Number(
-                      streamStats['projected'][appEra]['rcp85'][stat.id].median
+                      streamStats['projected'][appEra]['rcp85'][stat.id].max
                     )
                   )
                 )
@@ -159,9 +157,7 @@ const tableCaptionHtml = computed(() => {
               "
               :future="
                 roundSigFig(
-                  Number(
-                    streamStats['projected'][appEra]['rcp85'][stat.id].median
-                  )
+                  Number(streamStats['projected'][appEra]['rcp85'][stat.id].max)
                 )
               "
             />
