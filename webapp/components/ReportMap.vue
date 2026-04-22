@@ -3,12 +3,20 @@ const { $L, $config } = useNuxtApp()
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 import { getHandleCoord } from '~/utils/map'
 const streamSegmentStore = useStreamSegmentStore()
-let { hucId } = storeToRefs(streamSegmentStore)
+let { hucId, segmentId } = storeToRefs(streamSegmentStore)
 
 const hucBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=huc8=`
 const segBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=`
 
 let map: any = null
+let mapLayers: any[] = []
+
+const clearMapLayers = () => {
+  mapLayers.forEach(layer => {
+    map.removeLayer(layer)
+  })
+  mapLayers = []
+}
 
 const addHuc = () => {
   let hucUrl = hucBaseUrl + hucId.value
@@ -89,8 +97,7 @@ const addHuc = () => {
 }
 
 const addSegment = () => {
-  const streamSegmentStore = useStreamSegmentStore()
-  const { segmentId } = storeToRefs(streamSegmentStore)
+  clearMapLayers()
   let url = segBaseUrl + `seg_id_nat=${segmentId.value}`
   fetch(url)
     .then(response => response.json())
@@ -113,7 +120,22 @@ const addSegment = () => {
                     color: isOutlet ? '#ff0000' : '#0000ff',
                     weight: isSelected ? 5 : 2,
                     opacity: 1,
-                    interactive: false,
+                    interactive: !isSelected,
+                  },
+                  onEachFeature: (feature, layer) => {
+                    if (!isSelected) {
+                      layer.on('click', () => {
+                        navigateTo(`/conus/${feature.properties.seg_id_nat}`, {
+                          external: true,
+                        })
+                      })
+                      layer.on('mouseover', () => {
+                        layer.setStyle({ weight: 5 })
+                      })
+                      layer.on('mouseout', () => {
+                        layer.setStyle({ weight: 2 })
+                      })
+                    }
                   },
                 })
                 .addTo(map)
