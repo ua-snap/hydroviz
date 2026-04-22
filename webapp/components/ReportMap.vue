@@ -95,16 +95,49 @@ const addSegment = () => {
   fetch(url)
     .then(response => response.json())
     .then(data => {
-      let geoJsonLayer = $L
-        .geoJSON(data, {
-          style: {
-            color: '#0000ff',
-            weight: 3,
-          },
-          interactive: false,
-        })
-        .addTo(map)
-      map.fitBounds(geoJsonLayer.getBounds())
+      const isHUC8 = data.features[0].properties.huc8
+
+      if (isHUC8) {
+        let allSegmentsUrl = segBaseUrl + `huc8=${isHUC8}`
+        fetch(allSegmentsUrl)
+          .then(response => response.json())
+          .then(allData => {
+            allData.features.forEach(feature => {
+              const isOutlet = feature.properties.h8_outlet === 1
+              const isSelected =
+                feature.properties.seg_id_nat === segmentId.value
+
+              const currentStream = $L
+                .geoJSON(feature, {
+                  style: {
+                    color: isOutlet ? '#ff0000' : '#0000ff',
+                    weight: isSelected ? 5 : 2,
+                    opacity: 1,
+                    interactive: false,
+                  },
+                })
+                .addTo(map)
+
+              if (isSelected) {
+                map.fitBounds(currentStream.getBounds())
+              }
+            })
+          })
+          .catch(error => {
+            console.error('Error fetching all stream segments:', error)
+          })
+      } else {
+        const selectedStream = $L
+          .geoJSON(data, {
+            style: {
+              weight: 5,
+              color: '#0000ff',
+              interactive: false,
+            },
+          })
+          .addTo(map)
+        map.fitBounds(selectedStream.getBounds())
+      }
     })
     .catch(error => {
       console.error('Error fetching GeoJSON data:', error)
@@ -117,6 +150,7 @@ const initializeMap = () => {
       scrollWheelZoom: false,
       dragging: false,
       zoomControl: false,
+      doubleClickZoom: false,
       zoomSnap: 0.1,
     })
     .setView([37.8, -96], 8)
