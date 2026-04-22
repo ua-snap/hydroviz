@@ -63,6 +63,7 @@ export const getLayout = (
     pad: 20,
   },
   autosize: true,
+  dragmode: false,
 })
 
 export const initializeChart = (
