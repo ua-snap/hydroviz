@@ -11,13 +11,6 @@ const segBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&ver
 let map: any = null
 let mapLayers: any[] = []
 
-const clearMapLayers = () => {
-  mapLayers.forEach(layer => {
-    map.removeLayer(layer)
-  })
-  mapLayers = []
-}
-
 const addHuc = () => {
   let hucUrl = hucBaseUrl + hucId.value
   fetch(hucUrl)
@@ -97,7 +90,6 @@ const addHuc = () => {
 }
 
 const addSegment = () => {
-  clearMapLayers()
   let url = segBaseUrl + `seg_id_nat=${segmentId.value}`
   fetch(url)
     .then(response => response.json())
