@@ -97,10 +97,10 @@ const addSegment = () => {
       if (!data.features || data.features.length === 0) {
         return
       }
-      const isHUC8 = data.features[0].properties.huc8
+      const HUC8 = data.features[0].properties.huc8
 
-      if (isHUC8) {
-        let allSegmentsUrl = segBaseUrl + `huc8=${isHUC8}`
+      if (HUC8) {
+        let allSegmentsUrl = segBaseUrl + `huc8=${HUC8}`
         fetch(allSegmentsUrl)
           .then(response => response.json())
           .then(allData => {
