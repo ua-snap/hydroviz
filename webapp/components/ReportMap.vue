@@ -94,6 +94,9 @@ const addSegment = () => {
   fetch(url)
     .then(response => response.json())
     .then(data => {
+      if (!data.features || data.features.length === 0) {
+        return
+      }
       const isHUC8 = data.features[0].properties.huc8
 
       if (isHUC8) {
