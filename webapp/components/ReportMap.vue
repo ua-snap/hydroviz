@@ -3,12 +3,13 @@ const { $L, $config } = useNuxtApp()
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 import { getHandleCoord } from '~/utils/map'
 const streamSegmentStore = useStreamSegmentStore()
-let { hucId } = storeToRefs(streamSegmentStore)
+let { hucId, segmentId } = storeToRefs(streamSegmentStore)
 
 const hucBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=huc8=`
 const segBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=`
 
 let map: any = null
+let mapLayers: any[] = []
 
 const addHuc = () => {
   let hucUrl = hucBaseUrl + hucId.value
@@ -89,22 +90,71 @@ const addHuc = () => {
 }
 
 const addSegment = () => {
-  const streamSegmentStore = useStreamSegmentStore()
-  const { segmentId } = storeToRefs(streamSegmentStore)
   let url = segBaseUrl + `seg_id_nat=${segmentId.value}`
   fetch(url)
     .then(response => response.json())
     .then(data => {
-      let geoJsonLayer = $L
-        .geoJSON(data, {
-          style: {
-            color: '#0000ff',
-            weight: 3,
-          },
-          interactive: false,
-        })
-        .addTo(map)
-      map.fitBounds(geoJsonLayer.getBounds())
+      if (!data.features || data.features.length === 0) {
+        return
+      }
+      const HUC8 = data.features[0].properties.huc8
+
+      if (HUC8) {
+        let allSegmentsUrl = segBaseUrl + `huc8=${HUC8}`
+        fetch(allSegmentsUrl)
+          .then(response => response.json())
+          .then(allData => {
+            allData.features.forEach(feature => {
+              const isOutlet = feature.properties.h8_outlet === 1
+              const isSelected =
+                feature.properties.seg_id_nat === segmentId.value
+
+              const currentStream = $L
+                .geoJSON(feature, {
+                  style: {
+                    color: isOutlet ? '#ff0000' : '#0000ff',
+                    weight: isSelected ? 5 : 2,
+                    opacity: 1,
+                    interactive: !isSelected,
+                  },
+                  onEachFeature: (feature, layer) => {
+                    if (!isSelected) {
+                      layer.on('click', () => {
+                        navigateTo(`/conus/${feature.properties.seg_id_nat}`, {
+                          external: true,
+                        })
+                      })
+                      layer.on('mouseover', () => {
+                        layer.setStyle({ weight: 5 })
+                      })
+                      layer.on('mouseout', () => {
+                        layer.setStyle({ weight: 2 })
+                      })
+                    }
+                  },
+                })
+                .addTo(map)
+
+              if (isSelected) {
+                map.fitBounds(currentStream.getBounds())
+              }
+            })
+          })
+          .catch(error => {
+            console.error('Error fetching all stream segments:', error)
+          })
+      } else {
+        const selectedStream = $L
+          .geoJSON(data, {
+            style: {
+              weight: 5,
+              color: '#0000ff',
+              interactive: false,
+            },
+          })
+          .addTo(map)
+        map.fitBounds(selectedStream.getBounds())
+      }
     })
     .catch(error => {
       console.error('Error fetching GeoJSON data:', error)
@@ -117,6 +167,7 @@ const initializeMap = () => {
       scrollWheelZoom: false,
       dragging: false,
       zoomControl: false,
+      doubleClickZoom: false,
       zoomSnap: 0.1,
     })
     .setView([37.8, -96], 8)
