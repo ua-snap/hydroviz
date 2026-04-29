@@ -1,18 +1,64 @@
 <script setup lang="ts">
 const { $L, $config } = useNuxtApp()
 import { useStreamSegmentStore } from '~/stores/streamSegment'
-import { getHandleCoord } from '~/utils/map'
+import { fetchAndAddSegmentsByBounds } from '~/utils/map'
 const streamSegmentStore = useStreamSegmentStore()
-let { hucId, segmentId } = storeToRefs(streamSegmentStore)
+let { isLoading, hucId, segmentId } = storeToRefs(streamSegmentStore)
 
 const hucBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=huc8=`
-const segBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=`
+const segBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_subset&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=`
 
 let map: any = null
-let mapLayers: any[] = []
 
-const addHuc = () => {
+const clearMapLayers = () => {
+  if (!map) return
+  // Remove all layers except the base tile layer
+  map.eachLayer((layer: any) => {
+    if (layer instanceof $L.TileLayer) {
+      // Keep tile layers (basemap)
+      return
+    }
+    map.removeLayer(layer)
+  })
+}
+
+const getHucOutletSegmentId = async (
+  hucIdValue: string
+): Promise<number | null> => {
+  try {
+    const url = `${segBaseUrl}huc8='${hucIdValue}'`
+    const response = await fetch(url)
+    const data = await response.json()
+
+    const features = Array.isArray(data?.features) ? data.features : []
+    if (features.length === 0) {
+      console.error('No features returned for HUC:', hucIdValue)
+      return null
+    }
+
+    // Find the outlet segment (h8_outlet === 1)
+    const outletFeature = features.find(
+      (feature: any) => feature?.properties?.h8_outlet === 1
+    )
+
+    if (!outletFeature || !outletFeature.properties) {
+      console.error('No outlet feature found for HUC:', hucIdValue)
+      return null
+    }
+
+    return outletFeature.properties.seg_id_nat
+  } catch (error) {
+    console.error('Error fetching outlet segment for HUC:', error)
+    return null
+  }
+}
+
+const addHuc = async () => {
   let hucUrl = hucBaseUrl + hucId.value
+
+  // Get the outlet segment ID for this HUC
+  const outletSegmentId = await getHucOutletSegmentId(hucId.value)
+
   fetch(hucUrl)
     .then(response => response.json())
     .then(data => {
@@ -26,146 +72,47 @@ const addHuc = () => {
         })
         .addTo(map)
       map.fitBounds(geoJsonLayer.getBounds(), { padding: [25, 25] })
+
+      segmentId.value = outletSegmentId
+
+      // After fitting bounds, add all segments in the viewport with the outlet highlighted
+      fetchAndAddSegmentsByBounds({
+        map,
+        $L,
+        segBaseUrl,
+        interactive: true,
+        selectedSegmentId: segmentId.value,
+        fitBounds: false,
+        mapType: 'report',
+      })
     })
     .catch(error => {
       console.error('Error fetching HUC GeoJSON data:', error)
     })
-
-  let segUrl = segBaseUrl + `huc8=${hucId.value}`
-  fetch(segUrl)
-    .then(response => response.json())
-    .then(data => {
-      let regularSegments = data.features.filter(
-        (feature: any) => feature.properties.h8_outlet === 0
-      )
-      let outletSegments = data.features.filter(
-        (feature: any) => feature.properties.h8_outlet === 1
-      )
-
-      // Add regular segments to the map first.
-      regularSegments.forEach(feature => {
-        $L.geoJSON(feature, {
-          style: {
-            weight: 3,
-            color: '#0000ff',
-            interactive: false,
-          },
-        }).addTo(map)
-
-        let latlng = getHandleCoord(feature)
-        $L.circleMarker(latlng, {
-          radius: 4,
-          color: '#0000ff',
-          fillColor: '#0000ff',
-          fillOpacity: 1,
-        }).addTo(map)
-      })
-
-      // Add outlet segments next so they effectively have a higher z-index.
-      outletSegments.forEach(feature => {
-        $L.geoJSON(feature, {
-          style: {
-            weight: 3,
-            color: '#ff0000',
-            interactive: false,
-          },
-        }).addTo(map)
-
-        let latlng = getHandleCoord(feature)
-        $L.circleMarker(latlng, {
-          radius: 4,
-          color: '#ff0000',
-          fillColor: '#ff0000',
-          fillOpacity: 1,
-        }).addTo(map)
-
-        // Place a pin at the same coordinate for outlet segments.
-        // It's sometimes too hard to see them otherwise.
-        $L.marker(latlng).addTo(map)
-      })
-    })
-    .catch(error => {
-      console.error('Error fetching segment GeoJSON data:', error)
-    })
 }
 
 const addSegment = () => {
-  let url = segBaseUrl + `seg_id_nat=${segmentId.value}`
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      if (!data.features || data.features.length === 0) {
-        return
-      }
-      const HUC8 = data.features[0].properties.huc8
+  if (!segmentId.value) {
+    const route = useRoute()
+    const id = computed(() => parseInt(route.params.segment))
+    segmentId.value = id.value
+  }
+  if (isLoading.value) return
 
-      if (HUC8) {
-        let allSegmentsUrl = segBaseUrl + `huc8=${HUC8}`
-        fetch(allSegmentsUrl)
-          .then(response => response.json())
-          .then(allData => {
-            allData.features.forEach(feature => {
-              const isOutlet = feature.properties.h8_outlet === 1
-              const isSelected =
-                feature.properties.seg_id_nat === segmentId.value
-
-              const currentStream = $L
-                .geoJSON(feature, {
-                  style: {
-                    color: isOutlet ? '#ff0000' : '#0000ff',
-                    weight: isSelected ? 5 : 2,
-                    opacity: 1,
-                    interactive: !isSelected,
-                  },
-                  onEachFeature: (feature, layer) => {
-                    if (!isSelected) {
-                      layer.on('click', () => {
-                        navigateTo(`/conus/${feature.properties.seg_id_nat}`, {
-                          external: true,
-                        })
-                      })
-                      layer.on('mouseover', () => {
-                        layer.setStyle({ weight: 5 })
-                      })
-                      layer.on('mouseout', () => {
-                        layer.setStyle({ weight: 2 })
-                      })
-                    }
-                  },
-                })
-                .addTo(map)
-
-              if (isSelected) {
-                map.fitBounds(currentStream.getBounds())
-              }
-            })
-          })
-          .catch(error => {
-            console.error('Error fetching all stream segments:', error)
-          })
-      } else {
-        const selectedStream = $L
-          .geoJSON(data, {
-            style: {
-              weight: 5,
-              color: '#0000ff',
-              interactive: false,
-            },
-          })
-          .addTo(map)
-        map.fitBounds(selectedStream.getBounds())
-      }
-    })
-    .catch(error => {
-      console.error('Error fetching GeoJSON data:', error)
-    })
+  fetchAndAddSegmentsByBounds({
+    map,
+    $L,
+    segBaseUrl,
+    interactive: true,
+    selectedSegmentId: segmentId.value,
+    mapType: 'report',
+  })
 }
 
 const initializeMap = () => {
   map = $L
     .map('report-map', {
       scrollWheelZoom: false,
-      dragging: false,
       zoomControl: false,
       doubleClickZoom: false,
       zoomSnap: 0.1,
@@ -186,9 +133,22 @@ const initializeMap = () => {
   } else {
     addSegment()
   }
+
+  map.on('dragend', function (e) {
+    fetchAndAddSegmentsByBounds({
+      map,
+      $L,
+      segBaseUrl,
+      interactive: true,
+      selectedSegmentId: segmentId.value,
+      fitBounds: false,
+      mapType: 'report',
+    })
+  })
 }
 
 onMounted(() => {
+  if (isLoading.value) return
   initializeMap()
 })
 </script>
