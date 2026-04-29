@@ -5,7 +5,7 @@ let {
   streamStats,
   streamHydrograph,
   streamMonthlyFlow,
-  streamMinMaxFlowDates,
+  streamMaxFlowDates,
   hucId,
   segmentId,
   segmentName,
@@ -122,9 +122,7 @@ onUnmounted(() => {
             maximum flow rates.
           </p>
         </div>
-        <VizMinMaxFlowDates
-          :stream-min-max-flow-dates="streamMinMaxFlowDates"
-        />
+        <VizMaxFlowDates :stream-max-flow-dates="streamMaxFlowDates" />
       </div>
     </section>
 

@@ -12,7 +12,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const streamSummary = shallowRef(null)
   const streamHydrograph = shallowRef(null)
   const streamMonthlyFlow = shallowRef(null)
-  const streamMinMaxFlowDates = shallowRef(null)
+  const streamMaxFlowDates = shallowRef(null)
   const streamStats = shallowRef(null)
   const appContext = ref<AppContext>('mid')
   const appEra = ref<Era>('2046-2075')
@@ -65,7 +65,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     streamSummary.value = null
     streamHydrograph.value = null
     streamMonthlyFlow.value = null
-    streamMinMaxFlowDates.value = null
+    streamMaxFlowDates.value = null
     streamStats.value = null
     var dataResponse
 
@@ -118,7 +118,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
       streamSummary.value = dataResponse['summary']
       streamHydrograph.value = dataResponse['hydrograph']
       streamMonthlyFlow.value = dataResponse['monthly_flow']
-      streamMinMaxFlowDates.value = dataResponse['min_max_flow_dates']
+      streamMaxFlowDates.value = dataResponse['max_flow_dates']
       streamStats.value = dataResponse['stats']
     } catch {
       console.error('API response does not contain expected data.')
@@ -131,7 +131,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     streamSummary.value = null
     streamHydrograph.value = null
     streamMonthlyFlow.value = null
-    streamMinMaxFlowDates.value = null
+    streamMaxFlowDates.value = null
     streamStats.value = null
     hucId.value = null
   }
@@ -142,7 +142,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     streamSummary,
     streamHydrograph,
     streamMonthlyFlow,
-    streamMinMaxFlowDates,
+    streamMaxFlowDates,
     streamStats,
     fetchStreamStats,
     fetchHucStats,
