@@ -14,23 +14,23 @@ import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
 const { appContext, appEra } = storeToRefs(streamSegmentStore)
 
-const props = defineProps(['streamMinMaxFlowDates'])
+const props = defineProps(['streamMaxFlowDates'])
 
 onMounted(() => {
   initializeChart(
     $Plotly,
-    'min-max-flow-dates',
+    'max-flow-dates',
     buildChart,
-    toRaw(props.streamMinMaxFlowDates)
+    toRaw(props.streamMaxFlowDates)
   )
 })
 
 watch([appContext, appEra], () => {
   initializeChart(
     $Plotly,
-    'min-max-flow-dates',
+    'max-flow-dates',
     buildChart,
-    toRaw(props.streamMinMaxFlowDates)
+    toRaw(props.streamMaxFlowDates)
   )
 })
 
@@ -72,12 +72,8 @@ const buildChart = () => {
   }
 
   scenarios.forEach(scenario => {
-    let historicalFlow = [
-      props.streamMinMaxFlowDates['historical']['max']['flow'],
-    ]
-    let historicalFlowDate = [
-      props.streamMinMaxFlowDates['historical']['max']['date'],
-    ]
+    let historicalFlow = [props.streamMaxFlowDates['historical']['flow']]
+    let historicalFlowDate = [props.streamMaxFlowDates['historical']['date']]
 
     let customdataHistorical: string[][] = []
     historicalFlowDate.forEach((doy: number, index: number) => {
@@ -121,13 +117,9 @@ const buildChart = () => {
     historicalTraces.push(historicalTrace)
 
     let projectedFlows =
-      props.streamMinMaxFlowDates['projected'][appEra.value][scenario]['max'][
-        'flow'
-      ]
+      props.streamMaxFlowDates['projected'][appEra.value][scenario]['flow']
     let projectedDates = $_.cloneDeep(
-      props.streamMinMaxFlowDates['projected'][appEra.value][scenario]['max'][
-        'date'
-      ]
+      props.streamMaxFlowDates['projected'][appEra.value][scenario]['date']
     )
 
     let customdataProjected: string[][] = []
@@ -252,12 +244,12 @@ const buildChart = () => {
   layout['margin'] = { t: 100 }
   layout['height'] = 500
 
-  const config = getConfig('min-max-flow-dates')
+  const config = getConfig('max-flow-dates')
 
-  $Plotly.newPlot('min-max-flow-dates', traces, layout, config)
+  $Plotly.newPlot('max-flow-dates', traces, layout, config)
 }
 </script>
 
 <template>
-  <div id="min-max-flow-dates" class="mb-5"></div>
+  <div id="max-flow-dates" class="mb-5"></div>
 </template>
