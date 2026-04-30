@@ -4,26 +4,25 @@ import xarray as xr
 from luts import *
 
 
-def filter_files(files, type):
-    # ignore the files with long historical range (1952-2005 and 1952-2010); this overlaps the
-    # normal historical range (1976-2005) and is confusing
-    # type is either "seg" or "hru": use possible filtering based on type in the future
+def filter_files(files, type, diff=False):
+    # type is either "seg" or "hru"
+    # diff=True: keep only diff files; diff=False: keep non-diff files (excluding long historical ranges)
 
     filtered_files = []
     starting_len = len(files)
     count = 0
     for f in files:
-        if "diff" in f.name:
-            count = count + 1
-            pass
-        elif "1952_2005" in f.name:
-            count = count + 1
-            pass
-        elif "1952_2010" in f.name:
-            count = count + 1
-            pass
+        if diff:
+            if "diff" in f.name:
+                filtered_files.append(f)
+            else:
+                count += 1
         else:
-            filtered_files.append(f)
+            # ignore diff files and long historical ranges (1952-2005, 1952-2010)
+            if "diff" in f.name or "1952_2005" in f.name or "1952_2010" in f.name:
+                count += 1
+            else:
+                filtered_files.append(f)
 
     print(
         f"Filtered {count} files from type '{type}' list; {len(filtered_files)} files remain out of {starting_len} original files.\n"
@@ -214,11 +213,33 @@ def populate_encodings_metadata(ds):
     # NOTE: era names were hyphenated in the metadata for consistency; see luts.py for details
     for dim in ["landcover", "model", "scenario", "era"]:
         ds[dim].attrs["encoding"] = str(reverse_encodings_lookup[dim])
-    
+
     # for each variable, add the statistic metadata from stat_vars_dict
     for var in stat_vars_dict.keys():
         ds[var].attrs["description"] = stat_vars_dict[var]["statistic_description"]
         ds[var].attrs["units"] = stat_vars_dict[var]["units"]
+    return ds
+
+
+def populate_diff_metadata(ds):
+    for dim in ["landcover", "model", "scenario", "era"]:
+        ds[dim].attrs["encoding"] = str(reverse_encodings_lookup[dim])
+
+    for var in stat_vars_dict.keys():
+        method = stat_vars_dict[var]["difference_method"]
+        base_desc = stat_vars_dict[var]["statistic_description"]
+
+        if method == "ratio":
+            added = "Values represent the percentage difference between GCM projected era and GCM historical (1976-2005)."
+            units = "percent"
+        else:
+            added = "Values represent the absolute difference between GCM projected era and GCM historical (1976-2005)."
+            units = stat_vars_dict[var]["units"]
+
+        ds[var].attrs["description"] = f"{base_desc} {added}"
+        ds[var].attrs["units"] = units
+        ds[var].attrs["difference_method"] = method
+
     return ds
 
 def sort_by_model_dimension(ds):
