@@ -4,11 +4,10 @@ import { useStreamSegmentStore } from '~/stores/streamSegment'
 import { getHandleCoord } from '~/utils/map'
 const streamSegmentStore = useStreamSegmentStore()
 let { hucId } = storeToRefs(streamSegmentStore)
+let map: any = null
 
 const hucBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=huc8=`
 const segBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=`
-
-let map: any = null
 
 const addHuc = () => {
   let hucUrl = hucBaseUrl + hucId.value

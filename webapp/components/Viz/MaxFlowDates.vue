@@ -200,8 +200,8 @@ const buildChart = () => {
 
   let axisColor = 'rgba(0,0,0,0.08)'
 
-  let keysToExclude = ['date', 'min']
-  let { yMin, yMax } = getDataRange(props.streamMinMaxFlowDates, keysToExclude)
+  let keysToExclude = ['date']
+  let { yMin, yMax } = getDataRange(props.streamMaxFlowDates, keysToExclude)
 
   layout['polar'] = {
     angularaxis: {
