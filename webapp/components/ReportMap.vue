@@ -90,7 +90,6 @@ const addSegment = () => {
     map,
     $L,
     segBaseUrl,
-    interactive: true,
     selectedSegmentId: segmentId.value,
     mapType: 'report',
   })
@@ -121,12 +120,20 @@ const initializeMap = () => {
     addSegment()
   }
 
+  fetchAndAddSegmentsByBounds({
+    map,
+    $L,
+    segBaseUrl,
+    selectedSegmentId: segmentId.value,
+    fitBounds: false,
+    mapType: 'report',
+  })
+
   map.on('dragend', function (e) {
     fetchAndAddSegmentsByBounds({
       map,
       $L,
       segBaseUrl,
-      interactive: true,
       selectedSegmentId: segmentId.value,
       fitBounds: false,
       mapType: 'report',

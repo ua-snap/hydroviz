@@ -1,11 +1,3 @@
-export const getHandleCoord = (feature: any) => {
-  const { $L } = useNuxtApp()
-  const coords = feature.geometry.coordinates[0]
-  const midIdx = Math.floor(coords.length / 2)
-  const midCoord = coords[midIdx]
-  return $L.latLng(midCoord[1], midCoord[0])
-}
-
 const segmentColors: Record<string, any> = {
   main: {
     selected: {
@@ -33,11 +25,18 @@ const segmentColors: Record<string, any> = {
   },
 }
 
+export const getHandleCoord = (feature: any) => {
+  const { $L } = useNuxtApp()
+  const coords = feature.geometry.coordinates[0]
+  const midIdx = Math.floor(coords.length / 2)
+  const midCoord = coords[midIdx]
+  return $L.latLng(midCoord[1], midCoord[0])
+}
+
 export const addSegmentsGeoJson = ({
   map,
   $L,
   data,
-  layers,
   selectedSegmentId = null,
   fitBounds = true,
   mapType = 'main',
@@ -45,7 +44,6 @@ export const addSegmentsGeoJson = ({
   map: any
   $L: any
   data: any
-  layers?: any[]
   selectedSegmentId?: string | null
   fitBounds: boolean
   mapType?: 'main' | 'report'
@@ -156,9 +154,6 @@ export const addSegmentsGeoJson = ({
         isLoading.value = true
         navigateTo('/conus/' + feature.properties.seg_id_nat)
       })
-    if (layers) {
-      layers.push(combinedSegment)
-    }
   })
 
   // Fit bounds to selected segment if one exists
@@ -167,8 +162,18 @@ export const addSegmentsGeoJson = ({
       map.fitBounds(selectedSegmentLayer.getBounds(), { padding: [50, 50] })
     }
 
-    let latlng = getHandleCoord(selectedSegment)
-    $L.marker(latlng).addTo(map)
+    // Only add marker if one doesn't already exist.
+    let markerExists = false
+    map.eachLayer((layer: any) => {
+      if (layer instanceof $L.Marker) {
+        markerExists = true
+      }
+    })
+
+    if (!markerExists) {
+      let latlng = getHandleCoord(selectedSegment)
+      $L.marker(latlng).addTo(map)
+    }
   }
 }
 
@@ -176,7 +181,6 @@ export const fetchAndAddSegmentsByBounds = ({
   map,
   $L,
   segBaseUrl,
-  layers,
   selectedSegmentId = null,
   fitBounds = true,
   mapType = 'main',
@@ -184,7 +188,6 @@ export const fetchAndAddSegmentsByBounds = ({
   map: any
   $L: any
   segBaseUrl: string
-  layers?: any[]
   selectedSegmentId?: string | null | undefined
   fitBounds?: boolean
   mapType?: 'main' | 'report'
@@ -207,7 +210,6 @@ export const fetchAndAddSegmentsByBounds = ({
           map,
           $L,
           data: selectedData,
-          layers,
           selectedSegmentId,
           fitBounds,
           mapType: mapType,
@@ -233,12 +235,17 @@ export const fetchAndAddSegmentsByBounds = ({
             return response.json()
           })
           .then(data => {
+            // Clear GeoJSON layers from map before adding new ones.
+            map.eachLayer((layer: any) => {
+              if (layer instanceof $L.GeoJSON) {
+                map.removeLayer(layer)
+              }
+            })
             // Filter out the selected segment since we already added it
             addSegmentsGeoJson({
               map,
               $L,
               data: data,
-              layers,
               selectedSegmentId: selectedSegmentId,
               fitBounds: fitBounds,
               mapType: mapType,
@@ -274,7 +281,6 @@ export const fetchAndAddSegmentsByBounds = ({
         map,
         $L,
         data,
-        layers,
         selectedSegmentId,
         fitBounds,
         mapType: mapType,
