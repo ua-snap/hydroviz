@@ -189,10 +189,9 @@ export const fetchAndAddSegmentsByBounds = ({
   fitBounds?: boolean
   mapType?: 'main' | 'report'
 }) => {
-  // If a specific segment is selected, fetch it first and fit bounds
   if (selectedSegmentId) {
+    // Fetch only the selected segment first to determine map bounds.
     const selectedSegUrl = segBaseUrl + `seg_id_nat=${selectedSegmentId}`
-
     return fetch(selectedSegUrl)
       .then(response => {
         if (!response.ok) {
@@ -214,7 +213,7 @@ export const fetchAndAddSegmentsByBounds = ({
           mapType: mapType,
         })
 
-        // Now fetch all segments in the viewport (after bounds have been fitted)
+        // Map is now fit to bounds of selected segment. Now fetch everything in map viewport.
         const bounds = map.getBounds()
         const minLon = bounds.getWest()
         const maxLon = bounds.getEast()
@@ -235,19 +234,12 @@ export const fetchAndAddSegmentsByBounds = ({
           })
           .then(data => {
             // Filter out the selected segment since we already added it
-            const otherSegments = {
-              ...data,
-              features: data.features.filter(
-                (feature: any) =>
-                  feature.properties.seg_id_nat !== selectedSegmentId
-              ),
-            }
             addSegmentsGeoJson({
               map,
               $L,
               data: data,
               layers,
-              selectedSegmentId: selectedSegmentId, // Highlight the selected segment in this batch
+              selectedSegmentId: selectedSegmentId,
               fitBounds: fitBounds,
               mapType: mapType,
             })
@@ -258,7 +250,7 @@ export const fetchAndAddSegmentsByBounds = ({
       })
   }
 
-  // No selected segment - just fetch segments in current viewport
+  // No selected segment, so just fetch segments in current viewport.
   const bounds = map.getBounds()
   const minLon = bounds.getWest()
   const maxLon = bounds.getEast()
