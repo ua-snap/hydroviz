@@ -166,6 +166,9 @@ export const addSegmentsGeoJson = ({
     if (fitBounds) {
       map.fitBounds(selectedSegmentLayer.getBounds(), { padding: [50, 50] })
     }
+
+    let latlng = getHandleCoord(selectedSegment)
+    $L.marker(latlng).addTo(map)
   }
 }
 

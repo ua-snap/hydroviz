@@ -26,7 +26,7 @@ const getHucOutletSegmentId = async (
   hucIdValue: string
 ): Promise<number | null> => {
   try {
-    const url = `${segBaseUrl}huc8='${hucIdValue}'`
+    const url = `${segBaseUrl}huc8=${hucIdValue}`
     const response = await fetch(url)
     const data = await response.json()
 
