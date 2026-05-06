@@ -10,18 +10,6 @@ const segBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&ver
 
 let map: any = null
 
-const clearMapLayers = () => {
-  if (!map) return
-  // Remove all layers except the base tile layer
-  map.eachLayer((layer: any) => {
-    if (layer instanceof $L.TileLayer) {
-      // Keep tile layers (basemap)
-      return
-    }
-    map.removeLayer(layer)
-  })
-}
-
 const getHucOutletSegmentId = async (
   hucIdValue: string
 ): Promise<number | null> => {
