@@ -201,7 +201,6 @@ const addMapBoundsSegments = () => {
     $L,
     segBaseUrl,
     layers: segGeoJsonLayers,
-    interactive: true,
   })
 }
 

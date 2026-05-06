@@ -68,7 +68,6 @@ const addHuc = async () => {
         map,
         $L,
         segBaseUrl,
-        interactive: true,
         selectedSegmentId: segmentId.value,
         fitBounds: false,
         mapType: 'report',
