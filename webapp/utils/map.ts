@@ -1,3 +1,5 @@
+import { useStreamSegmentStore } from '~/stores/streamSegment'
+
 let segmentLayers: any[] = []
 
 const segmentColors: Record<string, any> = {
