@@ -66,6 +66,36 @@ export const getLayout = (
   dragmode: false,
 })
 
+// Recursively extract all relevant values (data keys not in excludeKeys) from
+// API data response, find the min/max values, add some padding, and return.
+export const getDataRange = (
+  data: any,
+  excludeKeys: string[] = []
+): { yMin: number; yMax: number } => {
+  const extractNumbers = (obj: any): number[] => {
+    if (typeof obj === 'number') {
+      return [obj]
+    }
+    if (Array.isArray(obj)) {
+      return obj.flatMap(extractNumbers)
+    }
+    if (obj && typeof obj === 'object') {
+      const allowedEntries = Object.entries(obj).filter(
+        ([key]) => !excludeKeys.includes(key)
+      )
+      return allowedEntries.flatMap(([, value]) => extractNumbers(value))
+    }
+    return []
+  }
+
+  const allValues = extractNumbers(data)
+  const paddingFactor = 0.05
+  return {
+    yMin: Math.min(...allValues) * (1 - paddingFactor),
+    yMax: Math.max(...allValues) * (1 + paddingFactor),
+  }
+}
+
 export const initializeChart = (
   $Plotly: any,
   chartId: string,

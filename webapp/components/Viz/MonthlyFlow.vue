@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { watch, toRaw } from 'vue'
-import { getLayout, getConfig, initializeChart } from '~/utils/chart'
+import {
+  getLayout,
+  getConfig,
+  initializeChart,
+  getDataRange,
+} from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
 
@@ -161,6 +166,13 @@ const buildChart = () => {
     dtick: 1,
   }
 
+  let { yMin, yMax } = getDataRange(props.streamMonthlyFlow)
+
+  let yAxisSettings = {
+    range: [yMin, yMax],
+    autorange: false,
+  }
+
   let legendConfig = {
     orientation: 'h',
     yanchor: 'top',
@@ -173,7 +185,7 @@ const buildChart = () => {
     titleText,
     'Mean monthly flow, cf/s',
     xAxisSettings,
-    {},
+    yAxisSettings,
     legendConfig
   )
 
