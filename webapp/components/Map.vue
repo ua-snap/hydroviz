@@ -200,7 +200,6 @@ const addMapBoundsSegments = () => {
     map,
     $L,
     segBaseUrl,
-    layers: segGeoJsonLayers,
   })
 }
 

@@ -1,3 +1,5 @@
+let segmentLayers: any[] = []
+
 const segmentColors: Record<string, any> = {
   main: {
     selected: {
@@ -40,6 +42,8 @@ export const addSegmentsGeoJson = ({
   selectedSegmentId = null,
   fitBounds = true,
   mapType = 'main',
+  segmentLayers = null,
+  preload = false,
 }: {
   map: any
   $L: any
@@ -47,6 +51,8 @@ export const addSegmentsGeoJson = ({
   selectedSegmentId?: string | null
   fitBounds: boolean
   mapType?: 'main' | 'report'
+  segmentLayers?: any[] | null
+  preload?: boolean
 }) => {
   // Add each segment individually so we can add hover effects
   // (color change and tooltip) to each segment individually.
@@ -65,6 +71,11 @@ export const addSegmentsGeoJson = ({
     ? [...otherSegments, selectedSegment]
     : otherSegments
 
+  let opacity = 1
+  if (preload) {
+    opacity = 0
+  }
+
   orderedSegments.forEach((feature: any) => {
     const isSelected =
       selectedSegmentId && feature.properties.seg_id_nat === selectedSegmentId
@@ -81,6 +92,7 @@ export const addSegmentsGeoJson = ({
         weight: isSelected ? 5 : 3,
         color: segmentColor,
         interactive: interactive,
+        opacity: opacity,
       },
     })
 
@@ -101,6 +113,7 @@ export const addSegmentsGeoJson = ({
         color: segmentColor,
         fillColor: segmentColor,
         interactive: interactive,
+        opacity: opacity,
       })
       segmentParts = [line, handle]
     }
@@ -111,6 +124,11 @@ export const addSegmentsGeoJson = ({
         fillColor: segmentColor,
       })
       .addTo(map)
+
+    // Store layer for later removal if array provided
+    if (segmentLayers) {
+      segmentLayers.push(combinedSegment)
+    }
 
     // Set cursor style: normal for selected, pointer for others
     const container =
@@ -162,17 +180,19 @@ export const addSegmentsGeoJson = ({
       map.fitBounds(selectedSegmentLayer.getBounds(), { padding: [50, 50] })
     }
 
-    // Only add marker if one doesn't already exist.
-    let markerExists = false
-    map.eachLayer((layer: any) => {
-      if (layer instanceof $L.Marker) {
-        markerExists = true
-      }
-    })
+    if (!preload) {
+      // Only add marker if one doesn't already exist.
+      let markerExists = false
+      map.eachLayer((layer: any) => {
+        if (layer instanceof $L.Marker) {
+          markerExists = true
+        }
+      })
 
-    if (!markerExists) {
-      let latlng = getHandleCoord(selectedSegment)
-      $L.marker(latlng).addTo(map)
+      if (!markerExists) {
+        let latlng = getHandleCoord(selectedSegment)
+        $L.marker(latlng).addTo(map)
+      }
     }
   }
 }
@@ -194,6 +214,9 @@ export const fetchAndAddSegmentsByBounds = ({
 }) => {
   if (selectedSegmentId) {
     // Fetch only the selected segment first to determine map bounds.
+    // The selected segment will be added with an opacity of 0 until fitBounds is called.
+    // It will then be removed and added back to the map with full opacity along with all
+    // other viewport segments. This is "preload" mode.
     const selectedSegUrl = segBaseUrl + `seg_id_nat=${selectedSegmentId}`
     return fetch(selectedSegUrl)
       .then(response => {
@@ -213,6 +236,8 @@ export const fetchAndAddSegmentsByBounds = ({
           selectedSegmentId,
           fitBounds,
           mapType: mapType,
+          segmentLayers,
+          preload: true,
         })
 
         // Map is now fit to bounds of selected segment. Now fetch everything in map viewport.
@@ -221,10 +246,10 @@ export const fetchAndAddSegmentsByBounds = ({
         const maxLon = bounds.getEast()
         const minLat = bounds.getSouth()
         const maxLat = bounds.getNorth()
+
         const segUrl =
           segBaseUrl +
           `INTERSECTS(the_geom,ENVELOPE(${minLon},${maxLon},${minLat},${maxLat}))`
-
         return fetch(segUrl)
           .then(response => {
             if (!response.ok) {
@@ -235,13 +260,13 @@ export const fetchAndAddSegmentsByBounds = ({
             return response.json()
           })
           .then(data => {
-            // Clear GeoJSON layers from map before adding new ones.
-            map.eachLayer((layer: any) => {
-              if (layer instanceof $L.GeoJSON) {
-                map.removeLayer(layer)
-              }
+            // Remove previously added segment layers
+            segmentLayers.forEach(layer => {
+              map.removeLayer(layer)
             })
-            // Filter out the selected segment since we already added it
+            segmentLayers = []
+
+            // Add all viewport segments (including selected)
             addSegmentsGeoJson({
               map,
               $L,
@@ -249,6 +274,7 @@ export const fetchAndAddSegmentsByBounds = ({
               selectedSegmentId: selectedSegmentId,
               fitBounds: fitBounds,
               mapType: mapType,
+              segmentLayers,
             })
           })
       })
