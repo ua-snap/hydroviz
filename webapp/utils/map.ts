@@ -168,7 +168,6 @@ export const addSegmentsGeoJson = ({
       .on('click', function (e: any) {
         const streamSegmentStore = useStreamSegmentStore()
         let { hucId, segmentId, isLoading } = storeToRefs(streamSegmentStore)
-        segmentId.value = feature.properties.seg_id_nat
         hucId.value = null
         segmentId.value = null
         isLoading.value = true
