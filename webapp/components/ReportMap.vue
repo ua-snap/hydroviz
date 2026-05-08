@@ -10,6 +10,20 @@ const segBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&ver
 
 let map: any = null
 
+// Set maxBounds to a large square around current map viewport.
+const setMapMaxBounds = () => {
+  let bounds = map.getBounds()
+  let sw = bounds.getSouthWest()
+  let ne = bounds.getNorthEast()
+  let latPadding = (ne.lat - sw.lat) * 2
+  let lngPadding = (ne.lng - sw.lng) * 1
+  let paddedBounds = $L.latLngBounds(
+    [sw.lat - latPadding, sw.lng - lngPadding],
+    [ne.lat + latPadding, ne.lng + lngPadding]
+  )
+  map.setMaxBounds(paddedBounds)
+}
+
 const getHucOutletSegmentId = async (
   hucIdValue: string
 ): Promise<number | null> => {
@@ -60,6 +74,7 @@ const addHuc = async () => {
         })
         .addTo(map)
       map.fitBounds(geoJsonLayer.getBounds(), { padding: [25, 25] })
+      setMapMaxBounds()
 
       segmentId.value = outletSegmentId
 
@@ -78,7 +93,7 @@ const addHuc = async () => {
     })
 }
 
-const addSegment = () => {
+const addSegment = async () => {
   if (!segmentId.value) {
     const route = useRoute()
     const id = computed(() => parseInt(route.params.segment))
@@ -86,13 +101,15 @@ const addSegment = () => {
   }
   if (isLoading.value) return
 
-  fetchAndAddSegmentsByBounds({
+  await fetchAndAddSegmentsByBounds({
     map,
     $L,
     segBaseUrl,
     selectedSegmentId: segmentId.value,
     mapType: 'report',
   })
+
+  setMapMaxBounds()
 }
 
 const initializeMap = () => {
