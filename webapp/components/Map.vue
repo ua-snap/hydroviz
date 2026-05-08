@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { $L, $config } = useNuxtApp()
-import { fetchAndAddSegmentsByBounds } from '~/utils/map'
+import { fetchAndAddSegmentsByBounds, clearSegmentLayers } from '~/utils/map'
 
 const segBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_subset&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=`
 const hucBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=huc8=`
@@ -25,7 +25,6 @@ let conusPerimeterLayer: any
 let simplifiedHucsLayer: any
 let simplifiedHucLayer: any
 let detailedHucLayer: any
-let segGeoJsonLayers: any[] = []
 
 const initializeMap = () => {
   map = $L
@@ -105,7 +104,7 @@ const initializeMap = () => {
         addMapBoundsSegments()
       }
     } else {
-      clearSegments()
+      clearSegmentLayers(map)
       if (!map.hasLayer(hucWmsLayer)) {
         map.addLayer(hucWmsLayer)
       }
@@ -146,16 +145,15 @@ const initializeMap = () => {
       return
     }
     if (map.getZoom() >= segViewThreshold) {
-      addMapBoundsSegments()
+      fetchAndAddSegmentsByBounds({
+        map,
+        $L,
+        segBaseUrl,
+        fitBounds: false,
+        mapType: 'main',
+      })
     }
   })
-}
-
-const clearSegments = () => {
-  segGeoJsonLayers.forEach(layer => {
-    map.removeLayer(layer)
-  })
-  segGeoJsonLayers = []
 }
 
 const resetHUC = () => {

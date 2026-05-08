@@ -1,7 +1,5 @@
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 
-let segmentLayers: any[] = []
-
 const segmentColors: Record<string, any> = {
   main: {
     selected: {
@@ -29,6 +27,28 @@ const segmentColors: Record<string, any> = {
   },
 }
 
+// Remove all layers except those containing MultiPolygon features (HUC boundaries).
+export const clearSegmentLayers = (map: any) => {
+  const { $L } = useNuxtApp()
+  const layersToRemove: any[] = []
+  map.eachLayer((layer: any) => {
+    if (layer instanceof $L.FeatureGroup || layer instanceof $L.GeoJSON) {
+      let isPolygonLayer = false
+      layer.eachLayer?.((subLayer: any) => {
+        if (subLayer.feature?.geometry?.type === 'MultiPolygon') {
+          isPolygonLayer = true
+        }
+      })
+      if (!isPolygonLayer) {
+        layersToRemove.push(layer)
+      }
+    }
+  })
+  layersToRemove.forEach(layer => {
+    map.removeLayer(layer)
+  })
+}
+
 export const getHandleCoord = (feature: any) => {
   const { $L } = useNuxtApp()
   const coords = feature.geometry.coordinates[0]
@@ -44,7 +64,6 @@ export const addSegmentsGeoJson = ({
   selectedSegmentId = null,
   fitBounds = true,
   mapType = 'main',
-  segmentLayers = null,
   preload = false,
 }: {
   map: any
@@ -53,7 +72,6 @@ export const addSegmentsGeoJson = ({
   selectedSegmentId?: string | null
   fitBounds: boolean
   mapType?: 'main' | 'report'
-  segmentLayers?: any[] | null
   preload?: boolean
 }) => {
   // Add each segment individually so we can add hover effects
@@ -89,9 +107,19 @@ export const addSegmentsGeoJson = ({
     let segmentColor = segmentColors[mapType][selectedKey][outletKey]
     let hoverColor = segmentColors[mapType][selectedKey].hover
 
+    let mapZoom = map.getZoom()
+    let lineWeight = 4
+    let handleRadius = 6
+    if (isSelected) {
+      lineWeight = 6
+    } else if (mapZoom < 9) {
+      lineWeight = 3
+      handleRadius = 4
+    }
+
     let line = $L.geoJSON(feature, {
       style: {
-        weight: isSelected ? 5 : 3,
+        weight: lineWeight,
         color: segmentColor,
         interactive: interactive,
         opacity: opacity,
@@ -110,7 +138,7 @@ export const addSegmentsGeoJson = ({
       // Add a circle marker as a handle for non-selected segments.
       let latlng = getHandleCoord(feature)
       let handle = $L.circleMarker(latlng, {
-        radius: 4,
+        radius: handleRadius,
         fillOpacity: 1,
         color: segmentColor,
         fillColor: segmentColor,
@@ -126,11 +154,6 @@ export const addSegmentsGeoJson = ({
         fillColor: segmentColor,
       })
       .addTo(map)
-
-    // Store layer for later removal if array provided
-    if (segmentLayers) {
-      segmentLayers.push(combinedSegment)
-    }
 
     // Set cursor style: normal for selected, pointer for others
     const container =
@@ -237,7 +260,6 @@ export const fetchAndAddSegmentsByBounds = ({
           selectedSegmentId,
           fitBounds,
           mapType: mapType,
-          segmentLayers,
           preload: true,
         })
 
@@ -261,11 +283,7 @@ export const fetchAndAddSegmentsByBounds = ({
             return response.json()
           })
           .then(data => {
-            // Remove previously added segment layers
-            segmentLayers.forEach(layer => {
-              map.removeLayer(layer)
-            })
-            segmentLayers = []
+            clearSegmentLayers(map)
 
             // Add all viewport segments (including selected)
             addSegmentsGeoJson({
@@ -275,7 +293,6 @@ export const fetchAndAddSegmentsByBounds = ({
               selectedSegmentId: selectedSegmentId,
               fitBounds: fitBounds,
               mapType: mapType,
-              segmentLayers,
             })
           })
       })
@@ -304,6 +321,7 @@ export const fetchAndAddSegmentsByBounds = ({
       return response.json()
     })
     .then(data => {
+      clearSegmentLayers(map)
       addSegmentsGeoJson({
         map,
         $L,

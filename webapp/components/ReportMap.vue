@@ -130,17 +130,6 @@ const initializeMap = () => {
       mapType: 'report',
     })
   })
-
-  map.on('dragend', function (e) {
-    fetchAndAddSegmentsByBounds({
-      map,
-      $L,
-      segBaseUrl,
-      selectedSegmentId: segmentId.value,
-      fitBounds: false,
-      mapType: 'report',
-    })
-  })
 }
 
 onMounted(() => {
