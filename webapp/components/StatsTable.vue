@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { eraFullNamesHtml, scenarioFullNames } from '~/types/modelsScenarios'
-import { fnc, roundSigFig } from '~/utils/general'
 import { computed } from 'vue'
 
 import { streamflowStatistics } from '~/types/statsVars'
@@ -44,38 +43,16 @@ const tableCaptionHtml = computed(() => {
           <td v-html="stat.description"></td>
           <td v-html="stat.units_short"></td>
           <td>
-            <span class="number">{{
-              fnc(
-                roundSigFig(
-                  Number(streamStats['historical']['1976-2005'][stat.id])
-                )
-              )
-            }}</span>
+            <StatValue
+              :value="streamStats['historical']['1976-2005'][stat.id]"
+            />
           </td>
           <td>
-            <span class="number">
-              {{
-                fnc(
-                  roundSigFig(
-                    Number(
-                      streamStats['projected'][appEra]['rcp60'][stat.id].median
-                    )
-                  )
-                )
-              }}
-            </span>
-            <Diff
-              :past="
-                roundSigFig(
-                  Number(streamStats['historical']['1976-2005'][stat.id])
-                )
-              "
+            <StatValue
+              :value="streamStats['projected'][appEra]['rcp60'][stat.id].median"
+              :past="streamStats['historical']['1976-2005'][stat.id]"
               :future="
-                roundSigFig(
-                  Number(
-                    streamStats['projected'][appEra]['rcp60'][stat.id].median
-                  )
-                )
+                streamStats['projected'][appEra]['rcp60'][stat.id].median
               "
             />
           </td>
@@ -104,62 +81,20 @@ const tableCaptionHtml = computed(() => {
           <td v-html="stat.description"></td>
           <td v-html="stat.units_short"></td>
           <td>
-            <span class="number">{{
-              fnc(
-                roundSigFig(
-                  Number(streamStats['historical']['1976-2005'][stat.id])
-                )
-              )
-            }}</span>
-          </td>
-          <td>
-            <span class="number">
-              {{
-                fnc(
-                  roundSigFig(
-                    Number(
-                      streamStats['projected'][appEra]['rcp45'][stat.id].min
-                    )
-                  )
-                )
-              }}
-            </span>
-            <Diff
-              :past="
-                roundSigFig(
-                  Number(streamStats['historical']['1976-2005'][stat.id])
-                )
-              "
-              :future="
-                roundSigFig(
-                  Number(streamStats['projected'][appEra]['rcp45'][stat.id].min)
-                )
-              "
+            <StatValue
+              :value="streamStats['historical']['1976-2005'][stat.id]"
             />
           </td>
           <td>
-            <span class="number">
-              {{
-                fnc(
-                  roundSigFig(
-                    Number(
-                      streamStats['projected'][appEra]['rcp85'][stat.id].max
-                    )
-                  )
-                )
-              }}
-            </span>
-            <Diff
-              :past="
-                roundSigFig(
-                  Number(streamStats['historical']['1976-2005'][stat.id])
-                )
-              "
-              :future="
-                roundSigFig(
-                  Number(streamStats['projected'][appEra]['rcp85'][stat.id].max)
-                )
-              "
+            <StatValue
+              :value="streamStats['projected'][appEra]['rcp45'][stat.id].min"
+              :past="streamStats['historical']['1976-2005'][stat.id]"
+            />
+          </td>
+          <td>
+            <StatValue
+              :value="streamStats['projected'][appEra]['rcp85'][stat.id].max"
+              :past="streamStats['historical']['1976-2005'][stat.id]"
             />
           </td>
         </tr>
