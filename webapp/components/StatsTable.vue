@@ -51,9 +51,6 @@ const tableCaptionHtml = computed(() => {
             <StatValue
               :value="streamStats['projected'][appEra]['rcp60'][stat.id].median"
               :past="streamStats['historical']['1976-2005'][stat.id]"
-              :future="
-                streamStats['projected'][appEra]['rcp60'][stat.id].median
-              "
             />
           </td>
         </tr>
