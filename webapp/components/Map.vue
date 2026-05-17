@@ -387,6 +387,12 @@ onMounted(() => {
 </script>
 
 <template>
+  <div class="container">
+    <p class="is-size-5 mb-2">
+      Outflow segments in the map below are
+      <strong style="color: #ff0000">red</strong>.
+    </p>
+  </div>
   <div id="map" style="height: 500px"></div>
 </template>
 
