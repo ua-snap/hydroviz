@@ -4,6 +4,13 @@ export default defineNuxtConfig({
   css: ['assets/styles/main.scss'],
   pages: true,
   modules: ['@pinia/nuxt'],
+  app: {
+    head: {
+      htmlAttrs: {
+        lang: 'en',
+      },
+    },
+  },
   runtimeConfig: {
     public: {
       snapApiUrl: process.env.SNAP_API_URL || 'https://earthmaps.io',

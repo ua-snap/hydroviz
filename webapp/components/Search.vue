@@ -91,7 +91,9 @@ onMounted(() => {
   <section class="section">
     <div class="container">
       <div class="field">
-        <label class="label">Search by stream segment name or HUC-8 ID</label>
+        <label class="label" for="search"
+          >Search by stream segment name or HUC-8 ID</label
+        >
         <input id="search" v-model="inputValue" class="input" />
       </div>
     </div>
