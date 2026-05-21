@@ -25,7 +25,9 @@ The HUC8 watershed boundary polygons were downloaded from [here](https://www.usg
 python run_build_nc.py --data_dir /beegfs/CMIP6/jdpaul3/hydroviz_data/stats --gis_dir /beegfs/CMIP6/jdpaul3/hydroviz_data/gis --output_dir /beegfs/CMIP6/jdpaul3/hydroviz_data/nc --conda_init_script /beegfs/CMIP6/jdpaul3/hydroviz/data/preprocess/conda_init.sh --conda_env_name snap-geo --build_nc_script /beegfs/CMIP6/jdpaul3/hydroviz/data/preprocess/build_nc.py --build_json_script /beegfs/CMIP6/jdpaul3/hydroviz/data/rasdaman/build_ingest_json.py
 ```
 
- -  Use the `data/preprocess/qc.ipynb` notebook to compare stats values in the netCDFs to the original tabular values.
+-  Use the `data/preprocess/qc.ipynb` notebook to compare stats values in the netCDFs to the original tabular values.
+
+- To create netCDFs for the `*_diff.csv` files, add the `--diff` flag to the command above. Outputs will have a `*_diff.nc` suffix. Use the `data/preprocess/qc_diff.ipynb` notebook to compare difference values in the netCDFs to the original tabular values.
 
 - Run the notebooks in `data/preprocess/shp` to 1) crosswalk stream segment IDs from the geospatial data (`Segments_subset.shp`) to the GNIS name attributes in the NHM geospatial fabric; 2) crosswalk HUC8 polygons to stream segment IDs and determine which streams are HUC8 outlets; 3) compute select statistical deltas and add them as attributes in the stream segment shapefile. These notebooks export a new shapefile with the added attributes for hosting in GeoServer ([gs.earthmaps.io](http://gs.earthmaps.io/)) and eventually enabling search by stream name in the web app. 
 

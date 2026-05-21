@@ -14,7 +14,8 @@ def arguments(argv):
     parser.add_argument("--conda_env_name", type=str, help="conda environment to use", required=True)
     parser.add_argument("--build_nc_script", type=str, help="location of build_nc.py", required=True)
     parser.add_argument("--build_json_script", type=str, help="location of build_ingest_json.py", required=True)
-    
+    parser.add_argument("--diff", action="store_true", help="process diff files only; outputs seg_diff.nc and hru_diff.nc")
+
     args = parser.parse_args()
     data_dir = args.data_dir
     gis_dir = args.gis_dir
@@ -23,8 +24,9 @@ def arguments(argv):
     conda_env_name = args.conda_env_name
     build_nc_script = args.build_nc_script
     build_json_script = args.build_json_script
+    diff = args.diff
 
-    return data_dir, gis_dir, output_dir, conda_init_script, conda_env_name, build_nc_script, build_json_script
+    return data_dir, gis_dir, output_dir, conda_init_script, conda_env_name, build_nc_script, build_json_script, diff
 
 
 def write_sbatch_head(sbatch_out_fp, conda_init_script, conda_env_name):
@@ -63,6 +65,7 @@ def write_sbatch(
     data_dir,
     gis_dir,
     output_dir,
+    diff=False,
 ):
     """Write an sbatch script for building the netCDFs
 
@@ -70,16 +73,19 @@ def write_sbatch(
         sbatch_fp (path_like): path to .slurm script to write sbatch commands to
         sbatch_out_fp (path_like): path to where sbatch stdout should be written
         sbatch_head (dict): string for sbatch head script
+        diff (bool): if True, pass --diff to build_nc_script
 
     Returns:
         None, writes the commands to sbatch_fp
     """
+    diff_flag = " --diff" if diff else ""
     pycommands = "\n"
     pycommands += (
         f"python {build_nc_script} "
         f"--data_dir {data_dir} "
         f"--gis_dir {gis_dir} "
-        f"--output_dir {output_dir};"
+        f"--output_dir {output_dir}"
+        f"{diff_flag};"
     )
     pycommands += (
         f"python {build_json_script} "
@@ -112,7 +118,7 @@ def submit_sbatch(sbatch_fp):
 
 if __name__ == "__main__":
 
-    data_dir, gis_dir, output_dir, conda_init_script, conda_env_name, build_nc_script, build_json_script = arguments(sys.argv)
+    data_dir, gis_dir, output_dir, conda_init_script, conda_env_name, build_nc_script, build_json_script, diff = arguments(sys.argv)
 
     # create the output directory if it doesn't exist
     Path(output_dir).mkdir(exist_ok=True, parents=True)
@@ -123,5 +129,5 @@ if __name__ == "__main__":
 
     # write sbatch head + commands, then submit job
     sbatch_head = write_sbatch_head(sbatch_out_fp, conda_init_script, conda_env_name)
-    write_sbatch(sbatch_fp, sbatch_out_fp, sbatch_head, build_nc_script, build_json_script, data_dir, gis_dir, output_dir)
+    write_sbatch(sbatch_fp, sbatch_out_fp, sbatch_head, build_nc_script, build_json_script, data_dir, gis_dir, output_dir, diff=diff)
     submit_sbatch(sbatch_fp)
