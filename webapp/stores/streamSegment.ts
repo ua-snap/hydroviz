@@ -21,7 +21,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   // If we have a hucId but not a segmentId, set segmentId to HUC outlet.
   const fetchHucStats = async (): Promise<void> => {
     isLoading.value = true
-    const hucBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=huc8=`
+    const hucBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_subset&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=huc8=`
     let hucUrl = hucBaseUrl + hucId.value
     try {
       const response = await fetch(hucUrl)

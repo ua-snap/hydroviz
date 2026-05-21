@@ -1,16 +1,66 @@
 <script setup lang="ts">
 const { $L, $config } = useNuxtApp()
 import { useStreamSegmentStore } from '~/stores/streamSegment'
-import { getHandleCoord } from '~/utils/map'
+import { fetchAndAddSegmentsByBounds } from '~/utils/map'
 const streamSegmentStore = useStreamSegmentStore()
-let { hucId } = storeToRefs(streamSegmentStore)
-let map: any = null
+let { isLoading, hucId, segmentId } = storeToRefs(streamSegmentStore)
 
 const hucBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=huc8=`
-const segBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=`
+const segBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_subset&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=`
 
-const addHuc = () => {
+let map: any = null
+
+// Set maxBounds to a large square around current map viewport.
+const setMapMaxBounds = () => {
+  let bounds = map.getBounds()
+  let sw = bounds.getSouthWest()
+  let ne = bounds.getNorthEast()
+  let latPadding = (ne.lat - sw.lat) * 2
+  let lngPadding = (ne.lng - sw.lng) * 1
+  let paddedBounds = $L.latLngBounds(
+    [sw.lat - latPadding, sw.lng - lngPadding],
+    [ne.lat + latPadding, ne.lng + lngPadding]
+  )
+  map.setMaxBounds(paddedBounds)
+}
+
+const getHucOutletSegmentId = async (
+  hucIdValue: string
+): Promise<number | null> => {
+  try {
+    const url = `${segBaseUrl}huc8=${hucIdValue}`
+    const response = await fetch(url)
+    const data = await response.json()
+
+    const features = Array.isArray(data?.features) ? data.features : []
+    if (features.length === 0) {
+      console.error('No features returned for HUC:', hucIdValue)
+      return null
+    }
+
+    // Find the outlet segment (h8_outlet === 1)
+    const outletFeature = features.find(
+      (feature: any) => feature?.properties?.h8_outlet === 1
+    )
+
+    if (!outletFeature || !outletFeature.properties) {
+      console.error('No outlet feature found for HUC:', hucIdValue)
+      return null
+    }
+
+    return outletFeature.properties.seg_id_nat
+  } catch (error) {
+    console.error('Error fetching outlet segment for HUC:', error)
+    return null
+  }
+}
+
+const addHuc = async () => {
   let hucUrl = hucBaseUrl + hucId.value
+
+  // Get the outlet segment ID for this HUC
+  const outletSegmentId = await getHucOutletSegmentId(hucId.value)
+
   fetch(hucUrl)
     .then(response => response.json())
     .then(data => {
@@ -24,98 +74,50 @@ const addHuc = () => {
         })
         .addTo(map)
       map.fitBounds(geoJsonLayer.getBounds(), { padding: [25, 25] })
+      setMapMaxBounds()
+
+      segmentId.value = outletSegmentId
+
+      // After fitting bounds, add all segments in the viewport with the outlet highlighted
+      fetchAndAddSegmentsByBounds({
+        map,
+        $L,
+        segBaseUrl,
+        selectedSegmentId: segmentId.value,
+        fitBounds: false,
+        mapType: 'report',
+      })
     })
     .catch(error => {
       console.error('Error fetching HUC GeoJSON data:', error)
     })
-
-  let segUrl = segBaseUrl + `huc8=${hucId.value}`
-  fetch(segUrl)
-    .then(response => response.json())
-    .then(data => {
-      let regularSegments = data.features.filter(
-        (feature: any) => feature.properties.h8_outlet === 0
-      )
-      let outletSegments = data.features.filter(
-        (feature: any) => feature.properties.h8_outlet === 1
-      )
-
-      // Add regular segments to the map first.
-      regularSegments.forEach(feature => {
-        $L.geoJSON(feature, {
-          style: {
-            weight: 3,
-            color: '#0000ff',
-            interactive: false,
-          },
-        }).addTo(map)
-
-        let latlng = getHandleCoord(feature)
-        $L.circleMarker(latlng, {
-          radius: 4,
-          color: '#0000ff',
-          fillColor: '#0000ff',
-          fillOpacity: 1,
-        }).addTo(map)
-      })
-
-      // Add outlet segments next so they effectively have a higher z-index.
-      outletSegments.forEach(feature => {
-        $L.geoJSON(feature, {
-          style: {
-            weight: 3,
-            color: '#ff0000',
-            interactive: false,
-          },
-        }).addTo(map)
-
-        let latlng = getHandleCoord(feature)
-        $L.circleMarker(latlng, {
-          radius: 4,
-          color: '#ff0000',
-          fillColor: '#ff0000',
-          fillOpacity: 1,
-        }).addTo(map)
-
-        // Place a pin at the same coordinate for outlet segments.
-        // It's sometimes too hard to see them otherwise.
-        $L.marker(latlng).addTo(map)
-      })
-    })
-    .catch(error => {
-      console.error('Error fetching segment GeoJSON data:', error)
-    })
 }
 
-const addSegment = () => {
-  const streamSegmentStore = useStreamSegmentStore()
-  const { segmentId } = storeToRefs(streamSegmentStore)
-  let url = segBaseUrl + `seg_id_nat=${segmentId.value}`
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      let geoJsonLayer = $L
-        .geoJSON(data, {
-          style: {
-            color: '#0000ff',
-            weight: 3,
-          },
-          interactive: false,
-        })
-        .addTo(map)
-      map.fitBounds(geoJsonLayer.getBounds())
-    })
-    .catch(error => {
-      console.error('Error fetching GeoJSON data:', error)
-    })
+const addSegment = async () => {
+  if (!segmentId.value) {
+    const route = useRoute()
+    const id = computed(() => parseInt(route.params.segment))
+    segmentId.value = id.value
+  }
+  if (isLoading.value) return
+
+  await fetchAndAddSegmentsByBounds({
+    map,
+    $L,
+    segBaseUrl,
+    selectedSegmentId: segmentId.value,
+    mapType: 'report',
+  })
+
+  setMapMaxBounds()
 }
 
 const initializeMap = () => {
   map = $L
     .map('report-map', {
       scrollWheelZoom: false,
-      dragging: false,
       zoomControl: false,
+      doubleClickZoom: false,
       zoomSnap: 0.1,
     })
     .setView([37.8, -96], 8)
@@ -134,9 +136,21 @@ const initializeMap = () => {
   } else {
     addSegment()
   }
+
+  map.on('moveend', function (e) {
+    fetchAndAddSegmentsByBounds({
+      map,
+      $L,
+      segBaseUrl,
+      selectedSegmentId: segmentId.value,
+      fitBounds: false,
+      mapType: 'report',
+    })
+  })
 }
 
 onMounted(() => {
+  if (isLoading.value) return
   initializeMap()
 })
 </script>
