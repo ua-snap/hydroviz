@@ -10,7 +10,7 @@ onMounted(() => {
       src: async (query: string) => {
         // Escape single quotes for safe use inside CQL string literals
         const safeQuery = query.replace(/'/g, "''")
-        const segUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=seg_id_nat,GNIS_NAME,GAUGE_ID&cql_filter=GNIS_NAME%20ILIKE%20%27%25${safeQuery}%25%27%20OR%20GAUGE_ID%20ILIKE%20%27%25${safeQuery}%25%27`
+        const segUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_subset&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=seg_id_nat,GNIS_NAME,GAUGE_ID&cql_filter=GNIS_NAME%20ILIKE%20%27%25${safeQuery}%25%27%20OR%20GAUGE_ID%20ILIKE%20%27%25${safeQuery}%25%27`
         const hucUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8_conus_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=huc8,name&cql_filter=name%20ILIKE%20%27%25${safeQuery}%25%27%20OR%20huc8%20LIKE%20%27%25${safeQuery}%25%27`
 
         let items: any[] = []
@@ -91,7 +91,9 @@ onMounted(() => {
   <section class="section">
     <div class="container">
       <div class="field">
-        <label class="label">Search by stream segment name or HUC-8 ID</label>
+        <label class="label" for="search"
+          >Search by stream segment name or HUC-8 ID</label
+        >
         <input id="search" v-model="inputValue" class="input" />
       </div>
     </div>

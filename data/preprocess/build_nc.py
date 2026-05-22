@@ -29,18 +29,24 @@ def arguments(argv):
         help="directory where hydrologic stats netCDFs will be saved",
         required=True,
     )
+    parser.add_argument(
+        "--diff",
+        action="store_true",
+        help="process diff files only; outputs seg_diff.nc and hru_diff.nc",
+    )
 
     args = parser.parse_args()
     data_dir = args.data_dir
     gis_dir = args.gis_dir
     output_dir = args.output_dir
+    diff = args.diff
 
-    return data_dir, gis_dir, output_dir
+    return data_dir, gis_dir, output_dir, diff
 
 
 if __name__ == "__main__":
 
-    data_dir, gis_dir, output_dir = arguments(sys.argv)
+    data_dir, gis_dir, output_dir, diff = arguments(sys.argv)
 
     print(f"Reading hydro stats CSVs from {data_dir}...\n")
 
@@ -52,8 +58,8 @@ if __name__ == "__main__":
     hru_files += list(Path(data_dir).glob("static*hru*.csv"))
 
     # filter files
-    seg_files = filter_files(seg_files, "seg")
-    hru_files = filter_files(hru_files, "hru")
+    seg_files = filter_files(seg_files, "seg", diff=diff)
+    hru_files = filter_files(hru_files, "hru", diff=diff)
 
     print(f"Reading GIS files from {gis_dir}...\n")
 
@@ -88,14 +94,14 @@ if __name__ == "__main__":
     )
     seg_ds = populate_dataset(seg_ds, seg_files)
     print("Adding variable and dimension encodings metadata ...\n")
-    seg_ds = populate_encodings_metadata(seg_ds)
+    seg_ds = populate_diff_metadata(seg_ds) if diff else populate_encodings_metadata(seg_ds)
     print("Sorting model dimension ...\n")
     seg_ds = sort_by_model_dimension(seg_ds)
     print("Converting data variables and dimensions to float32 ...\n")
     seg_ds = convert_to_float32(seg_ds)
     print(f"Clipping dataset to the extent of {seg_shp_path} ...\n")
     seg_ds = clip_dataset(seg_ds, seg_shp, "seg")
-    seg_outfile = os.path.join(output_dir, "seg.nc")
+    seg_outfile = os.path.join(output_dir, "seg_diff.nc" if diff else "seg.nc")
     print(f"Writing populated netCDF to {seg_outfile}...\n")
     seg_ds.to_netcdf(seg_outfile)
     del seg_ds
@@ -105,7 +111,7 @@ if __name__ == "__main__":
     print(f"Populating dataset from {len(hru_files)} watershed statistic CSVs...\n")
     hru_ds = populate_dataset(hru_ds, hru_files)
     print("Adding variable and dimension encodings metadata ...\n")
-    hru_ds = populate_encodings_metadata(hru_ds)
+    hru_ds = populate_diff_metadata(hru_ds) if diff else populate_encodings_metadata(hru_ds)
     print("Sorting model dimension ...\n")
     hru_ds = sort_by_model_dimension(hru_ds)
     print("Converting data variables and dimensions to float32 ...\n")
@@ -114,7 +120,7 @@ if __name__ == "__main__":
     hru_ds = crosswalk_hrus(hru_ds, hru_xwalk)
     print(f"Clipping dataset to the extent of {hru_shp_path} ...\n")
     hru_ds = clip_dataset(hru_ds, hru_shp, "hru")
-    hru_outfile = os.path.join(output_dir, "hru.nc")
+    hru_outfile = os.path.join(output_dir, "hru_diff.nc" if diff else "hru.nc")
     print(f"Writing populated netCDF to {hru_outfile}...\n")
     hru_ds.to_netcdf(hru_outfile)
     del hru_ds
