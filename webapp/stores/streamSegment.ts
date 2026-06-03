@@ -7,6 +7,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const apiFailed = ref<boolean>(false)
 
   const segmentId = ref(null)
+  const segmentType = ref(null)
   const segmentName = ref(null)
   const hucId = ref(null)
   const streamSummary = shallowRef(null)
@@ -21,8 +22,12 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   // If we have a hucId but not a segmentId, set segmentId to HUC outlet.
   const fetchHucStats = async (): Promise<void> => {
     isLoading.value = true
-    const hucBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_subset&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=huc8=`
+    const hucBaseUrl =
+      segmentType.value === 'alaska'
+        ? `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aarctic_rivers_segments_joined_3338_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=ID_1=`
+        : `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_subset&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=huc8=`
     let hucUrl = hucBaseUrl + hucId.value
+
     try {
       const response = await fetch(hucUrl)
       const data = await response.json()
@@ -37,8 +42,11 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
 
       // Find the first feature in the response where properties.h8_outlet is 1.
       // TODO: What do we do if there is more than 1 outlet stream segment?
-      const outletFeature = features.find(
-        (feature: any) => feature?.properties?.h8_outlet === 1
+      let outletFeature = null
+      let outletPropertyName =
+        segmentType.value === 'alaska' ? 'outlet' : 'h8_outlet'
+      outletFeature = features.find(
+        (feature: any) => feature?.properties?.[outletPropertyName] === 1
       )
 
       if (!outletFeature || !outletFeature.properties) {
@@ -46,7 +54,10 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
         return
       }
 
-      segmentId.value = outletFeature.properties.seg_id_nat
+      segmentId.value =
+        segmentType.value === 'alaska'
+          ? outletFeature.properties.COMID
+          : outletFeature.properties.seg_id_nat
 
       if (segmentId.value != null) {
         await fetchStreamStats()
@@ -69,7 +80,12 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     streamStats.value = null
     var dataResponse
 
-    let dataUrl = `${$config.public.snapApiUrl}/conus_hydrology/hydroviz/${segmentId.value}`
+    let dataUrl: string
+    if (segmentType.value === 'alaska') {
+      dataUrl = `${$config.public.snapApiUrl}/arctic_hydrology/hydroviz/${segmentId.value}`
+    } else {
+      dataUrl = `${$config.public.snapApiUrl}/conus_hydrology/hydroviz/${segmentId.value}`
+    }
 
     // Needs error checking, etc.
     isLoading.value = true
@@ -138,6 +154,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
 
   return {
     segmentId,
+    segmentType,
     segmentName,
     streamSummary,
     streamHydrograph,

@@ -101,8 +101,11 @@ const tableCaptionHtml = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-table caption {
-  font-size: 1.5rem;
-  font-weight: 600;
+table {
+  width: 100%;
+  caption {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
 }
 </style>

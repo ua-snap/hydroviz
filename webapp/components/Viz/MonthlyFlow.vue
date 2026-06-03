@@ -63,6 +63,8 @@ const getOffsetXTickVals = (scenario: string) => {
 const buildChart = () => {
   let traces: Data[] = []
 
+  const isAlaskaData = !props.streamMonthlyFlow['projected'][appEra.value]
+
   let scenarios: string[]
   if (appContext.value === 'mid') {
     scenarios = ['rcp60']
@@ -106,12 +108,6 @@ const buildChart = () => {
 
   traces.push(historicalTrace)
 
-  let scenarioLabels = {
-    rcp45: 'Stabilizing Emissions (RCP 4.5)',
-    rcp60: 'Stabilizing High Emissions (RCP 6.0)',
-    rcp85: 'Increasing Emissions (RCP 8.5)',
-  }
-
   let scenarioColors = {
     rcp45: {
       stroke: '#4293d6',
@@ -127,36 +123,70 @@ const buildChart = () => {
     },
   }
 
-  scenarios.forEach(scenario => {
-    let projectedFlowData =
-      props.streamMonthlyFlow['projected'][appEra.value][scenario]
+  if (isAlaskaData) {
+    let projectedFlowData = props.streamMonthlyFlow['projected']['2034-2065']
 
-    let xTickVals = getOffsetXTickVals(scenario)
-
-    let boxWidth: number
-    if (appContext.value === 'extremes') {
-      boxWidth = 0.2
-    } else {
-      boxWidth = 0.3
-    }
+    // let boxWidth: number
+    // if (appContext.value === 'extremes') {
+    //   boxWidth = 0.2
+    // } else {
+    //   boxWidth = 0.3
+    // }
 
     let showLegend = true
     Object.keys(monthLabels).forEach((monthKey, idx) => {
       let trace = {
-        x0: xTickVals[idx],
+        // x0: xTickVals[idx],
         y: projectedFlowData[monthKey],
         type: 'box',
-        name: `Projected, ${scenarioLabels[scenario]}`,
-        marker: { color: scenarioColors[scenario].stroke, size: 8 },
-        line: { color: scenarioColors[scenario].stroke, width: 1.5 },
-        fillcolor: scenarioColors[scenario].fill,
+        // name: `Projected, ${scenarioLabels[scenario]}`,
+        marker: { color: scenarioColors['rcp60'].stroke, size: 8 },
+        line: { color: scenarioColors['rcp60'].stroke, width: 1.5 },
+        fillcolor: scenarioColors['rcp60'].fill,
         showlegend: showLegend,
-        width: boxWidth, // Add width property to make boxes wider
+        // width: boxWidth, // Add width property to make boxes wider
       }
       traces.push(trace)
       showLegend = false
     })
-  })
+  } else {
+    let scenarioLabels = {
+      rcp45: 'Stabilizing Emissions (RCP 4.5)',
+      rcp60: 'Stabilizing High Emissions (RCP 6.0)',
+      rcp85: 'Increasing Emissions (RCP 8.5)',
+    }
+
+    scenarios.forEach(scenario => {
+      let projectedFlowData =
+        props.streamMonthlyFlow['projected'][appEra.value][scenario]
+
+      let xTickVals = getOffsetXTickVals(scenario)
+
+      let boxWidth: number
+      if (appContext.value === 'extremes') {
+        boxWidth = 0.2
+      } else {
+        boxWidth = 0.3
+      }
+
+      let showLegend = true
+      Object.keys(monthLabels).forEach((monthKey, idx) => {
+        let trace = {
+          x0: xTickVals[idx],
+          y: projectedFlowData[monthKey],
+          type: 'box',
+          name: `Projected, ${scenarioLabels[scenario]}`,
+          marker: { color: scenarioColors[scenario].stroke, size: 8 },
+          line: { color: scenarioColors[scenario].stroke, width: 1.5 },
+          fillcolor: scenarioColors[scenario].fill,
+          showlegend: showLegend,
+          width: boxWidth, // Add width property to make boxes wider
+        }
+        traces.push(trace)
+        showLegend = false
+      })
+    })
+  }
 
   const titleText: string = `Mean monthly modeled flow rate, ${appEra.value}`
 

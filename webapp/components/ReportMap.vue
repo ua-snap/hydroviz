@@ -1,14 +1,23 @@
 <script setup lang="ts">
 const { $L, $config } = useNuxtApp()
 import { useStreamSegmentStore } from '~/stores/streamSegment'
-import { fetchAndAddSegmentsByBounds } from '~/utils/map'
+import { fetchAndAddSegmentsByBounds, getHandleCoord } from '~/utils/map'
 const streamSegmentStore = useStreamSegmentStore()
-let { isLoading, hucId, segmentId } = storeToRefs(streamSegmentStore)
-
-const hucBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=huc8=`
-const segBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_subset&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=`
-
+let { isLoading, hucId, segmentType, segmentId } =
+  storeToRefs(streamSegmentStore)
 let map: any = null
+
+const wfsBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&outputFormat=application%2Fjson&srsName=EPSG:4326`
+
+const hucBaseUrl =
+  segmentType.value === 'alaska'
+    ? `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_watersheds_stats_simplified`
+    : `${wfsBaseUrl}&typeName=hydrology%3Ahuc8`
+
+const segBaseUrl =
+  segmentType.value === 'alaska'
+    ? `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_segments_joined_3338_simplified`
+    : `${wfsBaseUrl}&typeName=hydrology%3Aseg_h8_outlet_stats_simplified`
 
 // Set maxBounds to a large square around current map viewport.
 const setMapMaxBounds = () => {
@@ -28,7 +37,11 @@ const getHucOutletSegmentId = async (
   hucIdValue: string
 ): Promise<number | null> => {
   try {
-    const url = `${segBaseUrl}huc8=${hucIdValue}`
+    const isAlaska = segmentType.value === 'alaska'
+    const url = isAlaska
+      ? `${segBaseUrl}&cql_filter=ID_1='${hucIdValue}'`
+      : `${segBaseUrl}&cql_filter=huc8=${hucIdValue}`
+
     const response = await fetch(url)
     const data = await response.json()
 
@@ -38,9 +51,12 @@ const getHucOutletSegmentId = async (
       return null
     }
 
-    // Find the outlet segment (h8_outlet === 1)
+    const outletProperty = isAlaska ? 'outlet' : 'h8_outlet'
+    const segmentIdProperty = isAlaska ? 'COMID' : 'seg_id_nat'
+
+    // Find the outlet segment.
     const outletFeature = features.find(
-      (feature: any) => feature?.properties?.h8_outlet === 1
+      (feature: any) => feature?.properties?.[outletProperty] === 1
     )
 
     if (!outletFeature || !outletFeature.properties) {
@@ -48,7 +64,7 @@ const getHucOutletSegmentId = async (
       return null
     }
 
-    return outletFeature.properties.seg_id_nat
+    return outletFeature.properties[segmentIdProperty]
   } catch (error) {
     console.error('Error fetching outlet segment for HUC:', error)
     return null
@@ -56,7 +72,10 @@ const getHucOutletSegmentId = async (
 }
 
 const addHuc = async () => {
-  let hucUrl = hucBaseUrl + hucId.value
+  const hucUrl =
+    segmentType.value === 'alaska'
+      ? `${hucBaseUrl}&cql_filter=ID_1='${hucId.value}'`
+      : `${hucBaseUrl}&cql_filter=huc8=${hucId.value}`
 
   // Get the outlet segment ID for this HUC
   const outletSegmentId = await getHucOutletSegmentId(hucId.value)
@@ -82,8 +101,6 @@ const addHuc = async () => {
       fetchAndAddSegmentsByBounds({
         map,
         $L,
-        segBaseUrl,
-        selectedSegmentId: segmentId.value,
         fitBounds: false,
         mapType: 'report',
       })
@@ -99,13 +116,13 @@ const addSegment = async () => {
     const id = computed(() => parseInt(route.params.segment))
     segmentId.value = id.value
   }
+
   if (isLoading.value) return
 
   await fetchAndAddSegmentsByBounds({
     map,
     $L,
-    segBaseUrl,
-    selectedSegmentId: segmentId.value,
+    fitBounds: true,
     mapType: 'report',
   })
 
@@ -122,10 +139,12 @@ const initializeMap = () => {
     })
     .setView([37.8, -96], 8)
 
+  let maxZoom = segmentType.value === 'alaska' ? 12 : 13
+
   $L.tileLayer(
     'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}',
     {
-      maxZoom: 13,
+      maxZoom: maxZoom,
       attribution: 'Map data © USGS',
       opacity: 0.75,
     }
@@ -136,18 +155,13 @@ const initializeMap = () => {
   } else {
     addSegment()
   }
-
-  map.on('moveend', function (e) {
-    fetchAndAddSegmentsByBounds({
-      map,
-      $L,
-      segBaseUrl,
-      selectedSegmentId: segmentId.value,
-      fitBounds: false,
-      mapType: 'report',
-    })
-  })
 }
+
+watch(isLoading, (newValue, oldValue) => {
+  if (oldValue === true && newValue === false && map === null) {
+    initializeMap()
+  }
+})
 
 onMounted(() => {
   if (isLoading.value) return

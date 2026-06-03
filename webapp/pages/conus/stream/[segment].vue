@@ -1,0 +1,30 @@
+<script lang="ts" setup>
+import { useStreamSegmentStore } from '~/stores/streamSegment'
+const streamSegmentStore = useStreamSegmentStore()
+let { segmentId, segmentType } = storeToRefs(streamSegmentStore)
+
+const route = useRoute()
+let segment = parseInt(route.params.segment)
+
+// Sanity test input, numeric + integer + no bigger than total number of segments=56460
+if (!segment || !Number.isInteger(segment) || segment > 56460 || segment < 0) {
+  throw createError('Stream segment ID not valid')
+}
+
+// Set + fetch data.
+segmentId.value = segment
+segmentType.value = 'conus'
+</script>
+
+<template>
+  <section class="section">
+    <div class="container">
+      <NuxtLink class="content is-size-5" to="/"
+        >Go back, pick another place</NuxtLink
+      >
+    </div>
+  </section>
+  <Report />
+</template>
+
+<style scoped></style>
