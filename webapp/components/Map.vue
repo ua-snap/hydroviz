@@ -402,7 +402,7 @@ const hucFeatureHandler = (feature: any, layer: any) => {
     let hucName =
       region === 'alaska' ? feature.properties.Name : feature.properties.name
     let hucId =
-      region === 'alaska' ? feature.properties.ID_1 : feature.properties.huc8
+      region === 'alaska' ? feature.properties.ID_2 : feature.properties.huc8
     if (hucName && hucId) {
       layer
         .bindTooltip(`${hucName} (${hucId})`, {
@@ -453,7 +453,7 @@ const hucFeatureHandler = (feature: any, layer: any) => {
 
       let hucUrl =
         region === 'alaska'
-          ? `${regionConfig[region].hucBaseUrl}&cql_filter=ID_1='${feature.properties.ID_1}'`
+          ? `${regionConfig[region].hucBaseUrl}&cql_filter=ID_2='${feature.properties.ID_2}'`
           : `${regionConfig[region].hucBaseUrl}&cql_filter=huc8=${feature.properties.huc8}`
 
       let hucFetch = fetch(hucUrl)

@@ -39,7 +39,7 @@ const getHucOutletSegmentId = async (
   try {
     const isAlaska = segmentType.value === 'alaska'
     const url = isAlaska
-      ? `${segBaseUrl}&cql_filter=ID_1='${hucIdValue}'`
+      ? `${segBaseUrl}&cql_filter=ID_2='${hucIdValue}'`
       : `${segBaseUrl}&cql_filter=huc8=${hucIdValue}`
 
     const response = await fetch(url)
@@ -74,7 +74,7 @@ const getHucOutletSegmentId = async (
 const addHuc = async () => {
   const hucUrl =
     segmentType.value === 'alaska'
-      ? `${hucBaseUrl}&cql_filter=ID_1='${hucId.value}'`
+      ? `${hucBaseUrl}&cql_filter=ID_2='${hucId.value}'`
       : `${hucBaseUrl}&cql_filter=huc8=${hucId.value}`
 
   // Get the outlet segment ID for this HUC
@@ -155,6 +155,15 @@ const initializeMap = () => {
   } else {
     addSegment()
   }
+
+  map.on('moveend', function (e) {
+    fetchAndAddSegmentsByBounds({
+      map,
+      $L,
+      fitBounds: false,
+      mapType: 'report',
+    })
+  })
 }
 
 watch(isLoading, (newValue, oldValue) => {

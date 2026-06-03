@@ -24,9 +24,13 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     isLoading.value = true
     const hucBaseUrl =
       segmentType.value === 'alaska'
-        ? `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aarctic_rivers_segments_joined_3338_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=ID_1=`
-        : `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_subset&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=huc8=`
-    let hucUrl = hucBaseUrl + hucId.value
+        ? `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aarctic_rivers_segments_joined_3338_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326`
+        : `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_subset&outputFormat=application%2Fjson&srsName=EPSG:4326`
+    const hucFilter =
+      segmentType.value === 'alaska'
+        ? `&cql_filter=ID_2='${hucId.value}'`
+        : `&cql_filter=huc8=${hucId.value}`
+    let hucUrl = `${hucBaseUrl}${hucFilter}`
 
     try {
       const response = await fetch(hucUrl)

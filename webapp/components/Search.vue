@@ -12,7 +12,7 @@ onMounted(() => {
         const safeQuery = query.replace(/'/g, "''")
         const segUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_subset&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=seg_id_nat,GNIS_NAME,GAUGE_ID&cql_filter=GNIS_NAME%20ILIKE%20%27%25${safeQuery}%25%27%20OR%20GAUGE_ID%20ILIKE%20%27%25${safeQuery}%25%27`
         const hucUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8_conus_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=huc8,name&cql_filter=name%20ILIKE%20%27%25${safeQuery}%25%27%20OR%20huc8%20LIKE%20%27%25${safeQuery}%25%27`
-        const alaskaHucUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aarctic_rivers_watersheds_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=ID_1,Name&cql_filter=Name%20ILIKE%20%27%25${safeQuery}%25%27%20OR%20ID_1%20LIKE%20%27%25${safeQuery}%25%27`
+        const alaskaHucUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aarctic_rivers_watersheds_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=ID_2,Name&cql_filter=Name%20ILIKE%20%27%25${safeQuery}%25%27%20OR%20ID_2%20LIKE%20%27%25${safeQuery}%25%27`
 
         let items: any[] = []
 
@@ -56,7 +56,7 @@ onMounted(() => {
 
           if (alaskaHucRes && Array.isArray(alaskaHucRes.features)) {
             alaskaHucRes.features.forEach((feature: any) => {
-              let hucId = feature.properties.ID_1
+              let hucId = feature.properties.ID_2
               let name = `${feature.properties.Name} (${hucId})`
               items.push({
                 name: name,
