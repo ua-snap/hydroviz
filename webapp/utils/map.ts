@@ -76,13 +76,13 @@ export const addSegmentsGeoJson = ({
   preload?: boolean
 }) => {
   const streamSegmentStore = useStreamSegmentStore()
-  let { segmentType } = storeToRefs(streamSegmentStore)
+  let { segmentRegion } = storeToRefs(streamSegmentStore)
 
   // Add each segment individually so we can add hover effects
   // (color change and tooltip) to each segment individually.
   let selectedSegmentLayer: any = null
 
-  let idProperty = segmentType.value === 'alaska' ? 'COMID' : 'seg_id_nat'
+  let idProperty = segmentRegion.value === 'alaska' ? 'COMID' : 'seg_id_nat'
 
   let selectedSegment = data.features.find((feature: any) => {
     return feature.properties[idProperty] === selectedSegmentId
@@ -104,7 +104,7 @@ export const addSegmentsGeoJson = ({
 
   orderedSegments.forEach((feature: any) => {
     let isSelected: boolean = false
-    if (segmentType.value === 'alaska') {
+    if (segmentRegion.value === 'alaska') {
       isSelected = (selectedSegmentId &&
         feature.properties.COMID === selectedSegmentId) as boolean
     } else {
@@ -114,7 +114,7 @@ export const addSegmentsGeoJson = ({
 
     let interactive = !isSelected
     let selectedKey = isSelected ? 'selected' : 'unselected'
-    let outletProperty = segmentType.value === 'alaska' ? 'outlet' : 'h8_outlet'
+    let outletProperty = segmentRegion.value === 'alaska' ? 'outlet' : 'h8_outlet'
     let outletKey =
       feature.properties[outletProperty] === 1 ? 'outlet' : 'regular'
     let segmentColor = segmentColors[mapType][selectedKey][outletKey]
@@ -177,7 +177,7 @@ export const addSegmentsGeoJson = ({
 
     combinedSegment
       .on('mouseover', function (e: any) {
-        if (segmentType.value === 'conus') {
+        if (segmentRegion.value === 'conus') {
           let segmentName = feature.properties.GNIS_NAME
           if (segmentName !== '') {
             line
@@ -210,8 +210,8 @@ export const addSegmentsGeoJson = ({
         segmentId.value = null
         isLoading.value = true
         const routePrefix =
-          segmentType.value === 'alaska' ? '/alaska/stream' : '/conus/stream'
-        segmentType.value = null
+          segmentRegion.value === 'alaska' ? '/alaska/stream' : '/conus/stream'
+        segmentRegion.value = null
         const segId = feature.properties[idProperty]
         navigateTo(routePrefix + '/' + segId)
       })
@@ -253,11 +253,11 @@ export const fetchAndAddSegmentsByBounds = ({
 }) => {
   const { $config } = useNuxtApp()
   const streamSegmentStore = useStreamSegmentStore()
-  let { segmentId, segmentType } = storeToRefs(streamSegmentStore)
+  let { segmentId, segmentRegion } = storeToRefs(streamSegmentStore)
 
   const wfsBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&outputFormat=application%2Fjson&srsName=EPSG:4326`
   const segBaseUrl =
-    segmentType.value === 'alaska'
+    segmentRegion.value === 'alaska'
       ? `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_segments_joined_3338_simplified`
       : `${wfsBaseUrl}&typeName=hydrology%3Aseg_h8_outlet_stats_simplified`
 
@@ -267,7 +267,7 @@ export const fetchAndAddSegmentsByBounds = ({
     // It will then be removed and added back to the map with full opacity along with all
     // other viewport segments. This is "preload" mode.
     let selectedSegUrl: string
-    if (segmentType.value === 'alaska') {
+    if (segmentRegion.value === 'alaska') {
       selectedSegUrl = segBaseUrl + `&cql_filter=COMID=${segmentId.value}`
     } else {
       selectedSegUrl = segBaseUrl + `&cql_filter=seg_id_nat=${segmentId.value}`

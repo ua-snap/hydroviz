@@ -9,7 +9,7 @@ let {
   hucId,
   segmentId,
   segmentName,
-  segmentType,
+  segmentRegion,
   appContext,
 } = storeToRefs(streamSegmentStore)
 
@@ -50,7 +50,7 @@ onUnmounted(() => {
       </div>
     </section>
     <!-- StickyToggle must be outside of section/container wrappers -->
-    <StickyToggle v-if="segmentType == 'conus'" />
+    <StickyToggle v-if="segmentRegion == 'conus'" />
     <section class="section">
       <div class="container">
         <div class="content clamp is-size-5 mb-6">

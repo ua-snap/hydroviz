@@ -5,14 +5,14 @@ import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
 const route = useRoute()
 
-let { hucId, segmentType } = storeToRefs(streamSegmentStore)
+let { hucId, segmentRegion } = storeToRefs(streamSegmentStore)
 
 let huc = route.params.huc
 if (!/^\d{8}$/.test(huc) && !/^[A-Z0-9]{4}$/.test(huc)) {
   throw createError('HUC ID not valid')
 } else {
   hucId.value = huc
-  segmentType.value = 'alaska'
+  segmentRegion.value = 'alaska'
 }
 </script>
 

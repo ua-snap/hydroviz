@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { segmentId, segmentType } = storeToRefs(streamSegmentStore)
+let { segmentId, segmentRegion } = storeToRefs(streamSegmentStore)
 
 const route = useRoute()
 let segment = parseInt(route.params.segment)
@@ -13,7 +13,7 @@ if (!segment || !Number.isInteger(segment) || segment > 56460 || segment < 0) {
 
 // Set + fetch data.
 segmentId.value = segment
-segmentType.value = 'conus'
+segmentRegion.value = 'conus'
 </script>
 
 <template>

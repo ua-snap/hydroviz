@@ -3,19 +3,19 @@ const { $L, $config } = useNuxtApp()
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 import { fetchAndAddSegmentsByBounds, getHandleCoord } from '~/utils/map'
 const streamSegmentStore = useStreamSegmentStore()
-let { isLoading, hucId, segmentType, segmentId } =
+let { isLoading, hucId, segmentRegion, segmentId } =
   storeToRefs(streamSegmentStore)
 let map: any = null
 
 const wfsBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&outputFormat=application%2Fjson&srsName=EPSG:4326`
 
 const hucBaseUrl =
-  segmentType.value === 'alaska'
+  segmentRegion.value === 'alaska'
     ? `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_watersheds_stats_simplified`
     : `${wfsBaseUrl}&typeName=hydrology%3Ahuc8`
 
 const segBaseUrl =
-  segmentType.value === 'alaska'
+  segmentRegion.value === 'alaska'
     ? `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_segments_joined_3338_simplified`
     : `${wfsBaseUrl}&typeName=hydrology%3Aseg_h8_outlet_stats_simplified`
 
@@ -37,7 +37,7 @@ const getHucOutletSegmentId = async (
   hucIdValue: string
 ): Promise<number | null> => {
   try {
-    const isAlaska = segmentType.value === 'alaska'
+    const isAlaska = segmentRegion.value === 'alaska'
     const url = isAlaska
       ? `${segBaseUrl}&cql_filter=ID_2='${hucIdValue}'`
       : `${segBaseUrl}&cql_filter=huc8=${hucIdValue}`
@@ -73,7 +73,7 @@ const getHucOutletSegmentId = async (
 
 const addHuc = async () => {
   const hucUrl =
-    segmentType.value === 'alaska'
+    segmentRegion.value === 'alaska'
       ? `${hucBaseUrl}&cql_filter=ID_2='${hucId.value}'`
       : `${hucBaseUrl}&cql_filter=huc8=${hucId.value}`
 
@@ -139,7 +139,7 @@ const initializeMap = () => {
     })
     .setView([37.8, -96], 8)
 
-  let maxZoom = segmentType.value === 'alaska' ? 12 : 13
+  let maxZoom = segmentRegion.value === 'alaska' ? 12 : 13
 
   $L.tileLayer(
     'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}',

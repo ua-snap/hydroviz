@@ -1,8 +1,8 @@
 <script setup lang="ts">
 const props = defineProps(['streamStats', 'category', 'tableTitle'])
 const streamSegmentStore = useStreamSegmentStore()
-let { segmentType } = storeToRefs(streamSegmentStore)
-let region = segmentType.value === 'alaska' ? 'alaska' : 'conus'
+let { segmentRegion } = storeToRefs(streamSegmentStore)
+let region = segmentRegion.value === 'alaska' ? 'alaska' : 'conus'
 </script>
 
 <template>
