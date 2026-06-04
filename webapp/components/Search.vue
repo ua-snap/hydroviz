@@ -96,7 +96,7 @@ onMounted(() => {
     let category = selection.category
     if (category === 'stream segment') {
       // Only CONUS stream segments are accessible through the search,
-      // since it searches only by steam segment name and no Alaska
+      // since it searches only by stream segment name and no Alaska
       // stream segments have names.
       navigateTo(`/conus/stream/${id}`)
     } else if (category === 'huc') {

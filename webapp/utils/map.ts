@@ -1,5 +1,4 @@
 import { useStreamSegmentStore } from '~/stores/streamSegment'
-import proj4 from 'proj4'
 
 const segmentColors: Record<string, any> = {
   main: {
@@ -114,7 +113,8 @@ export const addSegmentsGeoJson = ({
 
     let interactive = !isSelected
     let selectedKey = isSelected ? 'selected' : 'unselected'
-    let outletProperty = segmentRegion.value === 'alaska' ? 'outlet' : 'h8_outlet'
+    let outletProperty =
+      segmentRegion.value === 'alaska' ? 'outlet' : 'h8_outlet'
     let outletKey =
       feature.properties[outletProperty] === 1 ? 'outlet' : 'regular'
     let segmentColor = segmentColors[mapType][selectedKey][outletKey]

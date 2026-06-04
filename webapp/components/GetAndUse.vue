@@ -4,7 +4,6 @@ const streamSegmentStore = useStreamSegmentStore()
 let { segmentRegion } = storeToRefs(streamSegmentStore)
 
 const { $config } = useNuxtApp()
-const route = useRoute()
 
 const hydrologyPath = computed(() =>
   segmentRegion.value === 'alaska' ? '/arctic_hydrology' : '/conus_hydrology'

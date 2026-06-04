@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { $L, $config } = useNuxtApp()
+import { fetchAndAddSegmentsByBounds, clearSegmentLayers } from '~/utils/map'
 import { getHandleCoord } from '~/utils/map'
 import proj4 from 'proj4'
 
@@ -84,7 +85,7 @@ const initializeMap = () => {
   }
 
   let proj: any = null
-  // Set CRS based on region
+
   if (config.crs === 'EPSG:3338') {
     let resolutions = [4096, 2048, 1024, 512, 256, 128, 64]
     proj = new $L.Proj.CRS(
