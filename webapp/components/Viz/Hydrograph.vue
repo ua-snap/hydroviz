@@ -350,7 +350,7 @@ const buildChart = hg => {
   let titleText: string
 
   if (isAlaskaData) {
-    titleText = 'Historical modeled flow rate, 1976-2005'
+    titleText = 'Historical modeled flow rate, 2034-2065'
   } else {
     if (appContext.value === 'mid') {
       scenarioLabel = scenarioLabels['rcp60']
