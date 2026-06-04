@@ -64,14 +64,16 @@ export const addSegmentsGeoJson = ({
   selectedSegmentId = null,
   fitBounds = true,
   mapType = 'main',
+  mapRegion = 'conus',
   preload = false,
 }: {
   map: any
   $L: any
   data: any
   selectedSegmentId?: string | null
-  fitBounds: boolean
+  fitBounds?: boolean
   mapType?: 'main' | 'report'
+  mapRegion?: 'conus' | 'alaska'
   preload?: boolean
 }) => {
   const streamSegmentStore = useStreamSegmentStore()
@@ -81,7 +83,8 @@ export const addSegmentsGeoJson = ({
   // (color change and tooltip) to each segment individually.
   let selectedSegmentLayer: any = null
 
-  let idProperty = segmentRegion.value === 'alaska' ? 'COMID' : 'seg_id_nat'
+  let region = segmentRegion.value || mapRegion
+  let idProperty = region === 'alaska' ? 'COMID' : 'seg_id_nat'
 
   let selectedSegment = data.features.find((feature: any) => {
     return feature.properties[idProperty] === selectedSegmentId
@@ -177,7 +180,7 @@ export const addSegmentsGeoJson = ({
 
     combinedSegment
       .on('mouseover', function (e: any) {
-        if (segmentRegion.value === 'conus') {
+        if (mapRegion === 'conus') {
           let segmentName = feature.properties.GNIS_NAME
           if (segmentName !== '') {
             line
@@ -210,7 +213,7 @@ export const addSegmentsGeoJson = ({
         segmentId.value = null
         isLoading.value = true
         const routePrefix =
-          segmentRegion.value === 'alaska' ? '/alaska/stream' : '/conus/stream'
+          region === 'alaska' ? '/alaska/stream' : '/conus/stream'
         segmentRegion.value = null
         const segId = feature.properties[idProperty]
         navigateTo(routePrefix + '/' + segId)
@@ -245,19 +248,23 @@ export const fetchAndAddSegmentsByBounds = ({
   $L,
   fitBounds = true,
   mapType = 'main',
+  region = 'conus',
 }: {
   map: any
   $L: any
   fitBounds?: boolean
   mapType?: 'main' | 'report'
+  region?: 'conus' | 'alaska'
 }) => {
   const { $config } = useNuxtApp()
   const streamSegmentStore = useStreamSegmentStore()
   let { segmentId, segmentRegion } = storeToRefs(streamSegmentStore)
 
+  let mapRegion = segmentRegion.value || region
+
   const wfsBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&outputFormat=application%2Fjson&srsName=EPSG:4326`
   const segBaseUrl =
-    segmentRegion.value === 'alaska'
+    mapRegion === 'alaska'
       ? `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_segments_joined_3338_simplified`
       : `${wfsBaseUrl}&typeName=hydrology%3Aseg_h8_outlet_stats_simplified`
 
@@ -267,7 +274,7 @@ export const fetchAndAddSegmentsByBounds = ({
     // It will then be removed and added back to the map with full opacity along with all
     // other viewport segments. This is "preload" mode.
     let selectedSegUrl: string
-    if (segmentRegion.value === 'alaska') {
+    if (mapRegion === 'alaska') {
       selectedSegUrl = segBaseUrl + `&cql_filter=COMID=${segmentId.value}`
     } else {
       selectedSegUrl = segBaseUrl + `&cql_filter=seg_id_nat=${segmentId.value}`
@@ -291,6 +298,7 @@ export const fetchAndAddSegmentsByBounds = ({
           selectedSegmentId: segmentId.value,
           fitBounds,
           mapType: mapType,
+          mapRegion: mapRegion,
           preload: true,
         })
 
@@ -304,7 +312,7 @@ export const fetchAndAddSegmentsByBounds = ({
 
         const segUrl =
           segBaseUrl +
-          `&cql_filter=INTERSECTS(the_geom,ENVELOPE(${minLon},${maxLon},${minLat},${maxLat}))`
+          `&cql_filter=BBOX(the_geom,${minLon},${minLat},${maxLon},${maxLat},'EPSG:4326')`
 
         return fetch(segUrl)
           .then(response => {
@@ -325,6 +333,7 @@ export const fetchAndAddSegmentsByBounds = ({
               selectedSegmentId: segmentId.value,
               fitBounds: fitBounds,
               mapType: mapType,
+              mapRegion: mapRegion,
             })
           })
       })
@@ -339,9 +348,10 @@ export const fetchAndAddSegmentsByBounds = ({
   const maxLon = bounds.getEast()
   const minLat = bounds.getSouth()
   const maxLat = bounds.getNorth()
+
   const segUrl =
     segBaseUrl +
-    `&cql_filter=INTERSECTS(the_geom,ENVELOPE(${minLon},${maxLon},${minLat},${maxLat}))`
+    `&cql_filter=BBOX(the_geom,${minLon},${minLat},${maxLon},${maxLat},'EPSG:4326')`
 
   return fetch(segUrl)
     .then(response => {
@@ -361,6 +371,7 @@ export const fetchAndAddSegmentsByBounds = ({
         selectedSegmentId: null,
         fitBounds,
         mapType: mapType,
+        mapRegion: mapRegion,
       })
     })
     .catch(error => {

@@ -1,8 +1,6 @@
 <script setup lang="ts">
 const { $L, $config } = useNuxtApp()
 import { fetchAndAddSegmentsByBounds, clearSegmentLayers } from '~/utils/map'
-import { getHandleCoord } from '~/utils/map'
-import proj4 from 'proj4'
 
 const props = defineProps<{
   region?: 'conus' | 'alaska'
@@ -32,7 +30,7 @@ const regionConfig = {
     defaultZoom: 0,
     defaultCenter: [64.2, -152.0] as [number, number],
     minZoom: 0,
-    maxZoom: 12,
+    maxZoom: 6,
     crs: 'EPSG:3338',
     segLayer: 'hydrology:arctic_rivers_segments_joined_3338_simplified',
     hucLayer: 'hydrology:arctic_rivers_watersheds_stats_simplified',
@@ -51,10 +49,10 @@ let hucSelectThreshold: number
 let segViewThreshold: number
 
 if (region === 'alaska') {
-  segmentWmsThreshold = 1
+  segmentWmsThreshold = 2
   clickToZoomThreshold = 2
   hucSelectThreshold = 2
-  segViewThreshold = 3
+  segViewThreshold = 4
 } else {
   segmentWmsThreshold = 6
   clickToZoomThreshold = 7
@@ -180,13 +178,27 @@ const initializeMap = () => {
 
   map.on('zoomend', function () {
     let zoomLevel = map.getZoom()
-    if (zoomLevel >= segViewThreshold) {
+    let segViewThresholdOffset = 0
+
+    // Workaround to keep zoom/layer behavior consistent with huge Alaskan HUCs.
+    if (region === 'alaska') {
+      segViewThresholdOffset = -1
+    }
+
+    if (zoomLevel >= segViewThreshold + segViewThresholdOffset) {
+      if (map.hasLayer(hucWmsLayer)) {
+        map.removeLayer(hucWmsLayer)
+      }
       if (map.hasLayer(segWmsLayer)) {
         map.removeLayer(segWmsLayer)
       }
-      if (hucBasedGeoJson) {
-        addMapBoundsSegments()
-      }
+      fetchAndAddSegmentsByBounds({
+        map,
+        $L,
+        fitBounds: false,
+        mapType: 'main',
+        region,
+      })
     } else {
       clearSegmentLayers(map)
       if (!map.hasLayer(hucWmsLayer)) {
@@ -196,12 +208,15 @@ const initializeMap = () => {
         map.addLayer(simplifiedHucsLayer)
       }
     }
-    if (zoomLevel < hucSelectThreshold || zoomLevel >= segViewThreshold) {
+    if (
+      zoomLevel < hucSelectThreshold ||
+      zoomLevel >= segViewThreshold + segViewThresholdOffset
+    ) {
       if (map.hasLayer(simplifiedHucsLayer)) {
         map.removeLayer(simplifiedHucsLayer)
       }
     }
-    if (zoomLevel >= segmentWmsThreshold && zoomLevel < segViewThreshold) {
+    if (zoomLevel >= segmentWmsThreshold && zoomLevel <= segViewThreshold) {
       if (!map.hasLayer(segWmsLayer)) {
         map.addLayer(segWmsLayer)
       }
@@ -219,21 +234,19 @@ const initializeMap = () => {
         map.removeLayer(perimeterLayer)
       }
     }
-    if (zoomLevel < segViewThreshold) {
+    if (zoomLevel < segViewThreshold + segViewThresholdOffset) {
       resetHUC()
     }
   })
 
   map.on('moveend', function () {
-    if (hucBasedGeoJson) {
-      return
-    }
-    if (map.getZoom() >= segViewThreshold) {
+    if (map.getZoom() >= segViewThreshold || hucBasedGeoJson) {
       fetchAndAddSegmentsByBounds({
         map,
         $L,
         fitBounds: false,
         mapType: 'main',
+        region,
       })
     }
   })
@@ -267,126 +280,6 @@ const addDetailedHucLayer = (data: any) => {
   map.fitBounds(bounds, {
     padding: [50, 50],
   })
-}
-
-const addSegmentsGeoJson = async (data: any) => {
-  // Add each segment individually so we can add hover effects
-  // (color change and tooltip) to each segment individually.
-  data.features.forEach(feature => {
-    let segmentColor: string
-    const outletValue =
-      region === 'alaska'
-        ? (feature.properties.Outlet ?? feature.properties.outlet)
-        : feature.properties.h8_outlet
-    const isOutlet = outletValue === 1
-    if (isOutlet) {
-      segmentColor = '#ff0000' // Red for outlet segments
-    } else {
-      segmentColor = '#0000ff' // Blue for non-outlet segments
-    }
-    let line = $L
-      .geoJSON(feature, {
-        style: {
-          weight: 3,
-          color: segmentColor,
-        },
-      })
-      .addTo(map)
-
-    // Add a circle marker as a handle.
-    let latlng = getHandleCoord(feature)
-    let handle = $L
-      .circleMarker(latlng, {
-        radius: 4,
-        color: segmentColor,
-        fillColor: segmentColor,
-        fillOpacity: 1,
-      })
-      .addTo(map)
-
-    let segmentParts = [line, handle]
-    segmentParts.forEach(layer => {
-      layer
-        .on('mouseover', function (e) {
-          segmentParts.forEach(part => {
-            part.setStyle({
-              color: '#ffff00',
-              fillColor: '#ffff00',
-            })
-          })
-          if (region === 'conus') {
-            let segmentName = feature.properties.GNIS_NAME
-            if (segmentName !== '') {
-              layer
-                .bindTooltip(segmentName, {
-                  className: 'is-size-6 px-3',
-                  opacity: 1,
-                })
-                .openTooltip()
-            }
-          }
-        })
-        .on('mouseout', function (e) {
-          segmentParts.forEach(part => {
-            part.setStyle({
-              color: segmentColor,
-              fillColor: segmentColor,
-            })
-          })
-        })
-        .on('click', function (e) {
-          if (config.mapId === 'map-conus') {
-            navigateTo('/conus/stream/' + feature.properties.seg_id_nat)
-          } else if (config.mapId === 'map-alaska') {
-            navigateTo('/alaska/stream/' + feature.properties.COMID)
-          }
-        })
-      // segGeoJsonLayers.push(layer)
-    })
-  })
-}
-
-const addMapBoundsSegments = () => {
-  if (map.hasLayer(hucWmsLayer)) {
-    map.removeLayer(hucWmsLayer)
-  }
-  if (simplifiedHucLayer && map.hasLayer(simplifiedHucLayer)) {
-    map.removeLayer(simplifiedHucLayer)
-  }
-  let bounds = map.getBounds()
-  let minLon, maxLon, minLat, maxLat
-  minLon = bounds.getWest()
-  maxLon = bounds.getEast()
-  minLat = bounds.getSouth()
-  maxLat = bounds.getNorth()
-
-  let segUrl =
-    regionConfig[region].segBaseUrl +
-    `&srsName=${regionConfig[region].crs}&cql_filter=` +
-    `INTERSECTS(the_geom,ENVELOPE(${minLon},${maxLon},${minLat},${maxLat}))`
-  fetch(segUrl)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(
-          `Failed to fetch segment data: ${response.status} ${response.statusText}`
-        )
-      }
-      return response.json()
-    })
-    .then(data => {
-      if (config.crs === 'EPSG:3338') {
-        data.features.forEach((feature: any) => {
-          feature.geometry.coordinates = feature.geometry.coordinates.map(
-            (line: any) =>
-              line.map((coord: any) => proj4('EPSG:3338', 'EPSG:4326', coord))
-          )
-        })
-      }
-      addSegmentsGeoJson(data)
-    })
-    .catch(error => {
-      console.error('Error fetching segment data for map bounds:', error)
-    })
 }
 
 const hucFeatureHandler = (feature: any, layer: any) => {
@@ -438,7 +331,6 @@ const hucFeatureHandler = (feature: any, layer: any) => {
     if (map.hasLayer(simplifiedHucsLayer)) {
       map.removeLayer(simplifiedHucsLayer)
     }
-    // if (feature.properties && feature.properties.huc8) {
     if (feature.properties) {
       // Make the simplified HUC-8 visible when it is clicked.
       // It will be swapped with a high-vertex HUC-8 before zooming in.
@@ -468,7 +360,6 @@ const hucFeatureHandler = (feature: any, layer: any) => {
           }
           const hucData = await hucResponse.json()
           addDetailedHucLayer(hucData)
-          addMapBoundsSegments()
         })
         .catch(error => {
           console.error('Error loading HUC data:', error)
