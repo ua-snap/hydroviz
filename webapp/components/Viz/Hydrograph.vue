@@ -17,6 +17,8 @@ import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
 let { appContext, appEra } = storeToRefs(streamSegmentStore)
 
+let isAlaskaData = false
+
 onMounted(() => {
   initializeChart(
     $Plotly,
@@ -268,7 +270,7 @@ const buildChart = hg => {
   let traces2: Data[] = []
 
   // Check if this is Alaska data (no projected scenarios)
-  const isAlaskaData = !hg['projected'][appEra.value]
+  isAlaskaData = !hg['projected'][appEra.value]
 
   let scenarios: string[] = []
   if (!isAlaskaData) {
