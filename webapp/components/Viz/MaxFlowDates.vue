@@ -92,14 +92,6 @@ const buildChart = () => {
     const historicalHovertextLabel = 'Max historical flow'
     const projectedHovertextLabel = 'Max projected flow'
 
-    let showLegend = false
-    if (
-      (appContext.value === 'extremes' && scenario === 'rcp45') ||
-      appContext.value === 'mid'
-    ) {
-      showLegend = true
-    }
-
     let historicalTrace = {
       r: historicalFlow,
       theta: historicalFlowDate,
@@ -113,7 +105,6 @@ const buildChart = () => {
       },
       customdata: customdataHistorical,
       hovertemplate: `%{customdata[0]}, 1976-2005<br />${historicalHovertextLabel}: %{r:,} cf/s<extra></extra>`,
-      showlegend: showLegend,
     }
 
     historicalTraces.push(historicalTrace)
@@ -149,7 +140,7 @@ const buildChart = () => {
         symbol: scenarioSymbol,
       },
       customdata: customdataProjected,
-      hovertemplate: `%{customdata[0]}, 2046-2075<br />${projectedHovertextLabel}: %{r:,} cf/s<extra></extra>`,
+      hovertemplate: `%{customdata[0]}, 2034-2065<br />${projectedHovertextLabel}: %{r:,} cf/s<extra></extra>`,
     }
 
     trace['subplot'] = 'polar'

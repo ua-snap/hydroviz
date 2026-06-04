@@ -186,7 +186,9 @@ const buildChart = () => {
     })
   }
 
-  const titleText: string = `Mean monthly modeled flow rate, 2034-2065`
+  const titleText: string = isAlaskaData
+    ? `Mean monthly modeled flow rate, 2034-2065`
+    : `Mean monthly modeled flow rate, ${appEra.value}`
 
   let xAxisSettings = {
     tickvals: $_.range(Object.values(monthLabels).length),
