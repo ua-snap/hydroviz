@@ -176,7 +176,7 @@ function orMoreIf100Percent(amount: number): string {
       <span class="warn">&#x26A0;&#xFE0F;</span> Model outputs vary by 50% or
       more for these variables.
     </p>
-    <p>
+    <p v-if="segmentRegion == 'conus'">
       Historical data uses the Maurer calibration, 1976&ndash;2005. Future
       projections for mid-century (2046&ndash;2075) use the mean of 13 global
       circulation models and a middle-of-the-road emissions scenario (RCP 6.0).

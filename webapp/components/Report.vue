@@ -54,7 +54,7 @@ onUnmounted(() => {
     <section class="section">
       <div class="container">
         <div class="content clamp is-size-5 mb-6">
-          <p v-if="appContext == 'mid'">
+          <p v-if="segmentRegion == 'conus' && appContext == 'mid'">
             The chart below is a hydrograph that shows the modeled historical
             mean (white line in center) and range of variation (gray band) with
             the projected middle-of-the-road climate scenario&mdash;Stabilizing
@@ -62,7 +62,7 @@ onUnmounted(() => {
             models are shown (the top and bottom lines), and the range of
             variation for the means are shown as a shaded ribbon.
           </p>
-          <p v-if="appContext == 'extremes'">
+          <p v-if="segmentRegion == 'conus' && appContext == 'extremes'">
             The charts below are hydrographs that show the modeled historical
             mean (white line in center) and range of variation (gray band) for
             two climate scenarios: Stabilizing Emissions (RCP 4.5) and
@@ -77,7 +77,7 @@ onUnmounted(() => {
     <section class="section">
       <div class="container">
         <div class="content clamp is-size-5 mb-6">
-          <p v-if="appContext == 'mid'">
+          <p v-if="segmentRegion == 'conus' && appContext == 'mid'">
             The chart below shows the mean modeled monthly flow rate for the
             historical modeled value (diamond) and with the projected
             middle-of-the-road climate scenario&mdash;Stabilizing High Emissions
@@ -88,7 +88,7 @@ onUnmounted(() => {
             &#177;1.5 times the interquartile range, and outliers are shown as
             colored dots.
           </p>
-          <p v-if="appContext == 'extremes'">
+          <p v-if="segmentRegion == 'conus' && appContext == 'extremes'">
             The charts below show the mean modeled monthly flow rate for the
             historical modeled value (diamond) with two climate scenarios:
             Stabilizing Emissions (RCP 4.5) and Increasing Emissions (RCP 8.5).
@@ -106,7 +106,7 @@ onUnmounted(() => {
     <section class="section">
       <div class="container">
         <div class="content clamp is-size-5 mb-6">
-          <p v-if="appContext == 'mid'">
+          <p v-if="segmentRegion == 'conus' && appContext == 'mid'">
             The chart below shows the modeled annual maximum daily flow rate and
             the date of its occurrence for the historical modeled value
             (diamond) and with the projected middle-of-the-road climate
@@ -114,7 +114,7 @@ onUnmounted(() => {
             models. This chart can help you see changes in the timing and
             magnitude of annual maximum flow rates.
           </p>
-          <p v-if="appContext == 'extremes'">
+          <p v-if="segmentRegion == 'conus' && appContext == 'extremes'">
             The charts below show the modeled annual maximum daily flow rate and
             the date of its occurrence for the historical modeled value
             (diamond) and for two climate scenarios, Stabilizing Emissions (RCP
@@ -132,13 +132,13 @@ onUnmounted(() => {
         <h4 class="title is-4">Complete statistics</h4>
 
         <div class="is-size-5 mb-6">
-          <p v-if="appContext == 'mid'">
+          <p v-if="segmentRegion == 'conus' && appContext == 'mid'">
             The projected values in the tables below show the median values
             across the Stabilizing High (RCP 6.0) climate scenario for 13
             climate models. This represents the middle-of-the-road for future
             model projections in the CMIP5 family of datasets.
           </p>
-          <p v-if="appContext == 'extremes'">
+          <p v-if="segmentRegion == 'conus' && appContext == 'extremes'">
             The projected values in the table below show the extreme values
             across two climate scenarios for 13 climate models. The values in
             the &lsquo;Minimum, Stabilizing (RCP 4.5)&rsquo; column are the
