@@ -25,7 +25,7 @@ const hydrologyUrl = computed(
             <a :href="hydrologyUrl">Access this data programmatically</a>
             with downloads ready for R and Python analysis.
           </li>
-          <li v-if="segmentRegion.value == 'conus'">
+          <li v-if="segmentRegion == 'conus'">
             <a
               href="https://www.sciencebase.gov/catalog/item/6373bd3bd34ed907bf6c6e25"
               >Access the source datasets</a
@@ -33,7 +33,7 @@ const hydrologyUrl = computed(
             used in this application, including references to academic papers
             about the dataset.
           </li>
-          <li v-if="segmentRegion.value == 'conus'">
+          <li v-if="segmentRegion == 'conus'">
             Read a
             <a href="https://pubs.usgs.gov/publication/tm6B9"
               >description of the National Hydrologic Model for use with the
@@ -42,7 +42,7 @@ const hydrologyUrl = computed(
             (PRMS)
           </li>
         </ul>
-        <div v-if="segmentRegion.value == 'conus'">
+        <div v-if="segmentRegion == 'conus'">
           <h4 class="title is-4">Academic citations</h4>
 
           <blockquote>
