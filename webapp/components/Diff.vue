@@ -15,7 +15,7 @@ const props = defineProps({
   },
   statId: {
     type: String,
-    required: true,
+    required: false,
   },
 })
 
@@ -33,7 +33,7 @@ const pct = computed(() => {
 
 // Julian date diffs should be the shortest distance around the date circle.
 // Consider the example of January 1st (1) vs. December 31st (366).
-// The raw difference is 365 days, but the actual difference in time is just 2 days.
+// The raw difference is 365 days, but the actual difference in time is just 1 day.
 // See: https://github.com/ua-snap/hydroviz/blob/main/data/preprocess/shp/modulo.md
 const julianDateDiff = computed(() => {
   return ((props.future - props.past + 183) % 366) - 183
@@ -42,7 +42,7 @@ const julianDateDiff = computed(() => {
 // It doesn't make sense to calculate percentage change on circular diffs from
 // Julian dates, so treat them differently and use absolute difference instead.
 const diffMagnitude = computed(() => {
-  if (julianDateStats.includes(props.statId)) {
+  if (props.statId && julianDateStats.includes(props.statId)) {
     return Math.abs(julianDateDiff.value)
   } else {
     return Math.abs(pct.value)
@@ -60,7 +60,7 @@ const isStrong = computed(() => {
 const diff = computed(() => {
   let diff: number | string
 
-  if (julianDateStats.includes(props.statId)) {
+  if (props.statId && julianDateStats.includes(props.statId)) {
     diff = julianDateDiff.value
   } else {
     diff = props.future - props.past

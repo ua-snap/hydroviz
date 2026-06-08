@@ -4,7 +4,7 @@ import { fnc, roundSigFig } from '~/utils/general'
 const props = defineProps<{
   value: string | null
   past?: string | null
-  statId: string | null
+  statId?: string | undefined
 }>()
 
 let value: number | null = null
