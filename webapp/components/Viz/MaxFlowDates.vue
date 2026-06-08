@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { watch, toRaw } from 'vue'
-import { doyToDateString } from '~/utils/general'
 import {
   getLayout,
   getConfig,
