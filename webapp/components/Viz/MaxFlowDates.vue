@@ -75,18 +75,12 @@ const buildChart = () => {
     let historicalFlow = [props.streamMaxFlowDates['historical']['flow']]
     let historicalFlowDate = [props.streamMaxFlowDates['historical']['date']]
 
-    let customdataHistorical: string[][] = []
     historicalFlowDate.forEach((doy: number, index: number) => {
-      let dayString = doyToDateString(doy)
-
-      customdataHistorical.push([dayString])
       historicalFlowDate[index] = convertTo360(doy)
     })
 
     const historicalTraceLabel = 'Historical, 1976-2005'
     const projectedTraceLabel = 'Projected'
-    const historicalHovertextLabel = 'Max historical flow'
-    const projectedHovertextLabel = 'Max projected flow'
 
     let showLegend = false
     if (
@@ -107,8 +101,6 @@ const buildChart = () => {
         color: scenarioColors['historical'],
         symbol: scenarioSymbols['historical'],
       },
-      customdata: customdataHistorical,
-      hovertemplate: `%{customdata[0]}, 1976-2005<br />${historicalHovertextLabel}: %{r:,} cf/s<extra></extra>`,
       showlegend: showLegend,
     }
     if (appContext.value === 'extremes' && scenario === 'rcp45') {
@@ -122,10 +114,7 @@ const buildChart = () => {
       props.streamMaxFlowDates['projected'][appEra.value][scenario]['date']
     )
 
-    let customdataProjected: string[][] = []
     projectedDates.forEach((doy: number, index: number) => {
-      let dayString = doyToDateString(doy)
-      customdataProjected.push([dayString])
       projectedDates[index] = convertTo360(doy)
     })
 
@@ -142,8 +131,6 @@ const buildChart = () => {
         color: scenarioColors[scenario],
         symbol: scenarioSymbols[scenario],
       },
-      customdata: customdataProjected,
-      hovertemplate: `%{customdata[0]}, 2046-2075<br />${projectedHovertextLabel}: %{r:,} cf/s<extra></extra>`,
     }
 
     if (appContext.value === 'mid') {
