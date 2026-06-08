@@ -35,8 +35,9 @@ const pct = computed(() => {
 // Consider the example of January 1st (1) vs. December 31st (366).
 // The raw difference is 365 days, but the actual difference in time is just 1 day.
 // See: https://github.com/ua-snap/hydroviz/blob/main/data/preprocess/shp/modulo.md
+// JavaScript requires an extra addition to handle negative values correctly.
 const julianDateDiff = computed(() => {
-  return ((props.future - props.past + 183) % 366) - 183
+  return ((((props.future - props.past + 183) % 366) + 366) % 366) - 183
 })
 
 // It doesn't make sense to calculate percentage change on circular diffs from
