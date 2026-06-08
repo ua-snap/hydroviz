@@ -51,6 +51,7 @@ const tableCaptionHtml = computed(() => {
             <StatValue
               :value="streamStats['projected'][appEra]['rcp60'][stat.id].median"
               :past="streamStats['historical']['1976-2005'][stat.id]"
+              :statId="stat.id"
             />
           </td>
         </tr>
@@ -86,12 +87,14 @@ const tableCaptionHtml = computed(() => {
             <StatValue
               :value="streamStats['projected'][appEra]['rcp45'][stat.id].min"
               :past="streamStats['historical']['1976-2005'][stat.id]"
+              :statId="stat.id"
             />
           </td>
           <td>
             <StatValue
               :value="streamStats['projected'][appEra]['rcp85'][stat.id].max"
               :past="streamStats['historical']['1976-2005'][stat.id]"
+              :statId="stat.id"
             />
           </td>
         </tr>

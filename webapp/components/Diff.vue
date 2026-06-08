@@ -2,6 +2,8 @@
 import { computed } from 'vue'
 import { fnc } from '~/utils/general'
 
+const julianDateStats = ['spr_ord', 'sum_ord', 'th1', 'tl1']
+
 const props = defineProps({
   future: {
     type: Number,
@@ -9,6 +11,10 @@ const props = defineProps({
   },
   past: {
     type: Number,
+    required: true,
+  },
+  statId: {
+    type: String,
     required: true,
   },
 })
@@ -25,25 +31,41 @@ const pct = computed(() => {
   return Math.round(((props.future - props.past) / props.past) * 100)
 })
 
-// True if the absolute percentage difference is less than 25%
+// Julian date diffs should be the shortest distance around the date circle.
+// Consider the example of January 1st (1) vs. December 31st (366).
+// The raw difference is 365 days, but the actual difference in time is just 2 days.
+// See: https://github.com/ua-snap/hydroviz/blob/main/data/preprocess/shp/modulo.md
+const julianDateDiff = computed(() => {
+  return ((props.future - props.past + 183) % 366) - 183
+})
+
+// It doesn't make sense to calculate percentage change on circular diffs from
+// Julian dates, so treat them differently and use absolute difference instead.
+const diffMagnitude = computed(() => {
+  if (julianDateStats.includes(props.statId)) {
+    return Math.abs(julianDateDiff.value)
+  } else {
+    return Math.abs(pct.value)
+  }
+})
+
 const isWeak = computed(() => {
-  return Math.abs(pct.value) < 25
+  return diffMagnitude.value < 25
 })
 
 const isStrong = computed(() => {
-  return Math.abs(pct.value) > 50
-})
-
-const isLess = computed(() => {
-  return pct.value < 0
-})
-
-const isMore = computed(() => {
-  return pct.value > 0
+  return diffMagnitude.value > 50
 })
 
 const diff = computed(() => {
-  let diff = props.future - props.past
+  let diff: number | string
+
+  if (julianDateStats.includes(props.statId)) {
+    diff = julianDateDiff.value
+  } else {
+    diff = props.future - props.past
+  }
+
   if (diff > 0) {
     diff = '&plus;' + fnc(diff)
   } else if (diff < 0) {
@@ -61,8 +83,6 @@ const diff = computed(() => {
     :class="{
       weak: isWeak,
       strong: isStrong,
-      less: isLess,
-      more: isMore,
     }"
     v-html="diff"
   ></span>

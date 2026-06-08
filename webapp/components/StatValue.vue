@@ -4,6 +4,7 @@ import { fnc, roundSigFig } from '~/utils/general'
 const props = defineProps<{
   value: string | null
   past?: string | null
+  statId: string | null
 }>()
 
 let value: number | null = null
@@ -27,6 +28,11 @@ if (props.value === null || props.value === undefined) {
 <template>
   <span>
     <span class="number">{{ formattedValue }}</span>
-    <Diff v-if="past !== null && value !== null" :past="past" :future="value" />
+    <Diff
+      v-if="past !== null && value !== null"
+      :past="past"
+      :future="value"
+      :statId="props.statId"
+    />
   </span>
 </template>
