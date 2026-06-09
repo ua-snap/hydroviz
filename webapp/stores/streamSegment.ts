@@ -96,7 +96,15 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     try {
       if ($config.public.staticFixtures) {
         console.log('Using static fixtures for hydroviz API data')
-        dataResponse = await import('@/assets/fixtures/api_output_example.json')
+        if (segmentRegion.value === 'alaska') {
+          dataResponse = await import(
+            '@/assets/fixtures/alaska_output_example.json'
+          )
+        } else {
+          dataResponse = await import(
+            '@/assets/fixtures/conus_output_example.json'
+          )
+        }
       } else {
         try {
           // Used to track mildly slow data API responses that don't abort.
