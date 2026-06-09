@@ -9,6 +9,7 @@ import {
 } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
+import { scenarioFullNames } from '~/types/modelsScenarios'
 
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
@@ -63,12 +64,6 @@ const buildChart = () => {
     rcp45: 'square',
     rcp60: 'circle',
     rcp85: 'cross',
-  }
-
-  let plotLabels = {
-    rcp45: 'Stabilizing Emissions (RCP 4.5)',
-    rcp60: 'Stabilizing High Emissions (RCP 6.0)',
-    rcp85: 'Increasing Emissions (RCP 8.5)',
   }
 
   scenarios.forEach(scenario => {
@@ -129,7 +124,7 @@ const buildChart = () => {
       projectedDates[index] = convertTo360(doy)
     })
 
-    let traceLabel = projectedTraceLabel + `, ${plotLabels[scenario]}`
+    let traceLabel = projectedTraceLabel + `, ${scenarioFullNames[scenario]}`
 
     let trace = {
       r: projectedFlows,
