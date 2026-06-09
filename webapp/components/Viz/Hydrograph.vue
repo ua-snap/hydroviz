@@ -313,7 +313,6 @@ const buildChart = hg => {
   $Plotly.newPlot('hydrograph', traces, layout, config)
 
   if (appContext.value === 'extremes') {
-    let scenarioLabel2 = scenarioFullNames.rcp85
     let titleText2 = `${titleBase}, ${scenarioLabel2}`
     let layout2 = getLayout(
       titleText2,

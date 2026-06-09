@@ -83,7 +83,7 @@ onUnmounted(() => {
             historical modeled value (diamond) and with the projected
             middle-of-the-road climate scenario&mdash;{{
               scenarioFullNames.rcp60
-            }}. The box plot show the range of values for 13 climate models.
+            }}. The box plot shows the range of values for 13 climate models.
             Each box plot spans from quartile 1 to quartile 3, which is the
             interquartile range (IQR). The second quartile&mdash;the
             median&mdash;is marked by a line inside the box. The whiskers span
