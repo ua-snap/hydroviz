@@ -2,52 +2,131 @@
 const { $L, $config } = useNuxtApp()
 import { fetchAndAddSegmentsByBounds, clearSegmentLayers } from '~/utils/map'
 
-const segBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_subset&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=`
-const hucBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8&outputFormat=application%2Fjson&srsName=EPSG:4326&cql_filter=huc8=`
+const props = defineProps<{
+  region?: 'conus' | 'alaska'
+}>()
 
-const defaultMapZoom = 4
-const defaultMapCenter = [37.8, -96]
-const segmentWmsThreshold = 6
-const clickToZoomThreshold = 7
-const hucSelectThreshold = 7
-const segViewThreshold = 8
+const region = props.region || 'conus'
+const wfsBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&outputFormat=application%2Fjson`
+
+// Region-specific configuration
+const regionConfig = {
+  conus: {
+    mapId: 'map-conus',
+    defaultZoom: 4,
+    defaultCenter: [37.8, -96] as [number, number],
+    minZoom: 4,
+    maxZoom: 12,
+    crs: 'EPSG:4326',
+    segLayer: 'hydrology:seg_h8_outlet_stats_simplified_subset',
+    hucLayer: 'hydrology:huc8_conus_stats_simplified',
+    perimeterAsset: '@/assets/conus_perimeter.json',
+    hucsAsset: '@/assets/conus_hucs_simplified.json',
+    segBaseUrl: `${wfsBaseUrl}&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_subset`,
+    hucBaseUrl: `${wfsBaseUrl}&typeName=hydrology%3Ahuc8&srsName=EPSG:4326`,
+  },
+  alaska: {
+    mapId: 'map-alaska',
+    defaultZoom: 0,
+    defaultCenter: [64.2, -152.0] as [number, number],
+    minZoom: 0,
+    maxZoom: 6,
+    crs: 'EPSG:3338',
+    segLayer: 'hydrology:arctic_rivers_segments_joined_3338_simplified',
+    hucLayer: 'hydrology:arctic_rivers_watersheds_stats_simplified',
+    perimeterAsset: '@/assets/conus_perimeter.json',
+    hucsAsset: '@/assets/alaska_hucs_simplified4326.json',
+    segBaseUrl: `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_segments_joined_3338_simplified`,
+    hucBaseUrl: `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_watersheds_stats_simplified&srsName=EPSG:4326`,
+  },
+}
+
+const config = regionConfig[region]
+
+let segmentWmsThreshold: number
+let clickToZoomThreshold: number
+let hucSelectThreshold: number
+let segViewThreshold: number
+
+if (region === 'alaska') {
+  segmentWmsThreshold = 2
+  clickToZoomThreshold = 2
+  hucSelectThreshold = 2
+  segViewThreshold = 4
+} else {
+  segmentWmsThreshold = 6
+  clickToZoomThreshold = 7
+  hucSelectThreshold = 7
+  segViewThreshold = 8
+}
 
 let hucBasedGeoJson = false
 
 // GeoJSON to load dynamically on mount.
-let conusPerimeter: any
+let perimeter: any
 let simplifiedHucs: any
 
 let map: any
 let hucWmsLayer: any
 let segWmsLayer: any
-let conusPerimeterLayer: any
+let perimeterLayer: any
 let simplifiedHucsLayer: any
 let simplifiedHucLayer: any
 let detailedHucLayer: any
 
 const initializeMap = () => {
-  map = $L
-    .map('map', {
-      scrollWheelZoom: false,
-      zoomSnap: 0.1,
-      minZoom: 4,
-      maxZoom: 12,
-    })
-    .setView(defaultMapCenter, defaultMapZoom)
+  const mapOptions: any = {
+    scrollWheelZoom: false,
+    zoomSnap: 0.1,
+    minZoom: config.minZoom,
+    maxZoom: config.maxZoom,
+  }
 
-  $L.tileLayer(
-    'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}',
-    {
-      attribution: 'Map data © USGS',
-    }
-  ).addTo(map)
+  let proj: any = null
+
+  if (config.crs === 'EPSG:3338') {
+    let resolutions = [4096, 2048, 1024, 512, 256, 128, 64]
+    proj = new $L.Proj.CRS(
+      'EPSG:3338',
+      '+proj=aea +lat_1=55 +lat_2=65 +lat_0=50 +lon_0=-154 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs',
+      {
+        // Lower-left corner of GeoServer's gridset bounds for EPSG:3338
+        origin: [-4648005.934316417, 444809.882955059],
+        resolutions: resolutions,
+      }
+    )
+    mapOptions.crs = proj
+  }
+
+  map = $L
+    .map(config.mapId, mapOptions)
+    .setView(config.defaultCenter, config.defaultZoom)
+
+  if (config.mapId === 'map-conus') {
+    $L.tileLayer(
+      'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}',
+      {
+        attribution: 'Map data © USGS',
+      }
+    ).addTo(map)
+  } else if (config.mapId === 'map-alaska') {
+    let url = `${$config.public.geoserverUrl}/wms`
+    $L.tileLayer
+      .wms(url, {
+        transparent: true,
+        crs: proj,
+        format: 'image/png',
+        version: '1.3.0',
+        layers: 'atlas_mapproxy:alaska_osm_retina',
+      })
+      .addTo(map)
+  }
 
   hucWmsLayer = $L.tileLayer
     .wms(`${$config.public.geoserverUrl}/wms`, {
       transparent: true,
       format: 'image/png',
-      layers: 'hydrology:huc8_conus_stats_simplified',
+      layers: config.hucLayer,
       styles: 'hydrology:hydroviz-choropleth',
       zIndex: 10,
       opacity: 0.85,
@@ -58,13 +137,13 @@ const initializeMap = () => {
   segWmsLayer = $L.tileLayer.wms(`${$config.public.geoserverUrl}/wms`, {
     transparent: true,
     format: 'image/png',
-    layers: 'hydrology:seg_h8_outlet_stats_simplified_subset',
+    layers: config.segLayer,
     zIndex: 20,
     opacity: 0.2,
   })
 
-  simplifiedHucsLayer = $L
-    .geoJSON(simplifiedHucs, {
+  if (simplifiedHucs) {
+    simplifiedHucsLayer = $L.geoJSON(simplifiedHucs, {
       style: {
         opacity: 0,
         fillOpacity: 0,
@@ -74,35 +153,52 @@ const initializeMap = () => {
       },
       onEachFeature: hucFeatureHandler,
     })
-    .addTo(map)
+    simplifiedHucsLayer.addTo(map)
+  }
 
-  conusPerimeterLayer = $L
-    .geoJSON(conusPerimeter, {
-      style: {
-        opacity: 0,
-        fillOpacity: 0,
-        interactive: true,
-      },
-      onEachFeature: function (feature, layer) {
-        layer.on('click', function (e) {
-          if (map.getZoom() < clickToZoomThreshold) {
-            map.setView(e.latlng, clickToZoomThreshold)
-          }
-          map.removeLayer(conusPerimeterLayer)
-        })
-      },
-    })
-    .addTo(map)
+  if (perimeter) {
+    perimeterLayer = $L
+      .geoJSON(perimeter, {
+        style: {
+          opacity: 0,
+          fillOpacity: 0,
+          interactive: true,
+        },
+        onEachFeature: function (feature, layer) {
+          layer.on('click', function (e) {
+            if (map.getZoom() < clickToZoomThreshold) {
+              map.setView(e.latlng, clickToZoomThreshold)
+            }
+            map.removeLayer(perimeterLayer)
+          })
+        },
+      })
+      .addTo(map)
+  }
 
   map.on('zoomend', function () {
     let zoomLevel = map.getZoom()
-    if (zoomLevel >= segViewThreshold) {
+    let segViewThresholdOffset = 0
+
+    // Workaround to keep zoom/layer behavior consistent with huge Alaskan HUCs.
+    if (region === 'alaska') {
+      segViewThresholdOffset = -1
+    }
+
+    if (zoomLevel >= segViewThreshold + segViewThresholdOffset) {
+      if (map.hasLayer(hucWmsLayer)) {
+        map.removeLayer(hucWmsLayer)
+      }
       if (map.hasLayer(segWmsLayer)) {
         map.removeLayer(segWmsLayer)
       }
-      if (hucBasedGeoJson) {
-        addMapBoundsSegments()
-      }
+      fetchAndAddSegmentsByBounds({
+        map,
+        $L,
+        fitBounds: false,
+        mapType: 'main',
+        region,
+      })
     } else {
       clearSegmentLayers(map)
       if (!map.hasLayer(hucWmsLayer)) {
@@ -112,12 +208,15 @@ const initializeMap = () => {
         map.addLayer(simplifiedHucsLayer)
       }
     }
-    if (zoomLevel < hucSelectThreshold || zoomLevel >= segViewThreshold) {
+    if (
+      zoomLevel < hucSelectThreshold ||
+      zoomLevel >= segViewThreshold + segViewThresholdOffset
+    ) {
       if (map.hasLayer(simplifiedHucsLayer)) {
         map.removeLayer(simplifiedHucsLayer)
       }
     }
-    if (zoomLevel >= segmentWmsThreshold && zoomLevel < segViewThreshold) {
+    if (zoomLevel >= segmentWmsThreshold && zoomLevel <= segViewThreshold) {
       if (!map.hasLayer(segWmsLayer)) {
         map.addLayer(segWmsLayer)
       }
@@ -127,30 +226,27 @@ const initializeMap = () => {
       }
     }
     if (zoomLevel < clickToZoomThreshold) {
-      if (!map.hasLayer(segWmsLayer)) {
-        map.addLayer(conusPerimeterLayer)
+      if (perimeterLayer && !map.hasLayer(perimeterLayer)) {
+        map.addLayer(perimeterLayer)
       }
     } else {
-      if (map.hasLayer(conusPerimeterLayer)) {
-        map.removeLayer(conusPerimeterLayer)
+      if (perimeterLayer && map.hasLayer(perimeterLayer)) {
+        map.removeLayer(perimeterLayer)
       }
     }
-    if (zoomLevel < segViewThreshold) {
+    if (zoomLevel < segViewThreshold + segViewThresholdOffset) {
       resetHUC()
     }
   })
 
   map.on('moveend', function () {
-    if (hucBasedGeoJson) {
-      return
-    }
-    if (map.getZoom() >= segViewThreshold) {
+    if (map.getZoom() >= segViewThreshold || hucBasedGeoJson) {
       fetchAndAddSegmentsByBounds({
         map,
         $L,
-        segBaseUrl,
         fitBounds: false,
         mapType: 'main',
+        region,
       })
     }
   })
@@ -186,21 +282,6 @@ const addDetailedHucLayer = (data: any) => {
   })
 }
 
-const addMapBoundsSegments = () => {
-  if (map.hasLayer(hucWmsLayer)) {
-    map.removeLayer(hucWmsLayer)
-  }
-  if (simplifiedHucLayer && map.hasLayer(simplifiedHucLayer)) {
-    map.removeLayer(simplifiedHucLayer)
-  }
-
-  fetchAndAddSegmentsByBounds({
-    map,
-    $L,
-    segBaseUrl,
-  })
-}
-
 const hucFeatureHandler = (feature: any, layer: any) => {
   layer.on('mouseover', function (e: any) {
     let mapZoom = map.getZoom()
@@ -212,10 +293,16 @@ const hucFeatureHandler = (feature: any, layer: any) => {
       fillColor: '#ffff00',
       fillOpacity: 0.5,
     })
-    const hoverText = `${feature.properties.name} (${feature.properties.huc8})`
-    if (hoverText) {
+    let hucName =
+      region === 'alaska' ? feature.properties.Name : feature.properties.name
+    let hucId =
+      region === 'alaska' ? feature.properties.ID_2 : feature.properties.huc8
+    if (hucName && hucId) {
       layer
-        .bindTooltip(hoverText, { className: 'is-size-6 px-3', opacity: 1 })
+        .bindTooltip(`${hucName} (${hucId})`, {
+          className: 'is-size-6 px-3',
+          opacity: 1,
+        })
         .openTooltip()
     }
   })
@@ -244,7 +331,7 @@ const hucFeatureHandler = (feature: any, layer: any) => {
     if (map.hasLayer(simplifiedHucsLayer)) {
       map.removeLayer(simplifiedHucsLayer)
     }
-    if (feature.properties && feature.properties.huc8) {
+    if (feature.properties) {
       // Make the simplified HUC-8 visible when it is clicked.
       // It will be swapped with a high-vertex HUC-8 before zooming in.
       simplifiedHucLayer = $L
@@ -257,7 +344,11 @@ const hucFeatureHandler = (feature: any, layer: any) => {
         })
         .addTo(map)
 
-      let hucUrl = hucBaseUrl + feature.properties.huc8
+      let hucUrl =
+        region === 'alaska'
+          ? `${regionConfig[region].hucBaseUrl}&cql_filter=ID_2='${feature.properties.ID_2}'`
+          : `${regionConfig[region].hucBaseUrl}&cql_filter=huc8=${feature.properties.huc8}`
+
       let hucFetch = fetch(hucUrl)
 
       hucFetch
@@ -269,7 +360,6 @@ const hucFeatureHandler = (feature: any, layer: any) => {
           }
           const hucData = await hucResponse.json()
           addDetailedHucLayer(hucData)
-          addMapBoundsSegments()
         })
         .catch(error => {
           console.error('Error loading HUC data:', error)
@@ -278,31 +368,45 @@ const hucFeatureHandler = (feature: any, layer: any) => {
   })
 }
 
-const loadConusPerimeter = async () => {
+const loadPerimeter = async () => {
+  if (!config.perimeterAsset) {
+    return
+  }
   try {
-    conusPerimeter = await import('@/assets/conus_perimeter.json')
+    if (region === 'conus') {
+      perimeter = await import('@/assets/conus_perimeter.json')
+    } else if (region === 'alaska') {
+      perimeter = await import('@/assets/alaska_perimeter.json')
+    }
   } catch (error) {
-    console.error('Failed to load CONUS outline:', error)
+    console.error('Failed to load perimeter:', error)
   }
 }
 
 const loadSimplifiedHucs = async () => {
+  if (!config.hucsAsset) {
+    return
+  }
   try {
-    simplifiedHucs = await import('@/assets/hucs_simplified.json')
+    if (region === 'conus') {
+      simplifiedHucs = await import('@/assets/conus_hucs_simplified.json')
+    } else if (region === 'alaska') {
+      simplifiedHucs = await import('@/assets/alaska_hucs_simplified.json')
+    }
   } catch (error) {
     console.error('Failed to load simplified HUCs:', error)
   }
 }
 
 onMounted(() => {
-  Promise.all([loadSimplifiedHucs(), loadConusPerimeter()]).then(() => {
+  Promise.all([loadSimplifiedHucs(), loadPerimeter()]).then(() => {
     initializeMap()
   })
 })
 </script>
 
 <template>
-  <div id="map" style="height: 500px"></div>
+  <div :id="config.mapId" style="height: 500px"></div>
 </template>
 
 <style lang="scss">

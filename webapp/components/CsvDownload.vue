@@ -2,7 +2,13 @@
 const { $config } = useNuxtApp()
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { segmentId } = storeToRefs(streamSegmentStore)
+let { segmentId, segmentRegion } = storeToRefs(streamSegmentStore)
+
+const hydrologyPath = computed(() => {
+  return segmentRegion.value === 'alaska'
+    ? '/arctic_hydrology'
+    : '/conus_hydrology'
+})
 </script>
 
 <template>
@@ -11,7 +17,8 @@ let { segmentId } = storeToRefs(streamSegmentStore)
     <a
       :href="
         $config.public.snapApiUrl +
-        '/conus_hydrology/stats/' +
+        hydrologyPath +
+        '/stats/' +
         segmentId +
         '?format=csv'
       "
@@ -21,7 +28,8 @@ let { segmentId } = storeToRefs(streamSegmentStore)
     <a
       :href="
         $config.public.snapApiUrl +
-        '/conus_hydrology/modeled_climatology/' +
+        hydrologyPath +
+        '/modeled_climatology/' +
         segmentId +
         '?format=csv'
       "
