@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { fnc, roundSigFig } from '~/utils/general'
+import { computed } from 'vue'
 
 const props = defineProps<{
   value: string | null
@@ -7,22 +8,26 @@ const props = defineProps<{
   statId?: string | undefined
 }>()
 
-let value: number | null = null
-if (props.value !== null && props.value !== undefined) {
-  value = roundSigFig(Number(props.value))
-}
+const value = computed<number | null>(() => {
+  if (props.value === null || props.value === undefined) {
+    return null
+  }
+  return roundSigFig(Number(props.value))
+})
 
-let past: number | null = null
-if (props.past !== null && props.past !== undefined) {
-  past = roundSigFig(Number(props.past))
-}
+const past = computed<number | null>(() => {
+  if (props.past === null || props.past === undefined) {
+    return null
+  }
+  return roundSigFig(Number(props.past))
+})
 
-let formattedValue: string
-if (props.value === null || props.value === undefined) {
-  formattedValue = 'N/A'
-} else {
-  formattedValue = fnc(value!)
-}
+const formattedValue = computed(() => {
+  if (value.value === null) {
+    return 'N/A'
+  }
+  return fnc(value.value)
+})
 </script>
 
 <template>
