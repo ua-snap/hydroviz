@@ -64,6 +64,8 @@ const getOffsetXTickVals = (scenario: string) => {
 const buildChart = () => {
   let traces: Data[] = []
 
+  const isAlaskaData = !props.streamMonthlyFlow['projected'][appEra.value]
+
   let scenarios: string[]
   if (appContext.value === 'mid') {
     scenarios = ['rcp60']
@@ -122,38 +124,66 @@ const buildChart = () => {
     },
   }
 
-  scenarios.forEach(scenario => {
-    let projectedFlowData =
-      props.streamMonthlyFlow['projected'][appEra.value][scenario]
-
-    let xTickVals = getOffsetXTickVals(scenario)
-
-    let boxWidth: number
-    if (appContext.value === 'extremes') {
-      boxWidth = 0.2
-    } else {
-      boxWidth = 0.3
-    }
-
+  if (isAlaskaData) {
+    let projectedFlowData = props.streamMonthlyFlow['projected']['2034-2065']
+    let boxWidth = 0.3
     let showLegend = true
+
+    // Alaska data doesn't have multiple scenarios, but use the same xTickVals
+    // as CONUS rcp60 scenario (i.e., one diamond and one box plot per month).
+    let xTickVals = getOffsetXTickVals('rcp60')
+
     Object.keys(monthLabels).forEach((monthKey, idx) => {
       let trace = {
         x0: xTickVals[idx],
         y: projectedFlowData[monthKey],
         type: 'box',
-        name: `Projected, ${scenarioFullNames[scenario]}`,
-        marker: { color: scenarioColors[scenario].stroke, size: 8 },
-        line: { color: scenarioColors[scenario].stroke, width: 1.5 },
-        fillcolor: scenarioColors[scenario].fill,
+        name: 'Projected',
+        marker: { color: scenarioColors['rcp60'].stroke, size: 8 },
+        line: { color: scenarioColors['rcp60'].stroke, width: 1.5 },
+        fillcolor: scenarioColors['rcp60'].fill,
         showlegend: showLegend,
         width: boxWidth, // Add width property to make boxes wider
       }
       traces.push(trace)
       showLegend = false
     })
-  })
+  } else {
+    scenarios.forEach(scenario => {
+      let projectedFlowData =
+        props.streamMonthlyFlow['projected'][appEra.value][scenario]
 
-  const titleText: string = `Mean monthly modeled flow rate, ${appEra.value}`
+      let xTickVals = getOffsetXTickVals(scenario)
+
+      let boxWidth: number
+      if (appContext.value === 'extremes') {
+        boxWidth = 0.2
+      } else {
+        boxWidth = 0.3
+      }
+
+      let showLegend = true
+      Object.keys(monthLabels).forEach((monthKey, idx) => {
+        let trace = {
+          x0: xTickVals[idx],
+          y: projectedFlowData[monthKey],
+          type: 'box',
+          name: `Projected, ${scenarioFullNames[scenario]}`,
+          marker: { color: scenarioColors[scenario].stroke, size: 8 },
+          line: { color: scenarioColors[scenario].stroke, width: 1.5 },
+          fillcolor: scenarioColors[scenario].fill,
+          showlegend: showLegend,
+          width: boxWidth, // Add width property to make boxes wider
+        }
+        traces.push(trace)
+        showLegend = false
+      })
+    })
+  }
+
+  const titleText: string = isAlaskaData
+    ? `Mean monthly modeled flow rate, 2034-2065`
+    : `Mean monthly modeled flow rate, ${appEra.value}`
 
   let xAxisSettings = {
     tickvals: $_.range(Object.values(monthLabels).length),
