@@ -64,6 +64,7 @@ export const getLayout = (
   },
   autosize: true,
   dragmode: false,
+  hovermode: false,
 })
 
 // Recursively extract all relevant values (data keys not in excludeKeys) from

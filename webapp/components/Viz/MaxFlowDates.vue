@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { watch, toRaw } from 'vue'
-import { doyToDateString } from '~/utils/general'
 import {
   getLayout,
   getConfig,
@@ -75,17 +74,11 @@ const buildChart = () => {
     let historicalFlow = [props.streamMaxFlowDates['historical']['flow']]
     let historicalFlowDate = [props.streamMaxFlowDates['historical']['date']]
 
-    let customdataHistorical: string[][] = []
     historicalFlowDate.forEach((doy: number, index: number) => {
-      let dayString = doyToDateString(doy)
-
-      customdataHistorical.push([dayString])
       historicalFlowDate[index] = convertTo360(doy)
     })
 
     const historicalTraceLabel = 'Historical, 1976-2005'
-    const historicalHovertextLabel = 'Max historical flow'
-    const projectedHovertextLabel = 'Max projected flow'
 
     let historicalTrace = {
       r: historicalFlow,
@@ -98,8 +91,9 @@ const buildChart = () => {
         color: scenarioColors['historical'],
         symbol: scenarioSymbols['historical'],
       },
-      customdata: customdataHistorical,
-      hovertemplate: `%{customdata[0]}, 1976-2005<br />${historicalHovertextLabel}: %{r:,} cf/s<extra></extra>`,
+    }
+    if (appContext.value === 'extremes' && scenario === 'rcp45') {
+      historicalTrace['subplot'] = 'polar2'
     }
 
     historicalTraces.push(historicalTrace)
@@ -110,10 +104,7 @@ const buildChart = () => {
       props.streamMaxFlowDates['projected']['2034-2065']['date']
     )
 
-    let customdataProjected: string[][] = []
     projectedDates.forEach((doy: number, index: number) => {
-      let dayString = doyToDateString(doy)
-      customdataProjected.push([dayString])
       projectedDates[index] = convertTo360(doy)
     })
 
@@ -134,8 +125,6 @@ const buildChart = () => {
         color: scenarioColor,
         symbol: scenarioSymbol,
       },
-      customdata: customdataProjected,
-      hovertemplate: `%{customdata[0]}, 2034-2065<br />${projectedHovertextLabel}: %{r:,} cf/s<extra></extra>`,
     }
 
     trace['subplot'] = 'polar'
