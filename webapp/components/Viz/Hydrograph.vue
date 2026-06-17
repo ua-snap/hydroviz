@@ -17,6 +17,8 @@ import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
 let { appContext, appEra } = storeToRefs(streamSegmentStore)
 
+let isAlaskaData = false
+
 onMounted(() => {
   initializeChart(
     $Plotly,
@@ -99,16 +101,184 @@ function processLowessAndHydroYear(traceData) {
   return hydroOrderedSmoothedY
 }
 
+function processProjectedAlaskaData(hg, traces: Data[]) {
+  let projectedFlowData = hg['projected']['2034-2065']
+
+  let hydroYearProjectedMeanMax = processLowessAndHydroYear(
+    projectedFlowData['doy_mean_max']
+  )
+
+  let hydroYearProjectedMeanMin = processLowessAndHydroYear(
+    projectedFlowData['doy_mean_min']
+  )
+
+  let meanMinTrace = {
+    x: hydroDoys,
+    y: hydroYearProjectedMeanMin,
+    type: 'scatter',
+    mode: 'line',
+    line: { color: scenarioColors['historical'].fill, width: 0 },
+    fillcolor: scenarioColors['rcp60'].fill,
+    showlegend: false,
+  }
+
+  let meanMaxTrace = {
+    x: hydroDoys,
+    y: hydroYearProjectedMeanMax,
+    type: 'scatter',
+    fill: 'tonexty',
+    line: { color: scenarioColors['historical'].fill, width: 0 },
+    fillcolor: scenarioColors['rcp60'].fill,
+    name: 'Minimum/maximum of model means',
+  }
+
+  traces.push(meanMinTrace)
+  traces.push(meanMaxTrace)
+
+  let traceConfig = {
+    doy_min_min: {
+      label: 'Minimum projected',
+    },
+    doy_mean_mean: {
+      label: 'Mean projected',
+    },
+    doy_max_max: {
+      label: 'Maximum projected',
+    },
+  }
+
+  Object.keys(traceConfig).forEach(key => {
+    let traceData = projectedFlowData[key]
+    let traceName = traceConfig[key].label
+
+    let hydroOrderedSmoothedY = processLowessAndHydroYear(traceData)
+    let trace = {
+      x: hydroDoys,
+      y: hydroOrderedSmoothedY,
+      type: 'scatter',
+      mode: 'lines',
+      line: {
+        shape: 'spline',
+        color: scenarioColors['rcp60'][key],
+      },
+      name: traceName,
+    }
+    traces.push(trace)
+  })
+}
+
+function processProjectedConusData(
+  hg,
+  scenarios: string[],
+  traces: Data[],
+  traces2: Data[]
+) {
+  const isExtremesContext = appContext.value === 'extremes'
+
+  scenarios.forEach(scenario => {
+    let projectedFlowData = hg['projected'][appEra.value][scenario]
+
+    let hydroYearProjectedMeanMax = processLowessAndHydroYear(
+      projectedFlowData['doy_mean_max']
+    )
+
+    let hydroYearProjectedMeanMin = processLowessAndHydroYear(
+      projectedFlowData['doy_mean_min']
+    )
+
+    let meanMinTrace = {
+      x: hydroDoys,
+      y: hydroYearProjectedMeanMin,
+      type: 'scatter',
+      mode: 'line',
+      line: { color: scenarioColors['historical'].fill, width: 0 },
+      fillcolor: scenarioColors[scenario].fill,
+      showlegend: false,
+    }
+
+    let meanMaxTrace = {
+      x: hydroDoys,
+      y: hydroYearProjectedMeanMax,
+      type: 'scatter',
+      fill: 'tonexty',
+      line: { color: scenarioColors['historical'].fill, width: 0 },
+      fillcolor: scenarioColors[scenario].fill,
+      name: 'Minimum/maximum of model means',
+    }
+
+    if (isExtremesContext) {
+      if (scenario === 'rcp45') {
+        traces.push(meanMinTrace)
+        traces.push(meanMaxTrace)
+      } else {
+        traces2.push(meanMinTrace)
+        traces2.push(meanMaxTrace)
+      }
+    } else {
+      traces.push(meanMinTrace)
+      traces.push(meanMaxTrace)
+    }
+  })
+
+  let traceConfig = {
+    doy_min_min: {
+      label: 'Minimum projected',
+    },
+    doy_mean_mean: {
+      label: 'Mean projected',
+    },
+    doy_max_max: {
+      label: 'Maximum projected',
+    },
+  }
+
+  scenarios.forEach(scenario => {
+    let projectedFlowData = hg['projected'][appEra.value][scenario]
+
+    Object.keys(traceConfig).forEach(key => {
+      let traceData = projectedFlowData[key]
+      let traceName = traceConfig[key].label
+
+      let hydroOrderedSmoothedY = processLowessAndHydroYear(traceData)
+      let trace = {
+        x: hydroDoys,
+        y: hydroOrderedSmoothedY,
+        type: 'scatter',
+        mode: 'lines',
+        line: {
+          shape: 'spline',
+          color: scenarioColors[scenario][key],
+        },
+        name: traceName,
+      }
+      if (isExtremesContext) {
+        if (scenario === 'rcp45') {
+          traces.push(trace)
+        } else {
+          traces2.push(trace)
+        }
+      } else {
+        traces.push(trace)
+      }
+    })
+  })
+}
+
 // hg is assumed to be non-null, raw, and only dynamic land cover now.
 const buildChart = hg => {
   let traces: Data[] = []
   let traces2: Data[] = []
 
-  let scenarios: string[]
-  if (appContext.value === 'mid') {
-    scenarios = ['rcp60']
-  } else {
-    scenarios = ['rcp85', 'rcp45']
+  // Check if this is Alaska data (no projected scenarios)
+  isAlaskaData = !hg['projected'][appEra.value]
+
+  let scenarios: string[] = []
+  if (!isAlaskaData) {
+    if (appContext.value === 'mid') {
+      scenarios = ['rcp60']
+    } else {
+      scenarios = ['rcp85', 'rcp45']
+    }
   }
 
   // Create historical trace
@@ -157,99 +327,18 @@ const buildChart = hg => {
   traces.push(historicalMaxTrace)
   traces.push(historicalMeanTrace)
 
-  if (appContext.value === 'extremes') {
+  if (appContext.value === 'extremes' && !isAlaskaData) {
     traces2.push(historicalMinTrace)
     traces2.push(historicalMaxTrace)
     traces2.push(historicalMeanTrace)
   }
 
-  scenarios.forEach(scenario => {
-    let projectedFlowData = hg['projected'][appEra.value][scenario]
-
-    let hydroYearProjectedMeanMax = processLowessAndHydroYear(
-      projectedFlowData['doy_mean_max']
-    )
-
-    let hydroYearProjectedMeanMin = processLowessAndHydroYear(
-      projectedFlowData['doy_mean_min']
-    )
-
-    let meanMinTrace = {
-      x: hydroDoys,
-      y: hydroYearProjectedMeanMin,
-      type: 'scatter',
-      mode: 'line',
-      line: { color: scenarioColors['historical'].fill, width: 0 },
-      fillcolor: scenarioColors[scenario].fill,
-      showlegend: false,
-    }
-
-    let meanMaxTrace = {
-      x: hydroDoys,
-      y: hydroYearProjectedMeanMax,
-      type: 'scatter',
-      fill: 'tonexty',
-      line: { color: scenarioColors['historical'].fill, width: 0 },
-      fillcolor: scenarioColors[scenario].fill,
-      name: 'Minimum/maximum of model means',
-    }
-
-    if (appContext.value === 'extremes') {
-      if (scenario === 'rcp45') {
-        traces.push(meanMinTrace)
-        traces.push(meanMaxTrace)
-      } else {
-        traces2.push(meanMinTrace)
-        traces2.push(meanMaxTrace)
-      }
-    } else {
-      traces.push(meanMinTrace)
-      traces.push(meanMaxTrace)
-    }
-  })
-
-  let traceConfig = {
-    doy_min_min: {
-      label: 'Minimum projected',
-    },
-    doy_mean_mean: {
-      label: 'Mean projected',
-    },
-    doy_max_max: {
-      label: 'Maximum projected',
-    },
+  // Only add projected data for CONUS (non-Alaska) data
+  if (isAlaskaData) {
+    processProjectedAlaskaData(hg, traces)
+  } else {
+    processProjectedConusData(hg, scenarios, traces, traces2)
   }
-
-  scenarios.forEach(scenario => {
-    let projectedFlowData = hg['projected'][appEra.value][scenario]
-
-    Object.keys(traceConfig).forEach(key => {
-      let traceData = projectedFlowData[key]
-      let traceName = traceConfig[key].label
-
-      let hydroOrderedSmoothedY = processLowessAndHydroYear(traceData)
-      let trace = {
-        x: hydroDoys,
-        y: hydroOrderedSmoothedY,
-        type: 'scatter',
-        mode: 'lines',
-        line: {
-          shape: 'spline',
-          color: scenarioColors[scenario][key],
-        },
-        name: traceName,
-      }
-      if (appContext.value === 'extremes') {
-        if (scenario === 'rcp45') {
-          traces.push(trace)
-        } else {
-          traces2.push(trace)
-        }
-      } else {
-        traces.push(trace)
-      }
-    })
-  })
 
   // These numbers correspond to the 1st of each month in a 366-day year,
   // oriented by the hydro year.
@@ -260,16 +349,21 @@ const buildChart = hg => {
 
   let scenarioLabel: string
   let scenarioLabel2: string
+  let titleText: string
 
-  if (appContext.value === 'mid') {
-    scenarioLabel = scenarioLabels['rcp60']
+  if (isAlaskaData) {
+    titleText = 'Historical modeled flow rate, 2034-2065'
   } else {
-    scenarioLabel = scenarioLabels['rcp45']
-    scenarioLabel2 = scenarioLabels['rcp85']
-  }
+    if (appContext.value === 'mid') {
+      scenarioLabel = scenarioLabels['rcp60']
+    } else {
+      scenarioLabel = scenarioLabels['rcp45']
+      scenarioLabel2 = scenarioLabels['rcp85']
+    }
 
-  let titleBase = `Modeled flow rate, ${appEra.value}`
-  let titleText = `${titleBase}, ${scenarioLabel}`
+    let titleBase = `Modeled flow rate, ${appEra.value}`
+    titleText = `${titleBase}, ${scenarioLabel}`
+  }
 
   let yAxisLabel = 'Flow rate, cf/s'
 
@@ -317,8 +411,9 @@ const buildChart = hg => {
 
   $Plotly.newPlot('hydrograph', traces, layout, config)
 
-  if (appContext.value === 'extremes') {
+  if (!isAlaskaData && appContext.value === 'extremes') {
     let scenarioLabel2 = scenarioLabels['rcp85']
+    let titleBase = `Modeled flow rate, ${appEra.value}`
     let titleText2 = `${titleBase}, ${scenarioLabel2}`
     let layout2 = getLayout(
       titleText2,
@@ -334,8 +429,8 @@ const buildChart = hg => {
 
 <template>
   <div id="hydrograph"></div>
-  <div v-if="appContext === 'extremes'" class="mt-6"></div>
-  <div id="hydrograph2"></div>
+  <div v-if="appContext === 'extremes' && !isAlaskaData" class="mt-6"></div>
+  <div v-if="!isAlaskaData" id="hydrograph2"></div>
 </template>
 
 <style lang="scss" scoped></style>
