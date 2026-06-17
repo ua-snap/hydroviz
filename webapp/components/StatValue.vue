@@ -5,6 +5,7 @@ import { computed } from 'vue'
 const props = defineProps<{
   value: string | null
   past?: string | null
+  statId?: string | undefined
 }>()
 
 const value = computed<number | null>(() => {
@@ -32,6 +33,11 @@ const formattedValue = computed(() => {
 <template>
   <span>
     <span class="number">{{ formattedValue }}</span>
-    <Diff v-if="past !== null && value !== null" :past="past" :future="value" />
+    <Diff
+      v-if="past !== null && value !== null"
+      :past="past"
+      :future="value"
+      :statId="props.statId"
+    />
   </span>
 </template>
