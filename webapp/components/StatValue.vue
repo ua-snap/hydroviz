@@ -3,8 +3,8 @@ import { fnc, roundSigFig } from '~/utils/general'
 import { computed } from 'vue'
 
 const props = defineProps<{
-  value: string | null
-  past?: string | null
+  value: string | number | null
+  past?: string | number | null
   statId?: string | undefined
 }>()
 
