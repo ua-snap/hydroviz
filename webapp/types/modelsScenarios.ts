@@ -47,7 +47,7 @@ export const scenarios: Record<Scenario, string> = {
 }
 
 export const scenarioFullNames: Record<Scenario, string> = {
-  rcp45: 'Stabilizing (RCP 4.5)',
+  rcp45: 'Stabilizing Emissions (RCP 4.5)',
   rcp60: 'Stabilizing High Emissions (RCP 6.0)',
   rcp85: 'Increasing Emissions (RCP 8.5)',
 }

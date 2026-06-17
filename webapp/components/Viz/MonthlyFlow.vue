@@ -8,6 +8,7 @@ import {
 } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
+import { scenarioFullNames } from '~/types/modelsScenarios'
 
 const props = defineProps(['streamMonthlyFlow'])
 
@@ -148,12 +149,6 @@ const buildChart = () => {
       showLegend = false
     })
   } else {
-    let scenarioLabels = {
-      rcp45: 'Stabilizing Emissions (RCP 4.5)',
-      rcp60: 'Stabilizing High Emissions (RCP 6.0)',
-      rcp85: 'Increasing Emissions (RCP 8.5)',
-    }
-
     scenarios.forEach(scenario => {
       let projectedFlowData =
         props.streamMonthlyFlow['projected'][appEra.value][scenario]
@@ -173,7 +168,7 @@ const buildChart = () => {
           x0: xTickVals[idx],
           y: projectedFlowData[monthKey],
           type: 'box',
-          name: `Projected, ${scenarioLabels[scenario]}`,
+          name: `Projected, ${scenarioFullNames[scenario]}`,
           marker: { color: scenarioColors[scenario].stroke, size: 8 },
           line: { color: scenarioColors[scenario].stroke, width: 1.5 },
           fillcolor: scenarioColors[scenario].fill,

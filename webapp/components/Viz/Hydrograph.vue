@@ -10,6 +10,7 @@ import {
 } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
+import { scenarioFullNames } from '~/types/modelsScenarios'
 
 const props = defineProps(['streamHydrograph'])
 
@@ -39,12 +40,6 @@ watch([appContext, appEra], () => {
     toRaw(props.streamHydrograph)
   )
 })
-
-let scenarioLabels = {
-  rcp45: 'Stabilizing Emissions (RCP 4.5)',
-  rcp60: 'Stabilizing High Emissions (RCP 6.0)',
-  rcp85: 'Increasing Emissions (RCP 8.5)',
-}
 
 let scenarioColors = {
   historical: { fill: '#bebebe80' },
@@ -355,10 +350,10 @@ const buildChart = hg => {
     titleText = 'Historical modeled flow rate, 2034-2065'
   } else {
     if (appContext.value === 'mid') {
-      scenarioLabel = scenarioLabels['rcp60']
+      scenarioLabel = scenarioFullNames['rcp60']
     } else {
-      scenarioLabel = scenarioLabels['rcp45']
-      scenarioLabel2 = scenarioLabels['rcp85']
+      scenarioLabel = scenarioFullNames['rcp45']
+      scenarioLabel2 = scenarioFullNames['rcp85']
     }
 
     let titleBase = `Modeled flow rate, ${appEra.value}`
@@ -412,7 +407,7 @@ const buildChart = hg => {
   $Plotly.newPlot('hydrograph', traces, layout, config)
 
   if (!isAlaskaData && appContext.value === 'extremes') {
-    let scenarioLabel2 = scenarioLabels['rcp85']
+    let scenarioLabel2 = scenarioFullNames['rcp85']
     let titleBase = `Modeled flow rate, ${appEra.value}`
     let titleText2 = `${titleBase}, ${scenarioLabel2}`
     let layout2 = getLayout(
