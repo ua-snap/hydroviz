@@ -155,6 +155,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
 
   const clearStats = (): void => {
     segmentId.value = null
+    segmentRegion.value = null
     segmentName.value = null
     streamSummary.value = null
     streamHydrograph.value = null
