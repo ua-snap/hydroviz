@@ -14,7 +14,6 @@ const lowFlow = computed(() => {
 const USGS_STREAM_GAUGE_URL_BASE =
   'https://waterdata.usgs.gov/monitoring-location/'
 </script>
-http://localhost:3000/conus/huc/17110009
 <template>
   <div class="content clamp is-size-5">
     <p>
