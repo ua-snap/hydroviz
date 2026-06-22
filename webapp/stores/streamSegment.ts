@@ -9,6 +9,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const segmentId = ref(null)
   const segmentRegion = ref(null)
   const segmentName = ref(null)
+  const gaugeId = ref(null)
   const hucId = ref(null)
   const streamSummary = shallowRef(null)
   const streamHydrograph = shallowRef(null)
@@ -77,6 +78,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     // BUG: this causes the front end render to fail because
     // it still tries to render the chart (!)
     segmentName.value = null
+    gaugeId.value = null
     streamSummary.value = null
     streamHydrograph.value = null
     streamMonthlyFlow.value = null
@@ -143,6 +145,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
 
     try {
       segmentName.value = dataResponse['name']
+      gaugeId.value = dataResponse['gauge_id']
       streamSummary.value = dataResponse['summary']
       streamHydrograph.value = dataResponse['hydrograph']
       streamMonthlyFlow.value = dataResponse['monthly_flow']
@@ -156,6 +159,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const clearStats = (): void => {
     segmentId.value = null
     segmentName.value = null
+    gaugeId.value = null
     streamSummary.value = null
     streamHydrograph.value = null
     streamMonthlyFlow.value = null
@@ -168,6 +172,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     segmentId,
     segmentRegion: segmentRegion,
     segmentName,
+    gaugeId,
     streamSummary,
     streamHydrograph,
     streamMonthlyFlow,
