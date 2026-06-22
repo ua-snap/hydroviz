@@ -20,7 +20,8 @@ const USGS_STREAM_GAUGE_URL_BASE =
       This stream segment is
       <span v-if="segmentIsHuc8Outlet">an outflow segment for</span
       ><span v-else>located in</span> the
-      <NuxtLink :to="{ path: `/conus/huc/${segmentHuc8Id}` }"
+      <NuxtLink
+        :to="{ path: `/${streamSegmentStore.segmentRegion}/huc/${segmentHuc8Id}` }"
         >{{ huc8s[segmentHuc8Id] }} watershed</NuxtLink
       >
       (HUC-8 {{ segmentHuc8Id }}).
