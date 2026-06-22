@@ -145,7 +145,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
       streamStats.value = dataResponse['stats']
       segmentUsgsGaugeId.value = dataResponse['gauge_id']
       segmentHuc8Id.value = dataResponse['huc8']
-      segmentIsHuc8Outlet.value = true
+      segmentIsHuc8Outlet.value = dataResponse['h8_outlet']
     } catch {
       console.error('API response does not contain expected data.')
     }

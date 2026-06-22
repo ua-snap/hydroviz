@@ -8,16 +8,11 @@ let { segmentUsgsGaugeId, segmentHuc8Id, streamSummary, segmentIsHuc8Outlet } =
   storeToRefs(streamSegmentStore)
 
 const lowFlow = computed(() => {
-  return true
-  // return streamSummary.value.ma99_hist.value <= 5
+  return streamSummary.value.ma99_hist.value <= 5
 })
 
 const USGS_STREAM_GAUGE_URL_BASE =
   'https://waterdata.usgs.gov/monitoring-location/'
-
-function hasUsgsStreamGage() {
-  if (segmentUsgsGaugeId != '') return true
-}
 </script>
 http://localhost:3000/conus/huc/17110009
 <template>
