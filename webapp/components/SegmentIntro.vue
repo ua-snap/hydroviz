@@ -39,6 +39,10 @@ http://localhost:3000/conus/huc/17110009
       variability. Charts and visualizations may look strange for this stream
       segment.
     </p>
+    <p>
+      All data in this report can be downloaded in CSV and other formats
+      <NuxtLink to="#get-and-use">at the bottom of this page</NuxtLink>.
+    </p>
   </div>
 </template>
 
