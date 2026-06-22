@@ -7,6 +7,9 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const apiFailed = ref<boolean>(false)
 
   const segmentId = ref(null)
+  const segmentUsgsGaugeId = ref(null)
+  const segmentHuc8Id = ref(null)
+  const segmentIsHuc8Outlet = ref(null)
   const segmentRegion = ref(null)
   const segmentName = ref(null)
   const hucId = ref(null)
@@ -74,14 +77,6 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   }
 
   const fetchStreamStats = async (): Promise<void> => {
-    // BUG: this causes the front end render to fail because
-    // it still tries to render the chart (!)
-    segmentName.value = null
-    streamSummary.value = null
-    streamHydrograph.value = null
-    streamMonthlyFlow.value = null
-    streamMaxFlowDates.value = null
-    streamStats.value = null
     var dataResponse
 
     let dataUrl: string
@@ -148,6 +143,9 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
       streamMonthlyFlow.value = dataResponse['monthly_flow']
       streamMaxFlowDates.value = dataResponse['max_flow_dates']
       streamStats.value = dataResponse['stats']
+      segmentUsgsGaugeId.value = dataResponse['gauge_id']
+      segmentHuc8Id.value = dataResponse['huc8']
+      segmentIsHuc8Outlet.value = true
     } catch {
       console.error('API response does not contain expected data.')
     }
@@ -156,6 +154,9 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const clearStats = (): void => {
     segmentId.value = null
     segmentRegion.value = null
+    segmentUsgsGaugeId.value = null
+    segmentHuc8Id.value = null
+    segmentIsHuc8Outlet.value = null
     segmentName.value = null
     streamSummary.value = null
     streamHydrograph.value = null
@@ -167,6 +168,9 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
 
   return {
     segmentId,
+    segmentUsgsGaugeId,
+    segmentHuc8Id,
+    segmentIsHuc8Outlet,
     segmentRegion: segmentRegion,
     segmentName,
     streamSummary,
