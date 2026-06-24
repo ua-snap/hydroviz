@@ -6,10 +6,10 @@ export const fnc = (number: number): string => {
 // round to sig)nificant fig)ures
 export const roundSigFig = (number: number): number => {
   let precision = 3
-  if (number > 100000) {
+  if (Math.abs(number) > 100000) {
     precision = 4
   }
-  if (number < 100) {
+  if (Math.abs(number) < 100) {
     precision = 2
   }
 
