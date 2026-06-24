@@ -53,13 +53,14 @@ let hucSelectZoom: number
 let segmentSelectZoom: number
 
 if (region === 'alaska') {
-  defaultViewZoom = 0
-  hucSelectZoom = 4
-  segmentSelectZoom = 8
+  defaultViewZoom = 0 // phase 0
+  hucSelectZoom = 4 // phase 1
+  segmentSelectZoom = 8 // phase 2
 } else {
+  // conus
   defaultViewZoom = 4
   hucSelectZoom = 7
-  segmentSelectZoom = 9
+  segmentSelectZoom = 10
 }
 
 // Query param keys per region for phase + HUC + center tracking.
@@ -452,7 +453,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div :id="config.mapId" style="height: 500px"></div>
+  <div :id="config.mapId" style="height: 80vh; min-height: 500px"></div>
 </template>
 
 <style lang="scss">
