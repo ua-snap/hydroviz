@@ -90,10 +90,6 @@ const isMax1DayFlowHighlyVariable = computed(() => {
   )
 })
 
-const lowFlow = computed(() => {
-  return streamSummary.value.ma99_hist.value <= 5
-})
-
 const sculptedMeanAnnualFlow = computed(() => {
   if (streamSummary.value.ma99_hist.value == 0) {
     return 'less than 1'
@@ -111,11 +107,6 @@ function orMoreIf100Percent(amount: number): string {
 
 <template>
   <div class="content clamp is-size-5">
-    <p v-if="lowFlow">
-      <strong>Note: this stream segment has a low mean annual flow.</strong>
-      Headwaters and other small or intermittent streams have high statistical
-      variability.
-    </p>
     <ul>
       <li>
         Historically, this stream has a mean annual flow

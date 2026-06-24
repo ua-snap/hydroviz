@@ -36,6 +36,7 @@ onUnmounted(() => {
           Statistics for {{ segmentName }}
           <span class="segmentId">ID{{ segmentId }}</span>
         </h3>
+        <SegmentIntro />
         <ReportMap class="my-6" />
         <DataSentences />
       </div>
