@@ -102,9 +102,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
           )
         } else {
           dataResponse = await import(
-            // TEMP FOR TESTING
-            // '@/assets/fixtures/conus_output_example.json'
-            '@/assets/fixtures/test-roundSigFig-fixture-DELETE.json'
+            '@/assets/fixtures/conus_output_example.json'
           )
         }
       } else {
