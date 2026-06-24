@@ -25,7 +25,7 @@ export const getConfig = (filename: string): Partial<Config> => {
 
 const getFooterCredits = (isAlaskaData: boolean): string => {
   if (isAlaskaData) {
-    return 'Data provided by Dylan Blaskey, Keith Musselman, Andrew Newman, & Yifan Cheng. (2024). doi:10.18739/A25M62870'
+    return 'Data provided by Dylan Blaskey, Keith Musselman, Andrew Newman, &amp; Yifan Cheng. (2024). doi:10.18739/A25M62870'
   } else {
     return (
       'Historical data provided by U.S. Geological Survey National Water Information System. doi:10.5066/F7P55KJN<br>' +
