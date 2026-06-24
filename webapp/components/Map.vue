@@ -85,8 +85,13 @@ const syncMapPositionToUrl = () => {
   const query: Record<string, string> = {
     ...safeQuery(),
     [paramKeys.phase]: String(newPhase),
-    [paramKeys.lat]: center.lat.toFixed(5),
-    [paramKeys.lng]: center.lng.toFixed(5),
+  }
+  if (newPhase >= MapPhase.WmsHuc) {
+    query[paramKeys.lat] = center.lat.toFixed(5)
+    query[paramKeys.lng] = center.lng.toFixed(5)
+  } else {
+    delete query[paramKeys.lat]
+    delete query[paramKeys.lng]
   }
   if (newPhase < MapPhase.HucSelected) delete query[paramKeys.huc]
 
