@@ -4,8 +4,13 @@ import { huc8s } from '~/assets/huc8names'
 
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { segmentUsgsGaugeId, segmentHuc8Id, streamSummary, segmentIsHuc8Outlet } =
-  storeToRefs(streamSegmentStore)
+let {
+  segmentUsgsGaugeId,
+  hucId,
+  segmentHuc8Id,
+  streamSummary,
+  segmentIsHuc8Outlet,
+} = storeToRefs(streamSegmentStore)
 
 const lowFlow = computed(() => {
   return streamSummary.value.ma99_hist.value <= 5
@@ -20,10 +25,15 @@ const USGS_STREAM_GAUGE_URL_BASE =
       This stream segment is
       <span v-if="segmentIsHuc8Outlet">an outflow segment for</span
       ><span v-else>located in</span> the
-      <NuxtLink
-        :to="{ path: `/${streamSegmentStore.segmentRegion}/huc/${segmentHuc8Id}` }"
-        >{{ huc8s[segmentHuc8Id] }} watershed</NuxtLink
-      >
+      <span v-if="hucId"> {{ huc8s[segmentHuc8Id] }} watershed </span>
+      <span v-else>
+        <NuxtLink
+          :to="{
+            path: `/${streamSegmentStore.segmentRegion}/huc/${segmentHuc8Id}`,
+          }"
+          >{{ huc8s[segmentHuc8Id] }} watershed</NuxtLink
+        >
+      </span>
       (HUC-8 {{ segmentHuc8Id }}).
     </p>
     <p v-if="segmentUsgsGaugeId">
