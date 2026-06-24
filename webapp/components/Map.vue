@@ -1,6 +1,10 @@
 <script setup lang="ts">
 const { $L, $config } = useNuxtApp()
 import { fetchAndAddSegmentsByBounds, clearSegmentLayers } from '~/utils/map'
+import { MapPhase, ALL_MAP_PARAMS } from '~/types/map'
+
+const route = useRoute()
+const router = useRouter()
 
 const props = defineProps<{
   region?: 'conus' | 'alaska'
@@ -43,6 +47,65 @@ const regionConfig = {
 
 const config = regionConfig[region]
 
+// Query param keys per region for phase + HUC tracking.
+const paramKeys = region === 'conus'
+  ? { phase: 'cp', huc: 'chuc', lat: 'clat', lng: 'clng' }
+  : { phase: 'ap', huc: 'ahuc', lat: 'alat', lng: 'alng' }
+
+
+// Returns only the known map params from the current route query, as plain strings.
+// This prevents stale, undefined, or array-valued keys from leaking into URL updates
+// when two Map instances (CONUS + Alaska) share the same route query object.
+const safeQuery = (): Record<string, string> => {
+  const q: Record<string, string> = {}
+  for (const key of ALL_MAP_PARAMS) {
+    const val = route.query[key]
+    if (typeof val === 'string') q[key] = val
+  }
+  return q
+}
+
+const getInitialView = (): { center: [number, number]; zoom: number } => {
+  return { center: config.defaultCenter, zoom: config.defaultZoom }
+}
+
+// Ascending to a higher phase pushes a new history entry.
+// Moving within or descending a phase replaces in-place.
+let currentPhase: MapPhase = MapPhase.Overview
+let hasUrlParams = !!route.query[paramKeys.phase]
+
+const syncMapPositionToUrl = () => {
+  const zoom = map.getZoom()
+  const center = map.getCenter()
+  const newPhase: MapPhase =
+    zoom < segmentWmsThreshold ? MapPhase.Overview :
+    zoom >= segViewThreshold   ? MapPhase.Segments :
+                                 MapPhase.WmsHuc
+
+  const query: Record<string, string> = {
+    ...safeQuery(),
+    [paramKeys.phase]: String(newPhase),
+    [paramKeys.lat]: center.lat.toFixed(5),
+    [paramKeys.lng]: center.lng.toFixed(5),
+  }
+  if (newPhase < MapPhase.HucSelected) delete query[paramKeys.huc]
+
+  if (newPhase > currentPhase) {
+    router.push({ query })
+  } else {
+    router.replace({ query })
+  }
+  currentPhase = newPhase
+  hasUrlParams = true
+}
+
+const setHucInUrl = (hucId: string) => {
+  const query = { ...safeQuery(), [paramKeys.huc]: hucId, [paramKeys.phase]: String(MapPhase.HucSelected) }
+  router.push({ query })
+  hasUrlParams = true
+  currentPhase = MapPhase.HucSelected
+}
+
 let segmentWmsThreshold: number
 let clickToZoomThreshold: number
 let hucSelectThreshold: number
@@ -75,8 +138,17 @@ let simplifiedHucLayer: any
 let detailedHucLayer: any
 
 const initializeMap = () => {
+  // Restore phase from URL when re-mounting after Back navigation so that
+  // the first pan/replace within the restored phase doesn't generate a spurious push.
+  const restoredPhase = parseInt(route.query[paramKeys.phase] as string)
+  if (!isNaN(restoredPhase) && restoredPhase in MapPhase) {
+    currentPhase = restoredPhase as MapPhase
+    hasUrlParams = true
+  }
+
   const mapOptions: any = {
     scrollWheelZoom: false,
+    zoomControl: false,
     zoomSnap: 0.1,
     minZoom: config.minZoom,
     maxZoom: config.maxZoom,
@@ -98,9 +170,10 @@ const initializeMap = () => {
     mapOptions.crs = proj
   }
 
+  const initialView = getInitialView()
   map = $L
     .map(config.mapId, mapOptions)
-    .setView(config.defaultCenter, config.defaultZoom)
+    .setView(initialView.center, initialView.zoom)
 
   if (config.mapId === 'map-conus') {
     $L.tileLayer(
@@ -177,6 +250,7 @@ const initializeMap = () => {
   }
 
   map.on('zoomend', function () {
+    syncMapPositionToUrl()
     let zoomLevel = map.getZoom()
     let segViewThresholdOffset = 0
 
@@ -240,6 +314,7 @@ const initializeMap = () => {
   })
 
   map.on('moveend', function () {
+    syncMapPositionToUrl()
     if (map.getZoom() >= segViewThreshold || hucBasedGeoJson) {
       fetchAndAddSegmentsByBounds({
         map,
@@ -250,6 +325,11 @@ const initializeMap = () => {
       })
     }
   })
+
+  // Apply zoom-dependent layer state for the initial view, since setView()
+  // fires zoomend before the listener above is registered.
+  map.fire('zoomend')
+  map.fire('moveend')
 }
 
 const resetHUC = () => {
@@ -332,6 +412,8 @@ const hucFeatureHandler = (feature: any, layer: any) => {
       map.removeLayer(simplifiedHucsLayer)
     }
     if (feature.properties) {
+      const hucId = region === 'alaska' ? feature.properties.ID_2 : feature.properties.huc8
+      if (hucId) setHucInUrl(String(hucId))
       // Make the simplified HUC-8 visible when it is clicked.
       // It will be swapped with a high-vertex HUC-8 before zooming in.
       simplifiedHucLayer = $L
