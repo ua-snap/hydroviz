@@ -34,7 +34,7 @@ const getFooterCredits = (isAlaskaData: boolean): string => {
   }
 }
 
-// Keep plot area, footer position, and margins cosnsistent across chart types.
+// Keep plot area, footer position, and margins consistent across chart types.
 // For both web display and exported PNG images.
 const getLayoutPositions = (
   isTwoLineTitle: boolean,
