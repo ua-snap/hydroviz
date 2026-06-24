@@ -79,7 +79,7 @@ const syncMapPositionToUrl = () => {
   const center = map.getCenter()
   const newPhase: MapPhase =
     zoom < segmentWmsThreshold ? MapPhase.Overview :
-    zoom >= segViewThreshold   ? MapPhase.Segments :
+    zoom >= segViewThreshold   ? MapPhase.HucSelected :
                                  MapPhase.WmsHuc
 
   const query: Record<string, string> = {
@@ -343,6 +343,33 @@ const resetHUC = () => {
   }
   hucBasedGeoJson = false
 }
+
+// Restores map state when the user navigates back to a previous phase.
+// setView triggers zoomend which handles layer management automatically.
+const restoreToPhase = (phase: MapPhase) => {
+  currentPhase = phase
+  const lat = parseFloat(route.query[paramKeys.lat] as string)
+  const lng = parseFloat(route.query[paramKeys.lng] as string)
+
+  if (phase === MapPhase.Overview) {
+    resetHUC()
+    map.setView(config.defaultCenter, config.defaultZoom)
+  } else if (phase === MapPhase.WmsHuc) {
+    resetHUC()
+    const center: [number, number] = (!isNaN(lat) && !isNaN(lng))
+      ? [lat, lng]
+      : config.defaultCenter
+    map.setView(center, hucSelectThreshold)
+  }
+}
+
+watch(() => route.query[paramKeys.phase], (newVal, oldVal) => {
+  const newPhase = parseInt(newVal as string) as MapPhase
+  const oldPhase = parseInt(oldVal as string) as MapPhase
+  if (!isNaN(newPhase) && !isNaN(oldPhase) && newPhase < oldPhase) {
+    restoreToPhase(newPhase)
+  }
+})
 
 const addDetailedHucLayer = (data: any) => {
   let huc = data

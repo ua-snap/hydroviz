@@ -20,20 +20,16 @@
  *   The user can mouse over watersheds to see names and click one to advance to Phase 2.
  *
  * HucSelected (2)
- *   Same zoom range as WmsHuc, but the map has fitBounds'd to a single HUC-8.
- *   Layers: detailed HUC-8 boundary (GeoJSON) + segment WMS overlay.
+ *   The map has fitBounds'd to a single HUC-8. Covers both the initial HUC view and
+ *   zooming further in to see individual stream segments as GeoJSON.
+ *   Layers: detailed HUC-8 boundary (GeoJSON) + stream segments fetched by viewport bounds.
  *   The selected HUC id is encoded in the URL so Back restores this view exactly.
- *
- * Segments (3)
- *   CONUS zoom ≥ 8 / Alaska zoom ≥ 4
- *   Layers: individual stream segment GeoJSON fetched by viewport bounds.
- *   Clicking a segment navigates to the segment detail page.
+ *   Clicking a segment navigates away to the segment detail page (outside the phase model).
  */
 export enum MapPhase {
   Overview = 0,
   WmsHuc = 1,
   HucSelected = 2,
-  Segments = 3,
 }
 
 export const ALL_MAP_PARAMS = [
