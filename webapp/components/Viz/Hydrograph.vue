@@ -77,6 +77,24 @@ function convertDoysToHydroYearDoys(series) {
 const doys = $_.range(1, 366 + 1)
 const hydroDoys = convertDoysToHydroYearDoys(doys)
 
+function postprocessValues(traceData) {
+  let smoothedData = processLowessAndHydroYear(traceData)
+  let clampedData = clampTinyValues(smoothedData)
+  return clampedData
+}
+
+// Clamp any value below 1 to 1 to avoid issues with logarithmic y-axis.
+function clampTinyValues(traceData) {
+  let clampValue = 1
+  return traceData.map((val: number) => {
+    if (val < clampValue) {
+      return clampValue
+    } else {
+      return val
+    }
+  })
+}
+
 // Converts & LOWESS smooths a timeseries of Y values
 // Need to trick it so there's not discontinuity between day 366/1.
 function processLowessAndHydroYear(traceData) {
@@ -99,11 +117,11 @@ function processLowessAndHydroYear(traceData) {
 function processProjectedAlaskaData(hg, traces: Data[]) {
   let projectedFlowData = hg['projected']['2034-2065']
 
-  let hydroYearProjectedMeanMax = processLowessAndHydroYear(
+  let hydroYearProjectedMeanMax = postprocessValues(
     projectedFlowData['doy_mean_max']
   )
 
-  let hydroYearProjectedMeanMin = processLowessAndHydroYear(
+  let hydroYearProjectedMeanMin = postprocessValues(
     projectedFlowData['doy_mean_min']
   )
 
@@ -146,7 +164,7 @@ function processProjectedAlaskaData(hg, traces: Data[]) {
     let traceData = projectedFlowData[key]
     let traceName = traceConfig[key].label
 
-    let hydroOrderedSmoothedY = processLowessAndHydroYear(traceData)
+    let hydroOrderedSmoothedY = postprocessValues(traceData)
     let trace = {
       x: hydroDoys,
       y: hydroOrderedSmoothedY,
@@ -173,11 +191,11 @@ function processProjectedConusData(
   scenarios.forEach(scenario => {
     let projectedFlowData = hg['projected'][appEra.value][scenario]
 
-    let hydroYearProjectedMeanMax = processLowessAndHydroYear(
+    let hydroYearProjectedMeanMax = postprocessValues(
       projectedFlowData['doy_mean_max']
     )
 
-    let hydroYearProjectedMeanMin = processLowessAndHydroYear(
+    let hydroYearProjectedMeanMin = postprocessValues(
       projectedFlowData['doy_mean_min']
     )
 
@@ -234,7 +252,7 @@ function processProjectedConusData(
       let traceData = projectedFlowData[key]
       let traceName = traceConfig[key].label
 
-      let hydroOrderedSmoothedY = processLowessAndHydroYear(traceData)
+      let hydroOrderedSmoothedY = postprocessValues(traceData)
       let trace = {
         x: hydroDoys,
         y: hydroOrderedSmoothedY,
@@ -279,13 +297,13 @@ const buildChart = hg => {
   // Create historical trace
   let historicalFlowData = hg['historical']
 
-  let hydroYearHistoricalDataMin = processLowessAndHydroYear(
+  let hydroYearHistoricalDataMin = postprocessValues(
     historicalFlowData['doy_min']
   )
-  let hydroYearHistoricalDataMean = processLowessAndHydroYear(
+  let hydroYearHistoricalDataMean = postprocessValues(
     historicalFlowData['doy_mean']
   )
-  let hydroYearHistoricalDataMax = processLowessAndHydroYear(
+  let hydroYearHistoricalDataMax = postprocessValues(
     historicalFlowData['doy_max']
   )
 
@@ -376,9 +394,10 @@ const buildChart = hg => {
   // Min/max need to be logarithmic to work with Plotly.js log chart type.
   let { yMin, yMax } = getDataRange(hg)
 
-  // Log of 0 is undefined.
-  if (yMin <= 0) {
-    yMin = 0.001
+  // Set minimum possible y-axis range to 1.
+  // All values below 1 have been clamped to 1 already.
+  if (yMin < 1) {
+    yMin = 1
   }
 
   let yMinLog = Math.log10(yMin)
