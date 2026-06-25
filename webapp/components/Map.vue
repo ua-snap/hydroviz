@@ -1,7 +1,13 @@
 <script setup lang="ts">
 const { $L, $config } = useNuxtApp()
-import { fetchAndAddSegmentsByBounds, clearSegmentLayers } from '~/utils/map'
+import {
+  fetchAndAddSegmentsByBounds,
+  fetchSegmentsForBounds,
+  addSegmentsGeoJson,
+  clearSegmentLayers,
+} from '~/utils/map'
 import { MapPhase, ALL_MAP_PARAMS } from '~/types/map'
+import waterLoaderUrl from '@/assets/water-loader.svg'
 
 const route = useRoute()
 const router = useRouter()
@@ -112,6 +118,13 @@ let simplifiedHucs: any
 let currentPhase: MapPhase = MapPhase.Overview
 // Guards against redundant re-application of the same phase state.
 let lastAppliedKey = ''
+// Set while the Phase 2 swap moves the map itself, so the moveend handler does
+// not re-fetch segments that loadPhase2Data already added.
+let suppressMoveFetch = false
+
+// Drives the loading overlay shown during the Phase 1 -> Phase 2 transition,
+// covering both the HUC boundary fetch and the initial segment fetch.
+const isLoadingPhase2 = ref(false)
 
 const showLayer = (layer: any) => {
   if (layer && !map.hasLayer(layer)) map.addLayer(layer)
@@ -133,6 +146,7 @@ const hideLayer = (layer: any) => {
 // clicks advance the map to Phase 1.
 const enterPhase0 = () => {
   currentPhase = MapPhase.Overview
+  isLoadingPhase2.value = false
   hideLayer(detailedHucLayer)
   clearSegmentLayers(map)
   hideLayer(segWmsLayer)
@@ -147,6 +161,7 @@ const enterPhase0 = () => {
 // + segWmsLayer stream overlay. The perimeter is hidden.
 const enterPhase1 = (center: [number, number]) => {
   currentPhase = MapPhase.WmsHuc
+  isLoadingPhase2.value = false
   hideLayer(detailedHucLayer)
   clearSegmentLayers(map)
   hideLayer(perimeterLayer)
@@ -157,45 +172,107 @@ const enterPhase1 = (center: [number, number]) => {
 }
 
 // Phase 2 — HUC selected. Zoom is driven by fitBounds() to the selected HUC.
-// Layers: detailed HUC boundary + stream segment GeoJSON (fetched by viewport
-// bounds on moveend). All overview/WMS layers hidden.
+// Layers: detailed HUC boundary + stream segment GeoJSON. All overview/WMS
+// layers hidden. The Phase 1 view is left fully intact while the data loads;
+// loadPhase2Data swaps everything in atomically once it's ready.
 const enterPhase2 = (hucId: string) => {
   currentPhase = MapPhase.HucSelected
-  hideLayer(perimeterLayer)
-  hideLayer(hucWmsLayer)
-  hideLayer(segWmsLayer)
-  hideLayer(simplifiedHucsLayer)
-  clearSegmentLayers(map)
-  loadDetailedHuc(hucId)
+  isLoadingPhase2.value = true
+  loadPhase2Data(hucId)
 }
 
-// Fetches a HUC-8 boundary by id and draws it, then fitBounds() to it.
-// The resulting moveend triggers the Phase 2 segment fetch.
-const loadDetailedHuc = (hucId: string) => {
+const fetchHuc = async (hucId: string) => {
   const hucUrl =
     region === 'alaska'
       ? `${config.hucBaseUrl}&cql_filter=ID_2='${hucId}'`
       : `${config.hucBaseUrl}&cql_filter=huc8=${hucId}`
-  fetch(hucUrl)
-    .then(async r => {
-      if (!r.ok)
-        throw new Error(`Failed to fetch HUC ${hucId} (status ${r.status})`)
-      addDetailedHucLayer(await r.json())
-    })
-    .catch(err => console.error('Error loading HUC data:', err))
+  const r = await fetch(hucUrl)
+  if (!r.ok)
+    throw new Error(`Failed to fetch HUC ${hucId} (status ${r.status})`)
+  return r.json()
 }
 
-const addDetailedHucLayer = (data: any) => {
-  hideLayer(detailedHucLayer)
-  detailedHucLayer = $L
-    .geoJSON(data, {
-      style: { weight: 0, fillColor: '#111111', fillOpacity: 0.4 },
-    })
-    .addTo(map)
+// The Phase 2 zoom is pinned to segmentSelectZoom (clamped to the map's max).
+// fitBounds would otherwise zoom out to fit large HUCs, packing the stream
+// network too densely; this is also the value that caps zoom-in for small HUCs.
+const phase2Zoom = () => Math.min(segmentSelectZoom, map.getMaxZoom())
 
-  const bounds = detailedHucLayer.getBounds?.()
-  if (bounds?.isValid?.()) {
-    map.fitBounds(bounds, { padding: [50, 50], maxZoom: segmentSelectZoom })
+// Saved center from the URL ([lat, lng]), or null if absent/invalid. A fresh
+// HUC click clears these, so a present value means we are restoring a Phase 2
+// view (e.g. returning from a segment report after panning).
+const urlCenter = (): [number, number] | null => {
+  const lat = parseFloat(route.query[paramKeys.lat] as string)
+  const lng = parseFloat(route.query[paramKeys.lng] as string)
+  return !isNaN(lat) && !isNaN(lng) ? [lat, lng] : null
+}
+
+// Computes the lat/lng bounds the viewport WOULD show at a given center/zoom,
+// without moving the map — so segments are fetched for the same visible extent
+// before the atomic swap happens.
+const viewportBoundsAt = (center: any, zoom: number) => {
+  const half = map.getSize().divideBy(2)
+  const centerPx = map.project(center, zoom)
+  const sw = map.unproject(centerPx.add($L.point(-half.x, half.y)), zoom)
+  const ne = map.unproject(centerPx.add($L.point(half.x, -half.y)), zoom)
+  return $L.latLngBounds(sw, ne)
+}
+
+// Loads the HUC boundary and its segments BEFORE touching the visible map, then
+// swaps layers and moves the map in a single synchronous block. Because nothing
+// above the swap alters the map, the user sees the intact Phase 1 view (under the
+// loading overlay) until the fully-rendered Phase 2 view appears in one paint.
+const loadPhase2Data = async (hucId: string) => {
+  // Capture the saved center synchronously, before any await (or the onMounted
+  // updatePositionInUrl) can overwrite it. Present => restore a panned view;
+  // absent => fresh HUC click, so center on the HUC below.
+  const savedCenter = urlCenter()
+  try {
+    const hucData = await fetchHuc(hucId)
+    const bounds = $L.geoJSON(hucData).getBounds()
+    if (!bounds?.isValid?.()) throw new Error('HUC has no valid bounds')
+
+    const center = savedCenter ?? bounds.getCenter()
+    const zoom = phase2Zoom()
+
+    const segData = await fetchSegmentsForBounds({
+      bounds: viewportBoundsAt(center, zoom),
+      region,
+    })
+
+    // --- Atomic swap (no awaits below: a single render frame) ---
+    hideLayer(perimeterLayer)
+    hideLayer(hucWmsLayer)
+    hideLayer(segWmsLayer)
+    hideLayer(simplifiedHucsLayer)
+    hideLayer(detailedHucLayer)
+    clearSegmentLayers(map)
+
+    detailedHucLayer = $L
+      .geoJSON(hucData, {
+        style: { weight: 0, fillColor: '#111111', fillOpacity: 0.2 },
+      })
+      .addTo(map)
+
+    // Move to the Phase 2 view (saved center if restoring, else the HUC center).
+    // Suppress the moveend-driven refetch (consumed in the moveend handler, which
+    // also covers the animated case where moveend fires after this call returns)
+    // since the segments are added explicitly below.
+    suppressMoveFetch = true
+    map.setView(center, zoom, { animate: false })
+
+    addSegmentsGeoJson({
+      map,
+      $L,
+      data: segData,
+      selectedSegmentId: null,
+      fitBounds: false,
+      mapType: 'main',
+      mapRegion: region,
+    })
+  } catch (err) {
+    console.error('Error loading Phase 2 data:', err)
+  } finally {
+    isLoadingPhase2.value = false
   }
 }
 
@@ -290,14 +367,17 @@ const hucFeatureHandler = (feature: any, layer: any) => {
     const hucId =
       region === 'alaska' ? feature.properties.ID_2 : feature.properties.huc8
     if (!hucId) return
-    // Phase 1 -> Phase 2: push a new history entry for the selected HUC.
-    router.push({
-      query: {
-        ...safeQuery(),
-        [paramKeys.phase]: String(MapPhase.HucSelected),
-        [paramKeys.huc]: String(hucId),
-      },
-    })
+    // Phase 1 -> Phase 2: push a new history entry for the selected HUC. Clear
+    // the carried-over Phase 1 center so loadPhase2Data centers on the HUC; the
+    // map's own moveend then records the Phase 2 center for later restoration.
+    const query = {
+      ...safeQuery(),
+      [paramKeys.phase]: String(MapPhase.HucSelected),
+      [paramKeys.huc]: String(hucId),
+    }
+    delete query[paramKeys.lat]
+    delete query[paramKeys.lng]
+    router.push({ query })
   })
 }
 
@@ -415,6 +495,14 @@ const initializeMap = () => {
   // entirely by the phase functions.)
   map.on('moveend', function () {
     updatePositionInUrl()
+    // Skip the refetch for the programmatic Phase 2 move (loadPhase2Data adds the
+    // segments itself). Consume the flag here so it works whether moveend fires
+    // synchronously or after an animated move.
+    if (suppressMoveFetch) {
+      suppressMoveFetch = false
+      return
+    }
+    // Refresh segments for the new viewport when panning within Phase 2.
     if (currentPhase === MapPhase.HucSelected) {
       fetchAndAddSegmentsByBounds({
         map,
@@ -469,12 +557,40 @@ onMounted(() => {
 </script>
 
 <template>
-  <div :id="config.mapId" style="height: 80vh; min-height: 500px"></div>
+  <div class="map-wrapper" style="height: 80vh; min-height: 500px">
+    <div :id="config.mapId" style="height: 100%"></div>
+    <div v-if="isLoadingPhase2" class="map-loading-overlay">
+      <img :src="waterLoaderUrl" class="map-loading-icon" alt="" />
+      <p class="mt-3 has-text-white is-size-5">Loading stream network…</p>
+    </div>
+  </div>
 </template>
 
 <style lang="scss">
 .leaflet-interactive:focus,
 .leaflet-interactive:active {
   outline: none;
+}
+
+.map-wrapper {
+  position: relative;
+}
+
+.map-loading-overlay {
+  position: absolute;
+  inset: 0;
+  // Above Leaflet panes (max ~700) and controls (~1000).
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(128, 128, 128, 1);
+  pointer-events: all;
+}
+
+.map-loading-icon {
+  width: 6rem;
+  height: 6rem;
 }
 </style>
