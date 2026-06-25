@@ -302,9 +302,15 @@ const hucFeatureHandler = (feature: any, layer: any) => {
 }
 
 const initializeMap = () => {
+  // Zoom is owned entirely by the phase functions; the user may only pan and
+  // click. Disable every user-driven zoom interaction and the zoom control.
   const mapOptions: any = {
-    scrollWheelZoom: false,
     zoomControl: false,
+    scrollWheelZoom: false,
+    doubleClickZoom: false,
+    boxZoom: false,
+    touchZoom: false,
+    keyboard: false,
     zoomSnap: 0.1,
     minZoom: Math.min(config.minZoom, defaultViewZoom),
     maxZoom: config.maxZoom,
