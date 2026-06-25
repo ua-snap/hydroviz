@@ -1,4 +1,5 @@
 import type { Config, Layout } from 'plotly.js'
+import lowess from '@stdlib/stats-lowess'
 
 export const getConfig = (filename: string): Partial<Config> => ({
   responsive: true, // changes the height / width dynamically for charts
@@ -110,4 +111,57 @@ export const initializeChart = (
     buildChart(sourceData)
     window.dispatchEvent(new Event('resize'))
   }
+}
+
+// Shift a DOY-indexed dataset to hydro year (Oct 1 - Sept 30)
+export const convertDoysToHydroYearDoys = (series: number[]): number[] => {
+  let octDec = series.slice(273) // through end of array (366)
+  let janSept = series.slice(0, 273)
+  return octDec.concat(janSept)
+}
+
+// Round to significant digits.  Stub.
+function roundTo(num, sig = 3) {
+  return Number(num.toPrecision(sig))
+}
+
+// Converts & LOWESS smooths a timeseries of Y values
+// Need to trick it so there's not discontinuity between day 366/1.
+export const processLowessAndHydroYear = (
+  traceData: number[],
+  doys: number[]
+): number[] => {
+  let hydroYearTraceData = convertDoysToHydroYearDoys(traceData)
+
+  // Bit tricky: we index the day-of-year as 1...366 for the x-axis
+  // for the purpose of the lowess calculation, but the y-values represent
+  // the hydro-year shifted values.  This gives us the correct, smooth
+  // chart form.
+  let smoothed = lowess(doys, hydroYearTraceData, {
+    f: 0.05,
+    sorted: true,
+  })
+  let hydroOrderedSmoothedY = smoothed.y.map((value: number) => {
+    return roundTo(value)
+  })
+  return hydroOrderedSmoothedY
+}
+
+// Get offset x-tick values for monthly charts
+export const getOffsetXTickVals = (
+  xTickValOffsets: Record<string, number>,
+  scenario: string
+): number[] => {
+  const numMonths = 12
+  const xTickVals = Array.from({ length: numMonths }, (_, i) => i)
+  const offset: number = xTickValOffsets[scenario] ?? 0
+  const offsetXTickVals = xTickVals.map(tickVal => tickVal + offset)
+  return offsetXTickVals
+}
+
+// Convert day-of-year to 360-degree representation for polar charts
+// Values exceeding 360 cannot be plotted on a Plotly.js polarscatter chart.
+// So, slightly squeeze 366 calendar to a 360 degree representation.
+export const convertTo360 = (doy: number): number => {
+  return ((doy - 1) / 366) * 360
 }

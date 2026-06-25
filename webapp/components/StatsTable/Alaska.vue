@@ -2,11 +2,17 @@
 import { fnc, roundSigFig } from '~/utils/general'
 import { computed } from 'vue'
 
-import { streamflowStatistics } from '~/types/statsVars'
+import { statistics } from '~/types/statsVars'
 const { $_ } = useNuxtApp()
-const props = defineProps(['streamStats', 'category', 'tableTitle'])
+const props = defineProps(['streamStats', 'wtStats', 'category', 'tableTitle'])
 
-var statsInCategory = $_.filter(streamflowStatistics, {
+// Support both streamStats and wtStats props
+const statsData = computed(() => props.wtStats || props.streamStats)
+
+// Hide the statistic ID column for water temperature
+const showStatisticId = computed(() => props.category !== 'water_temperature')
+
+var statsInCategory = $_.filter(statistics, {
   category: props.category,
 })
 
@@ -16,23 +22,25 @@ const tableCaptionHtml = computed(() => {
 </script>
 
 <template>
-  <div v-if="streamStats" class="my-6">
+  <div v-if="statsData" class="my-6">
     <table class="table">
       <caption class="mb-4" v-html="tableCaptionHtml"></caption>
       <thead>
         <tr>
-          <th scope="col" width="10%">Statistic</th>
-          <th scope="col" width="30%">Description</th>
-          <th scope="col" width="20%">Units</th>
-          <th scope="col" width="20%">
+          <th v-if="showStatisticId" scope="col" width="10%">Statistic</th>
+          <th scope="col" :width="showStatisticId ? '30%' : '40%'">
+            Description
+          </th>
+          <th scope="col" :width="showStatisticId ? '20%' : '15%'">Units</th>
+          <th scope="col" :width="showStatisticId ? '20%' : '22.5%'">
             Modeled Historical<br />(1990&ndash;2021)
           </th>
-          <th scope="col" width="20%">Median</th>
+          <th scope="col" :width="showStatisticId ? '20%' : '22.5%'">Median</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="stat in statsInCategory" :key="stat.id">
-          <th scope="row">
+          <th v-if="showStatisticId" scope="row">
             <code>{{ stat.id }}</code>
           </th>
           <td v-html="stat.description"></td>
@@ -41,7 +49,7 @@ const tableCaptionHtml = computed(() => {
             <span class="number">{{
               fnc(
                 roundSigFig(
-                  Number(streamStats['historical']['1990-2021'][stat.id])
+                  Number(statsData['historical']['1990-2021'][stat.id])
                 )
               )
             }}</span>
@@ -51,9 +59,7 @@ const tableCaptionHtml = computed(() => {
               {{
                 fnc(
                   roundSigFig(
-                    Number(
-                      streamStats['projected']['2034-2065'][stat.id].median
-                    )
+                    Number(statsData['projected']['2034-2065'][stat.id].median)
                   )
                 )
               }}
@@ -61,12 +67,12 @@ const tableCaptionHtml = computed(() => {
             <Diff
               :past="
                 roundSigFig(
-                  Number(streamStats['historical']['1990-2021'][stat.id])
+                  Number(statsData['historical']['1990-2021'][stat.id])
                 )
               "
               :future="
                 roundSigFig(
-                  Number(streamStats['projected']['2034-2065'][stat.id].median)
+                  Number(statsData['projected']['2034-2065'][stat.id].median)
                 )
               "
             />

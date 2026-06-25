@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps(['streamStats', 'category', 'tableTitle'])
+const props = defineProps(['streamStats', 'wtStats', 'category', 'tableTitle'])
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
 let { segmentRegion } = storeToRefs(streamSegmentStore)
@@ -10,6 +10,7 @@ let region = segmentRegion.value === 'alaska' ? 'alaska' : 'conus'
   <StatsTableAlaska
     v-if="region === 'alaska'"
     :stream-stats="streamStats"
+    :wt-stats="wtStats"
     :category="category"
     :table-title="tableTitle"
   />

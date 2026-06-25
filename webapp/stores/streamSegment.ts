@@ -18,6 +18,10 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const streamMonthlyFlow = shallowRef(null)
   const streamMaxFlowDates = shallowRef(null)
   const streamStats = shallowRef(null)
+  const streamMonthlyTemperature = shallowRef(null)
+  const streamWtHydrograph = shallowRef(null)
+  const streamWtStats = shallowRef(null)
+  const streamMaxTempDates = shallowRef(null)
   const appContext = ref<AppContext>('mid')
   const appEra = ref<Era>('2046-2075')
   const { $config } = useNuxtApp()
@@ -143,6 +147,51 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
       streamMonthlyFlow.value = dataResponse['monthly_flow']
       streamMaxFlowDates.value = dataResponse['max_flow_dates']
       streamStats.value = dataResponse['stats']
+      streamWtHydrograph.value = dataResponse['wt_hydrograph']
+      streamWtStats.value = dataResponse['wt_stats']
+
+      // Use monthly_temperature field directly (has individual model arrays)
+      streamMonthlyTemperature.value = dataResponse['monthly_temperature']
+
+      // Check if API provides max_temp_dates (individual model values)
+      if (dataResponse['max_temp_dates']) {
+        streamMaxTempDates.value = dataResponse['max_temp_dates']
+      } else if (dataResponse['wt_stats']) {
+        // Fallback: use aggregated wt_stats data (only 3 values: min/median/max)
+        // TODO: API should provide individual model values like max_flow_dates does
+        const wtStats = dataResponse['wt_stats']
+        streamMaxTempDates.value = {
+          historical: {},
+          projected: {},
+        }
+
+        // Extract historical max temp and date
+        if (wtStats.historical && wtStats.historical['1990-2021']) {
+          const hist = wtStats.historical['1990-2021']
+          streamMaxTempDates.value.historical = {
+            temp: hist['wt_ann_max_temp_mean'],
+            date: hist['wt_ann_max_temp_doy_mean'],
+          }
+        }
+
+        // Extract projected max temp and date (only min/median/max available)
+        if (wtStats.projected && wtStats.projected['2034-2065']) {
+          const proj = wtStats.projected['2034-2065']
+          streamMaxTempDates.value.projected['2034-2065'] = {
+            temp: [
+              proj['wt_ann_max_temp_mean'].min,
+              proj['wt_ann_max_temp_mean'].median,
+              proj['wt_ann_max_temp_mean'].max,
+            ],
+            date: [
+              proj['wt_ann_max_temp_doy_mean'].min,
+              proj['wt_ann_max_temp_doy_mean'].median,
+              proj['wt_ann_max_temp_doy_mean'].max,
+            ],
+          }
+        }
+      }
+
       segmentUsgsGaugeId.value = dataResponse['gauge_id']
       segmentHuc8Id.value = dataResponse['huc8']
       segmentIsHuc8Outlet.value =
@@ -165,6 +214,10 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     streamMonthlyFlow.value = null
     streamMaxFlowDates.value = null
     streamStats.value = null
+    streamMonthlyTemperature.value = null
+    streamWtHydrograph.value = null
+    streamWtStats.value = null
+    streamMaxTempDates.value = null
     hucId.value = null
     isLoading.value = false
     apiSlow.value = false
@@ -180,6 +233,10 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     segmentName,
     streamSummary,
     streamHydrograph,
+    streamMonthlyTemperature,
+    streamWtHydrograph,
+    streamWtStats,
+    streamMaxTempDates,
     streamMonthlyFlow,
     streamMaxFlowDates,
     streamStats,

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { toRaw } from 'vue'
-import lowess from '@stdlib/stats-lowess'
 import { doyToDateString } from '~/utils/general'
 import {
   getLayout,
   getConfig,
   initializeChart,
   getDataRange,
+  convertDoysToHydroYearDoys,
+  processLowessAndHydroYear,
 } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
@@ -17,6 +18,9 @@ const props = defineProps(['streamHydrograph'])
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
 let { appContext, appEra } = storeToRefs(streamSegmentStore)
+
+const doys = $_.range(1, 366 + 1)
+const hydroDoys = convertDoysToHydroYearDoys(doys)
 
 let isAlaskaData = false
 
@@ -63,22 +67,8 @@ let scenarioColors = {
   },
 }
 
-// Round to significant digits.  Stub.
-function roundTo(num, sig = 3) {
-  return Number(num.toPrecision(sig))
-}
-
-// Shift a DOY-indexed dataset to hydro year (Oct 1 - Sept 30)
-function convertDoysToHydroYearDoys(series) {
-  let octDec = series.slice(273) // through end of array (366)
-  let janSept = series.slice(0, 273)
-  return octDec.concat(janSept)
-}
-const doys = $_.range(1, 366 + 1)
-const hydroDoys = convertDoysToHydroYearDoys(doys)
-
 function postprocessValues(traceData) {
-  let smoothedData = processLowessAndHydroYear(traceData)
+  let smoothedData = processLowessAndHydroYear(traceData, doys)
   let clampedData = clampTinyValues(smoothedData)
   return clampedData
 }
@@ -93,25 +83,6 @@ function clampTinyValues(traceData) {
       return val
     }
   })
-}
-
-// Converts & LOWESS smooths a timeseries of Y values
-// Need to trick it so there's not discontinuity between day 366/1.
-function processLowessAndHydroYear(traceData) {
-  let hydroYearTraceData = convertDoysToHydroYearDoys(traceData)
-
-  // Bit tricky: we index the day-of-year as 1...366 for the x-axis
-  // for the purpose of the lowess calculation, but the y-values represent
-  // the hydro-year shifted values.  This gives us the correct, smooth
-  // chart form.
-  let smoothed = lowess(doys, hydroYearTraceData, {
-    f: 0.05,
-    sorted: true,
-  })
-  let hydroOrderedSmoothedY = smoothed.y.map((cfm: number) => {
-    return roundTo(cfm)
-  })
-  return hydroOrderedSmoothedY
 }
 
 function processProjectedAlaskaData(hg, traces: Data[]) {

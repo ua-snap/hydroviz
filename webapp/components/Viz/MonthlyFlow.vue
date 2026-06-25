@@ -5,6 +5,7 @@ import {
   getConfig,
   initializeChart,
   getDataRange,
+  getOffsetXTickVals,
 } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
@@ -49,17 +50,6 @@ watch([appContext, appEra], () => {
   )
 })
 
-let xTickValOffsets: Record<string, number> = {}
-
-const getOffsetXTickVals = (scenario: string) => {
-  let xTickVals = $_.range(Object.values(monthLabels).length)
-  let offset = xTickValOffsets[scenario]
-  let offsetXTickVals = xTickVals.map(tickVal => {
-    return tickVal + offset
-  })
-  return offsetXTickVals
-}
-
 // stats is assumed to be non-null, raw, and only dynamic land cover now.
 const buildChart = () => {
   let traces: Data[] = []
@@ -73,6 +63,7 @@ const buildChart = () => {
     scenarios = ['rcp45', 'rcp85']
   }
 
+  let xTickValOffsets: Record<string, number> = {}
   if (appContext.value === 'mid') {
     xTickValOffsets = {
       historical: -0.11,
@@ -95,7 +86,7 @@ const buildChart = () => {
   })
 
   let historicalTrace = {
-    x: getOffsetXTickVals('historical'),
+    x: getOffsetXTickVals(xTickValOffsets, 'historical'),
     y: historicalFlowDataArray,
     type: 'scatter',
     mode: 'markers',
@@ -131,7 +122,7 @@ const buildChart = () => {
 
     // Alaska data doesn't have multiple scenarios, but use the same xTickVals
     // as CONUS rcp60 scenario (i.e., one diamond and one box plot per month).
-    let xTickVals = getOffsetXTickVals('rcp60')
+    let xTickVals = getOffsetXTickVals(xTickValOffsets, 'rcp60')
 
     Object.keys(monthLabels).forEach((monthKey, idx) => {
       let trace = {
@@ -153,7 +144,7 @@ const buildChart = () => {
       let projectedFlowData =
         props.streamMonthlyFlow['projected'][appEra.value][scenario]
 
-      let xTickVals = getOffsetXTickVals(scenario)
+      let xTickVals = getOffsetXTickVals(xTickValOffsets, scenario)
 
       let boxWidth: number
       if (appContext.value === 'extremes') {
