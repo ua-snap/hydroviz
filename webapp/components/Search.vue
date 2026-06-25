@@ -10,36 +10,16 @@ onMounted(() => {
       src: async (query: string) => {
         // Escape single quotes for safe use inside CQL string literals
         const safeQuery = query.replace(/'/g, "''")
-        const segUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_subset&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=seg_id_nat,GNIS_NAME,GAUGE_ID&cql_filter=GNIS_NAME%20ILIKE%20%27%25${safeQuery}%25%27%20OR%20GAUGE_ID%20ILIKE%20%27%25${safeQuery}%25%27`
         const hucUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8_conus_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=huc8,name&cql_filter=name%20ILIKE%20%27%25${safeQuery}%25%27%20OR%20huc8%20LIKE%20%27%25${safeQuery}%25%27`
         const alaskaHucUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aarctic_rivers_watersheds_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=ID_2,Name&cql_filter=Name%20ILIKE%20%27%25${safeQuery}%25%27%20OR%20ID_2%20LIKE%20%27%25${safeQuery}%25%27`
 
         let items: any[] = []
 
         try {
-          const [segRes, hucRes, alaskaHucRes] = await Promise.all([
-            fetch(segUrl).then(res => res.json()),
+          const [hucRes, alaskaHucRes] = await Promise.all([
             fetch(hucUrl).then(res => res.json()),
             fetch(alaskaHucUrl).then(res => res.json()),
           ])
-
-          if (segRes && Array.isArray(segRes.features)) {
-            segRes.features.forEach((feature: any) => {
-              let segIdNat = feature.properties.seg_id_nat
-              let gaugeId = feature.properties.GAUGE_ID
-              let name = feature.properties.GNIS_NAME
-              if (gaugeId && gaugeId !== 'NA') {
-                name += ` (ID: ${segIdNat}, ${gaugeId})`
-              } else {
-                name += ` (ID: ${segIdNat})`
-              }
-              items.push({
-                name: name,
-                id: segIdNat,
-                category: 'stream segment',
-              })
-            })
-          }
 
           if (hucRes && Array.isArray(hucRes.features)) {
             hucRes.features.forEach((feature: any) => {
@@ -77,13 +57,13 @@ onMounted(() => {
       },
       keys: ['name'],
     },
-    resultItem: {
-      element: (element: HTMLElement, match: any) => {
-        let item = match.value
-        element.innerHTML =
-          item.name + '<span class="category">' + item.category + '</span>'
-      },
-    },
+    // resultItem: {
+    //   element: (element: HTMLElement, match: any) => {
+    //     let item = match.value
+    //     element.innerHTML =
+    //       item.name + '<span class="category">' + item.category + '</span>'
+    //   },
+    // },
     threshold: 3,
     debounce: 200,
   }
@@ -93,34 +73,23 @@ onMounted(() => {
   searchAutoComplete.input.addEventListener('selection', function (event: any) {
     let selection = event.detail.selection.value
     let id = selection.id
-    let category = selection.category
-    if (category === 'stream segment') {
-      // Only CONUS stream segments are accessible through the search,
-      // since it searches only by stream segment name and no Alaska
-      // stream segments have names.
-      navigateTo(`/conus/stream/${id}`)
-    } else if (category === 'huc') {
-      if (selection.region === 'conus') {
-        navigateTo(`/conus/huc/${id}`)
-      } else if (selection.region === 'alaska') {
-        navigateTo(`/alaska/huc/${id}`)
-      }
+
+    if (selection.region === 'conus') {
+      navigateTo(`/conus/huc/${id}`)
+    } else if (selection.region === 'alaska') {
+      navigateTo(`/alaska/huc/${id}`)
     }
   })
 })
 </script>
 
 <template>
-  <section class="section">
-    <div class="container">
-      <div class="field">
-        <label class="label" for="search"
-          >Search by stream segment name or HUC-8 ID</label
-        >
-        <input id="search" v-model="inputValue" class="input" />
-      </div>
-    </div>
-  </section>
+  <div class="field">
+    <label class="label" for="search"
+      >Search by stream segment name or HUC8 ID</label
+    >
+    <input id="search" v-model="inputValue" class="input" />
+  </div>
 </template>
 
 <style lang="scss" scoped>

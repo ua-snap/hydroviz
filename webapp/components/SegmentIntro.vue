@@ -34,7 +34,7 @@ const USGS_STREAM_GAUGE_URL_BASE =
           >{{ huc8s[segmentHuc8Id] }} watershed</NuxtLink
         >
       </span>
-      (HUC-8 {{ segmentHuc8Id }}).
+      (HUC8 {{ segmentHuc8Id }}).
     </p>
     <p v-if="segmentUsgsGaugeId">
       This stream segment has a corresponding USGS stream gage,
