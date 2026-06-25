@@ -143,8 +143,8 @@ const enterPhase0 = () => {
 }
 
 // Phase 1 — HUC selection. Zoomed in to hucSelectZoom at the given center.
-// Layers: invisible simplifiedHucsLayer (hover/click targets) + segWmsLayer
-// stream overlay. The choropleth and perimeter are hidden.
+// Layers: HUC-8 choropleth (hucWmsLayer) + invisible simplifiedHucsLayer (hover/click targets)
+// + segWmsLayer stream overlay. The perimeter is hidden.
 const enterPhase1 = (center: [number, number]) => {
   currentPhase = MapPhase.WmsHuc
   hideLayer(detailedHucLayer)
@@ -192,7 +192,11 @@ const addDetailedHucLayer = (data: any) => {
       style: { weight: 0, fillColor: '#111111', fillOpacity: 0.4 },
     })
     .addTo(map)
-  map.setView($L.geoJSON(data).getBounds().getCenter(), segmentSelectZoom)
+
+  const bounds = detailedHucLayer.getBounds?.()
+  if (bounds?.isValid?.()) {
+    map.fitBounds(bounds, { padding: [50, 50], maxZoom: segmentSelectZoom })
+  }
 }
 
 // ============================================================================
@@ -204,13 +208,19 @@ const addDetailedHucLayer = (data: any) => {
 const syncMapFromUrl = () => {
   if (!map) return
   const phase = phaseFromUrl()
-  const hucId = route.query[paramKeys.huc] as string
+  const rawHucId = route.query[paramKeys.huc]
+  const hucId = typeof rawHucId === 'string' ? rawHucId : undefined
+  const validHucId =
+    typeof hucId === 'string' &&
+    (region === 'alaska'
+      ? /^\d{8}$/.test(hucId) || /^[A-Z0-9]{4}$/.test(hucId)
+      : /^\d{8}$/.test(hucId))
   const key = `${phase}:${hucId ?? ''}`
   if (key === lastAppliedKey) return
   lastAppliedKey = key
 
-  if (phase === MapPhase.HucSelected && hucId) {
-    enterPhase2(String(hucId))
+  if (phase === MapPhase.HucSelected && validHucId) {
+    enterPhase2(hucId)
   } else if (phase === MapPhase.WmsHuc) {
     enterPhase1(centerFromUrl())
   } else {

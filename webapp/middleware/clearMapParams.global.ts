@@ -1,6 +1,7 @@
 import { ALL_MAP_PARAMS } from '~/types/map'
 
-const REPORT_PATTERN = /^\/(conus|alaska)\/(stream|huc)\//
+const REPORT_PATTERN =
+  /^\/(conus\/(stream|huc)\/|alaska\/(stream|huc)\/|conus\/\d+$)/
 
 export default defineNuxtRouteMiddleware((to) => {
   if (!REPORT_PATTERN.test(to.path)) return
@@ -10,5 +11,5 @@ export default defineNuxtRouteMiddleware((to) => {
 
   const query = { ...to.query }
   ALL_MAP_PARAMS.forEach(p => delete query[p])
-  return navigateTo({ ...to, query }, { replace: true })
+  return navigateTo({ path: to.path, query, hash: to.hash }, { replace: true })
 })
