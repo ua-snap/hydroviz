@@ -13,9 +13,7 @@ let { appContext, appEra } = storeToRefs(streamSegmentStore)
         model futures, and <strong>future extremes</strong> show the size of
         variation between the minimums and maximums for lower and higher
         emissions scenarios.
-        <NuxtLink to="/about/data"
-          >Read more about how these are defined</NuxtLink
-        >
+        <NuxtLink to="/data">Read more about how these are defined</NuxtLink>
         and learn how to apply them in your work.
       </p>
       <p>
