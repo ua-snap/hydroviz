@@ -274,8 +274,14 @@ const loadPhase2Data = async (hucId: string) => {
     })
   } catch (err) {
     console.error('Error loading Phase 2 data:', err)
+    // If we never reached the atomic swap (still on Phase 1 layers), revert phase
+    // so URL updates and moveend logic remain consistent.
+    if (seq === phase2LoadSeq && map?.hasLayer?.(hucWmsLayer)) {
+      currentPhase = MapPhase.WmsHuc
+      updatePositionInUrl()
+    }
   } finally {
-    isLoadingPhase2.value = false
+    if (seq === phase2LoadSeq) isLoadingPhase2.value = false
   }
 }
 
