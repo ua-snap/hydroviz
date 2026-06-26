@@ -195,7 +195,7 @@ const fetchHuc = async (hucId: string) => {
 // The Phase 2 zoom is pinned to segmentSelectZoom (clamped to the map's max).
 // fitBounds would otherwise zoom out to fit large HUCs, packing the stream
 // network too densely; this is also the value that caps zoom-in for small HUCs.
-const phase2Zoom = () => Math.min(segmentSelectZoom, map.getMaxZoom())
+const phase2Zoom = () => Math.min(segmentSelectZoom, config.maxZoom)
 
 // Saved center from the URL ([lat, lng]), or null if absent/invalid. A fresh
 // HUC click clears these, so a present value means we are restoring a Phase 2
@@ -381,6 +381,23 @@ const hucFeatureHandler = (feature: any, layer: any) => {
   })
 }
 
+// The view the map should be created at, derived from the URL. On a remount
+// (e.g. Back from a segment report) this starts the map at the saved Phase 2
+// center/zoom instead of the default extent, so it never flashes the full
+// region before loadPhase2Data settles it. Falls back to the region default.
+const initialView = (): { center: [number, number]; zoom: number } => {
+  const center = urlCenter()
+  if (center) {
+    if (phaseFromUrl() === MapPhase.HucSelected) {
+      return { center, zoom: phase2Zoom() }
+    }
+    if (phaseFromUrl() === MapPhase.WmsHuc) {
+      return { center, zoom: hucSelectZoom }
+    }
+  }
+  return { center: config.defaultCenter, zoom: defaultViewZoom }
+}
+
 const initializeMap = () => {
   // Zoom is owned entirely by the phase functions; the user may only pan and
   // click. Disable every user-driven zoom interaction and the zoom control.
@@ -412,9 +429,8 @@ const initializeMap = () => {
     mapOptions.crs = proj
   }
 
-  map = $L
-    .map(config.mapId, mapOptions)
-    .setView(config.defaultCenter, defaultViewZoom)
+  const view = initialView()
+  map = $L.map(config.mapId, mapOptions).setView(view.center, view.zoom)
 
   if (config.mapId === 'map-conus') {
     $L.tileLayer(
@@ -561,7 +577,9 @@ onMounted(() => {
     <div :id="config.mapId" style="height: 100%"></div>
     <div v-if="isLoadingPhase2" class="map-loading-overlay">
       <img :src="waterLoaderUrl" class="map-loading-icon" alt="" />
-      <p class="mt-3 has-text-white is-size-5">Loading stream network…</p>
+      <p class="mt-3 has-text-white is-size-3 is-bold">
+        Loading stream network&hellip;
+      </p>
     </div>
   </div>
 </template>
@@ -585,7 +603,7 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(128, 128, 128, 1);
+  background: rgba(128, 128, 128, 0.5);
   pointer-events: all;
 }
 
