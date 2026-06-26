@@ -16,7 +16,7 @@ const props = defineProps(['streamHydrograph'])
 
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { appContext, appEra } = storeToRefs(streamSegmentStore)
+let { segmentId, gaugeId, appContext, appEra } = storeToRefs(streamSegmentStore)
 
 let isAlaskaData = false
 
@@ -332,18 +332,17 @@ const buildChart = hg => {
     y: hydroYearHistoricalDataMean,
     type: 'scatter',
     mode: 'line',
-    line: { color: '#f0f0f0', width: 3 },
+    line: { color: '#f0f0f0', width: 2 },
     name: 'Mean historical, 1976-2005',
   }
 
+  // First put the two historical traces at the bottom of the stack...
   traces.push(historicalMinTrace)
   traces.push(historicalMaxTrace)
-  traces.push(historicalMeanTrace)
 
   if (appContext.value === 'extremes' && !isAlaskaData) {
     traces2.push(historicalMinTrace)
     traces2.push(historicalMaxTrace)
-    traces2.push(historicalMeanTrace)
   }
 
   // Only add projected data for CONUS (non-Alaska) data
@@ -351,6 +350,13 @@ const buildChart = hg => {
     processProjectedAlaskaData(hg, traces)
   } else {
     processProjectedConusData(hg, scenarios, traces, traces2)
+  }
+
+  // Now put the historical mean on top because it makes the key comparison
+  // easier to see (how do the projections relate to the historical calibration mean?)
+  traces.push(historicalMeanTrace)
+  if (appContext.value === 'extremes' && !isAlaskaData) {
+    traces2.push(historicalMeanTrace)
   }
 
   // These numbers correspond to the 1st of each month in a 366-day year,
@@ -363,9 +369,13 @@ const buildChart = hg => {
   let scenarioLabel: string
   let scenarioLabel2: string
   let titleText: string
+  let titleBase: string = ''
+  let gaugeIdLine = gaugeId.value
+    ? `<br><span  style="font-size: 0.8em;">Gage ID: ${gaugeId.value}</span>`
+    : ''
 
   if (isAlaskaData) {
-    titleText = 'Historical modeled flow rate, 2034-2065'
+    titleText = `Modeled flow rate, 2034-2065${gaugeIdLine}`
   } else {
     if (appContext.value === 'mid') {
       scenarioLabel = scenarioFullNames['rcp60']
@@ -374,8 +384,8 @@ const buildChart = hg => {
       scenarioLabel2 = scenarioFullNames['rcp85']
     }
 
-    let titleBase = `Modeled flow rate, ${appEra.value}`
-    titleText = `${titleBase}, ${scenarioLabel}`
+    titleBase = `Modeled flow rate, ${appEra.value}`
+    titleText = `${titleBase}, ${scenarioLabel}${gaugeIdLine}`
   }
 
   let yAxisLabel = 'Flow rate, cf/s'
@@ -413,30 +423,49 @@ const buildChart = hg => {
     x: 0.5,
   }
 
+  let isTwoLineTitle = gaugeId.value ? true : false
+
   let layout = getLayout(
+    'hydrograph',
     titleText,
     yAxisLabel,
     xAxisConfig,
     yAxisConfig,
-    legendConfig
+    legendConfig,
+    isTwoLineTitle,
+    isAlaskaData
   )
 
-  const config = getConfig()
+  if (isAlaskaData) {
+    let pngName = `hydrograph_${segmentId.value}_2034-2065`
+    let config = getConfig(pngName)
+    $Plotly.newPlot('hydrograph', traces, layout, config)
+  } else {
+    if (appContext.value === 'mid') {
+      let pngName = `hydrograph_${segmentId.value}_rcp60_${appEra.value}`
+      let config = getConfig(pngName)
+      $Plotly.newPlot('hydrograph', traces, layout, config)
+    } else {
+      let pngName = `hydrograph_${segmentId.value}_rcp45_${appEra.value}`
+      let config = getConfig(pngName)
+      $Plotly.newPlot('hydrograph', traces, layout, config)
 
-  $Plotly.newPlot('hydrograph', traces, layout, config)
-
-  if (!isAlaskaData && appContext.value === 'extremes') {
-    let scenarioLabel2 = scenarioFullNames['rcp85']
-    let titleBase = `Modeled flow rate, ${appEra.value}`
-    let titleText2 = `${titleBase}, ${scenarioLabel2}`
-    let layout2 = getLayout(
-      titleText2,
-      yAxisLabel,
-      xAxisConfig,
-      yAxisConfig,
-      legendConfig
-    )
-    $Plotly.newPlot('hydrograph2', traces2, layout2, config)
+      let scenarioLabel2 = scenarioFullNames['rcp85']
+      let titleText2 = `${titleBase}, ${scenarioLabel2}${gaugeIdLine}`
+      let layout2 = getLayout(
+        'hydrograph',
+        titleText2,
+        yAxisLabel,
+        xAxisConfig,
+        yAxisConfig,
+        legendConfig,
+        isTwoLineTitle,
+        isAlaskaData
+      )
+      let pngName2 = `hydrograph_${segmentId.value}_rcp85_${appEra.value}`
+      let config2 = getConfig(pngName2)
+      $Plotly.newPlot('hydrograph2', traces2, layout2, config2)
+    }
   }
 }
 </script>

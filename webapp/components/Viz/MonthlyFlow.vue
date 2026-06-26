@@ -14,7 +14,7 @@ const props = defineProps(['streamMonthlyFlow'])
 
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { appContext, appEra } = storeToRefs(streamSegmentStore)
+let { segmentId, gaugeId, appContext, appEra } = storeToRefs(streamSegmentStore)
 
 const monthLabels = {
   ma21: 'Oct',
@@ -181,9 +181,12 @@ const buildChart = () => {
     })
   }
 
+  let gaugeIdLine = gaugeId.value
+    ? `<br><span style="font-size: 0.8em;">Gage ID: ${gaugeId.value}</span>`
+    : ''
   const titleText: string = isAlaskaData
-    ? `Mean monthly modeled flow rate, 2034-2065`
-    : `Mean monthly modeled flow rate, ${appEra.value}`
+    ? `Mean monthly modeled flow rate, 2034-2065${gaugeIdLine}`
+    : `Mean monthly modeled flow rate, ${appEra.value}${gaugeIdLine}`
 
   let xAxisSettings = {
     tickvals: $_.range(Object.values(monthLabels).length),
@@ -206,15 +209,31 @@ const buildChart = () => {
     x: 0.5,
   }
 
+  let isTwoLineTitle = gaugeId.value ? true : false
+
   let layout = getLayout(
+    'monthlyFlow',
     titleText,
     'Mean monthly flow, cf/s',
     xAxisSettings,
     yAxisSettings,
-    legendConfig
+    legendConfig,
+    isTwoLineTitle,
+    isAlaskaData
   )
 
-  const config = getConfig()
+  let pngName: string
+  if (isAlaskaData) {
+    pngName = `monthly-flow_${segmentId.value}_2034-2065`
+  } else {
+    if (appContext.value === 'mid') {
+      pngName = `monthly-flow_${segmentId.value}_rcp60_${appEra.value}`
+    } else {
+      pngName = `monthly-flow_${segmentId.value}_rcp45-rcp85_${appEra.value}`
+    }
+  }
+
+  let config = getConfig(pngName)
 
   $Plotly.newPlot('monthly-flow', traces, layout, config)
 }

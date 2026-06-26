@@ -1,71 +1,197 @@
 import type { Config, Layout } from 'plotly.js'
 
-export const getConfig = (filename: string): Partial<Config> => ({
-  responsive: true, // changes the height / width dynamically for charts
-  displayModeBar: true, // always show the camera icon
-  displaylogo: false,
-  modeBarButtonsToRemove: [
-    'zoom2d',
-    'pan2d',
-    'select2d',
-    'lasso2d',
-    'zoomIn2d',
-    'zoomOut2d',
-    'autoScale2d',
-    'resetScale2d',
-  ],
-  toImageButtonOptions: {
-    format: 'png',
-    filename: filename,
-    scale: 2,
-  },
-})
+export const getConfig = (filename: string): Partial<Config> => {
+  return {
+    responsive: true, // changes the height / width dynamically for charts
+    displayModeBar: true, // always show the camera icon
+    displaylogo: false,
+    modeBarButtonsToRemove: [
+      'zoom2d',
+      'pan2d',
+      'select2d',
+      'lasso2d',
+      'zoomIn2d',
+      'zoomOut2d',
+      'autoScale2d',
+      'resetScale2d',
+    ],
+    toImageButtonOptions: {
+      format: 'png',
+      filename: filename,
+      scale: 2,
+    },
+  }
+}
+
+const getFooterCredits = (isAlaskaData: boolean): string => {
+  if (isAlaskaData) {
+    return 'Data provided by Dylan Blaskey, Keith Musselman, Andrew Newman, &amp; Yifan Cheng. (2024). doi:10.18739/A25M62870'
+  } else {
+    return (
+      'Historical data provided by U.S. Geological Survey National Water Information System. doi:10.5066/F7P55KJN<br>' +
+      'Projected data provided by LaFontaine, J.H., and Riley, J.W., 2023. doi:10.5066/P9EBKREQ'
+    )
+  }
+}
+
+// Keep plot area, footer position, and margins consistent across chart types.
+// For both web display and exported PNG images.
+const getLayoutPositions = (
+  isTwoLineTitle: boolean,
+  isAlaskaData: boolean,
+  chartType: string
+) => {
+  let height: null | number = null
+  let marginTop: null | number = null
+  let marginBottom: null | number = null
+  let footerY: null | number = null
+
+  if (isTwoLineTitle) {
+    if (isAlaskaData) {
+      if (chartType === 'hydrograph') {
+        height = 515
+        marginTop = 100
+        marginBottom = 145
+        footerY = -0.5
+      } else if (chartType === 'monthlyFlow') {
+        height = 535
+        marginTop = 120
+        marginBottom = 150
+        footerY = -0.56
+      } else if (chartType === 'maxFlowDates') {
+        height = 560
+        marginTop = 120
+        marginBottom = 130
+        footerY = -0.35
+      }
+    } else {
+      if (chartType === 'hydrograph') {
+        height = 535
+        marginTop = 100
+        marginBottom = 160
+        footerY = -0.55
+      } else if (chartType === 'monthlyFlow') {
+        height = 520
+        marginTop = 100
+        marginBottom = 145
+        footerY = -0.48
+      } else if (chartType === 'maxFlowDates') {
+        height = 555
+        marginTop = 120
+        marginBottom = 130
+        footerY = -0.4
+      }
+    }
+  } else {
+    if (isAlaskaData) {
+      if (chartType === 'hydrograph') {
+        height = 505
+        marginTop = 80
+        marginBottom = 150
+        footerY = -0.5
+      } else if (chartType === 'monthlyFlow') {
+        height = 505
+        marginTop = 100
+        marginBottom = 130
+        footerY = -0.43
+      } else if (chartType === 'maxFlowDates') {
+        height = 530
+        marginTop = 100
+        marginBottom = 120
+        footerY = -0.35
+      }
+    } else {
+      if (chartType === 'hydrograph') {
+        height = 520
+        marginTop = 80
+        marginBottom = 165
+        footerY = -0.55
+      } else if (chartType === 'monthlyFlow') {
+        height = 505
+        marginTop = 80
+        marginBottom = 145
+        footerY = -0.48
+      } else if (chartType === 'maxFlowDates') {
+        height = 535
+        marginTop = 100
+        marginBottom = 130
+        footerY = -0.4
+      }
+    }
+  }
+  return { height, marginTop, marginBottom, footerY }
+}
 
 export const getLayout = (
+  chartType: string,
   title: string,
   yAxisLabel: string,
   xAxisConfig?: Partial<Layout['xaxis']>,
   yAxisConfig?: Partial<Layout['yaxis']>,
-  legendConfig?: Partial<Layout['legend']>
-): Partial<Layout> => ({
-  title: {
-    text: title,
-    font: {
-      size: 24,
-    },
-    automargin: true,
-    yref: 'container',
-    y: 0.95,
-  },
-  xaxis: {
-    automargin: true,
-    gridcolor: 'rgba(0,0,0,0.08)',
-    ...xAxisConfig,
-  },
-  yaxis: {
-    gridcolor: 'rgba(0,0,0,0.08)',
-    automargin: true,
+  legendConfig?: Partial<Layout['legend']>,
+  isTwoLineTitle: boolean = false,
+  isAlaskaData: boolean = false
+): Partial<Layout> => {
+  let { height, marginTop, marginBottom, footerY } = getLayoutPositions(
+    isTwoLineTitle,
+    isAlaskaData,
+    chartType
+  )
+  return {
     title: {
-      text: yAxisLabel,
+      text: title,
       font: {
-        size: 18,
+        size: 24,
       },
+      automargin: true,
+      yref: 'container',
+      y: 0.93,
     },
-    ...yAxisConfig,
-  },
-  legend: {
-    ...legendConfig,
-  },
-  margin: {
-    l: 100,
-    t: 80,
-    b: 60,
-    pad: 20,
-  },
-  autosize: true,
-  dragmode: false,
-  hovermode: false,
-})
+    xaxis: {
+      automargin: true,
+      gridcolor: 'rgba(0,0,0,0.08)',
+      ...xAxisConfig,
+    },
+    yaxis: {
+      gridcolor: 'rgba(0,0,0,0.08)',
+      automargin: true,
+      title: {
+        text: yAxisLabel,
+        font: {
+          size: 18,
+        },
+      },
+      ...yAxisConfig,
+    },
+    legend: {
+      ...legendConfig,
+    },
+    height: height,
+    margin: {
+      l: 100,
+      t: marginTop,
+      b: marginBottom,
+      pad: 20,
+    },
+    autosize: true,
+    dragmode: false,
+    hovermode: false,
+    annotations: [
+      {
+        text: getFooterCredits(isAlaskaData),
+        xref: 'paper',
+        yref: 'paper',
+        x: 0.5,
+        y: footerY,
+        showarrow: false,
+        font: {
+          size: 12,
+          color: '#333',
+        },
+      },
+    ],
+  }
+}
 
 // Recursively extract all relevant values (data keys not in excludeKeys) from
 // API data response, find the min/max values, add some padding, and return.

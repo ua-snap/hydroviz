@@ -12,7 +12,8 @@ import { scenarioFullNames } from '~/types/modelsScenarios'
 
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-const { appContext, appEra } = storeToRefs(streamSegmentStore)
+const { segmentId, gaugeId, appContext, appEra } =
+  storeToRefs(streamSegmentStore)
 
 const props = defineProps(['streamMaxFlowDates'])
 
@@ -68,8 +69,11 @@ const buildChart = () => {
   }
 
   let titleText: string
+  let gaugeIdLine = gaugeId.value
+    ? `<br><span style="font-size: 0.8em;">Gage ID: ${gaugeId.value}</span>`
+    : ''
   if (isAlaskaData) {
-    titleText = `Modeled flow rate at date of annual maximum daily flow, 2034-2065`
+    titleText = `Modeled flow rate at date of annual maximum daily flow, 2034-2065${gaugeIdLine}`
 
     let historicalFlow = [props.streamMaxFlowDates['historical']['flow']]
     let historicalFlowDate = [props.streamMaxFlowDates['historical']['date']]
@@ -131,7 +135,7 @@ const buildChart = () => {
 
     projectedTraces.push(trace)
   } else {
-    titleText = `Modeled flow rate at date of annual maximum daily flow, ${appEra.value}`
+    titleText = `Modeled flow rate at date of annual maximum daily flow, ${appEra.value}${gaugeIdLine}`
     scenarios.forEach(scenario => {
       let historicalFlow = [props.streamMaxFlowDates['historical']['flow']]
       let historicalFlowDate = [props.streamMaxFlowDates['historical']['date']]
@@ -236,7 +240,17 @@ const buildChart = () => {
     traceorder: 'reversed',
   }
 
-  const layout = getLayout(titleText, '', {}, {}, legendConfig)
+  let isTwoLineTitle = gaugeId.value ? true : false
+  let layout = getLayout(
+    'maxFlowDates',
+    titleText,
+    '',
+    {},
+    {},
+    legendConfig,
+    isTwoLineTitle,
+    isAlaskaData
+  )
 
   let firstOfMonthValues = [
     1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335,
@@ -302,10 +316,18 @@ const buildChart = () => {
     layout['polar2']['domain'] = { x: [0.42, 1], y: [0, 1] }
   }
 
-  layout['margin'] = { t: 100 }
-  layout['height'] = 500
+  let pngName: string
+  if (isAlaskaData) {
+    pngName = `max-flow-dates_${segmentId.value}_2034-2065`
+  } else {
+    if (appContext.value === 'mid') {
+      pngName = `max-flow-dates_${segmentId.value}_rcp60_${appEra.value}`
+    } else {
+      pngName = `max-flow-dates_${segmentId.value}_rcp45-rcp85_${appEra.value}`
+    }
+  }
 
-  const config = getConfig('max-flow-dates')
+  let config = getConfig(pngName)
 
   $Plotly.newPlot('max-flow-dates', traces, layout, config)
 }
