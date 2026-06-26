@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const { $L, $config } = useNuxtApp()
 import {
   fetchAndAddSegmentsByBounds,
   fetchSegmentsForBounds,
@@ -9,6 +8,7 @@ import {
 import { MapPhase, ALL_MAP_PARAMS } from '~/types/map'
 import waterLoaderUrl from '@/assets/water-loader.svg'
 
+const { $L, $config } = useNuxtApp()
 const route = useRoute()
 const router = useRouter()
 
@@ -274,14 +274,11 @@ const loadPhase2Data = async (hucId: string) => {
     })
   } catch (err) {
     console.error('Error loading Phase 2 data:', err)
-    // If we never reached the atomic swap (still on Phase 1 layers), revert phase
-    // so URL updates and moveend logic remain consistent.
-    if (seq === phase2LoadSeq && map?.hasLayer?.(hucWmsLayer)) {
-      currentPhase = MapPhase.WmsHuc
-      updatePositionInUrl()
-    }
+    // Revert to Phase 1 to try and keep UI consistent
+    enterPhase1(centerFromUrl())
   } finally {
-    if (seq === phase2LoadSeq) isLoadingPhase2.value = false
+    // Done loading, OK
+    isLoadingPhase2.value = false
   }
 }
 
