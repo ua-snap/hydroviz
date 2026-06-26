@@ -243,6 +243,48 @@ export const addSegmentsGeoJson = ({
   }
 }
 
+// Builds the WFS request URL for all segments intersecting a lat/lng bounds.
+const segmentBboxUrl = (bounds: any, mapRegion: 'conus' | 'alaska') => {
+  const { $config } = useNuxtApp()
+  const wfsBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&outputFormat=application%2Fjson&srsName=EPSG:4326`
+  const segBaseUrl =
+    mapRegion === 'alaska'
+      ? `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_segments_joined_3338_simplified`
+      : `${wfsBaseUrl}&typeName=hydrology%3Aseg_h8_outlet_stats_simplified`
+
+  const minLon = bounds.getWest()
+  const maxLon = bounds.getEast()
+  const minLat = bounds.getSouth()
+  const maxLat = bounds.getNorth()
+  return (
+    segBaseUrl +
+    `&cql_filter=BBOX(the_geom,${minLon},${minLat},${maxLon},${maxLat},'EPSG:4326')`
+  )
+}
+
+// Fetches (but does not add) the segment GeoJSON for a given bounds. Lets callers
+// load segments for a region before moving the map there, so the swap can happen
+// atomically without an intermediate empty/moving frame.
+export const fetchSegmentsForBounds = async ({
+  bounds,
+  region = 'conus',
+}: {
+  bounds: any
+  region?: 'conus' | 'alaska'
+}) => {
+  const streamSegmentStore = useStreamSegmentStore()
+  const { segmentRegion } = storeToRefs(streamSegmentStore)
+  const mapRegion = segmentRegion.value || region
+
+  const response = await fetch(segmentBboxUrl(bounds, mapRegion))
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch segment data: ${response.status} ${response.statusText}`
+    )
+  }
+  return response.json()
+}
+
 export const fetchAndAddSegmentsByBounds = ({
   map,
   $L,

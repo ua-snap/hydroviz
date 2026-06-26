@@ -16,13 +16,6 @@ segmentId.value = segment
 </script>
 
 <template>
-  <section class="section">
-    <div class="container">
-      <NuxtLink class="content is-size-5" to="/"
-        >Go back, pick another place</NuxtLink
-      >
-    </div>
-  </section>
   <Report />
 </template>
 

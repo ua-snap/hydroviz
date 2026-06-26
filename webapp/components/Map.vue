@@ -1,6 +1,16 @@
 <script setup lang="ts">
+import {
+  fetchAndAddSegmentsByBounds,
+  fetchSegmentsForBounds,
+  addSegmentsGeoJson,
+  clearSegmentLayers,
+} from '~/utils/map'
+import { MapPhase, ALL_MAP_PARAMS } from '~/types/map'
+import waterLoaderUrl from '@/assets/water-loader.svg'
+
 const { $L, $config } = useNuxtApp()
-import { fetchAndAddSegmentsByBounds, clearSegmentLayers } from '~/utils/map'
+const route = useRoute()
+const router = useRouter()
 
 const props = defineProps<{
   region?: 'conus' | 'alaska'
@@ -17,7 +27,7 @@ const regionConfig = {
     defaultCenter: [37.8, -96] as [number, number],
     minZoom: 4,
     maxZoom: 12,
-    crs: 'EPSG:4326',
+    crs: 'EPSG:3857',
     segLayer: 'hydrology:seg_h8_outlet_stats_simplified_subset',
     hucLayer: 'hydrology:huc8_conus_stats_simplified',
     perimeterAsset: '@/assets/conus_perimeter.json',
@@ -43,42 +53,369 @@ const regionConfig = {
 
 const config = regionConfig[region]
 
-let segmentWmsThreshold: number
-let clickToZoomThreshold: number
-let hucSelectThreshold: number
-let segViewThreshold: number
+// Per-phase zoom levels for this region.
+let defaultViewZoom: number
+let hucSelectZoom: number
+let segmentSelectZoom: number
 
 if (region === 'alaska') {
-  segmentWmsThreshold = 2
-  clickToZoomThreshold = 2
-  hucSelectThreshold = 2
-  segViewThreshold = 4
+  defaultViewZoom = 0 // phase 0
+  hucSelectZoom = 4 // phase 1
+  segmentSelectZoom = 8 // phase 2
 } else {
-  segmentWmsThreshold = 6
-  clickToZoomThreshold = 7
-  hucSelectThreshold = 7
-  segViewThreshold = 8
+  // conus
+  defaultViewZoom = 4
+  hucSelectZoom = 7
+  segmentSelectZoom = 10
 }
 
-let hucBasedGeoJson = false
+// Query param keys per region for phase + HUC + center tracking.
+const paramKeys =
+  region === 'conus'
+    ? { phase: 'cp', huc: 'chuc', lat: 'clat', lng: 'clng' }
+    : { phase: 'ap', huc: 'ahuc', lat: 'alat', lng: 'alng' }
 
-// GeoJSON to load dynamically on mount.
-let perimeter: any
-let simplifiedHucs: any
+// Returns only the known map params from the current route query, as plain strings.
+// This prevents stale, undefined, or array-valued keys from leaking into URL updates
+// when two Map instances (CONUS + Alaska) share the same route query object.
+const safeQuery = (): Record<string, string> => {
+  const q: Record<string, string> = {}
+  for (const key of ALL_MAP_PARAMS) {
+    const val = route.query[key]
+    if (typeof val === 'string') q[key] = val
+  }
+  return q
+}
+
+// Reads the target phase from the URL, clamped to a valid MapPhase.
+const phaseFromUrl = (): MapPhase => {
+  const p = parseInt(route.query[paramKeys.phase] as string)
+  if (isNaN(p) || p < MapPhase.Overview || p > MapPhase.HucSelected) {
+    return MapPhase.Overview
+  }
+  return p as MapPhase
+}
+
+// Reads the saved center from the URL, falling back to the region default.
+const centerFromUrl = (): [number, number] => {
+  const lat = parseFloat(route.query[paramKeys.lat] as string)
+  const lng = parseFloat(route.query[paramKeys.lng] as string)
+  return !isNaN(lat) && !isNaN(lng) ? [lat, lng] : config.defaultCenter
+}
 
 let map: any
 let hucWmsLayer: any
 let segWmsLayer: any
 let perimeterLayer: any
 let simplifiedHucsLayer: any
-let simplifiedHucLayer: any
 let detailedHucLayer: any
 
+// GeoJSON loaded dynamically on mount.
+let perimeter: any
+let simplifiedHucs: any
+
+// The phase the map is currently displaying. Set only by the enterPhaseN functions.
+let currentPhase: MapPhase = MapPhase.Overview
+// Guards against redundant re-application of the same phase state.
+let lastAppliedKey = ''
+// Set while the Phase 2 swap moves the map itself, so the moveend handler does
+// not re-fetch segments that loadPhase2Data already added.
+let suppressMoveFetch = false
+
+// Drives the loading overlay shown during the Phase 1 -> Phase 2 transition,
+// covering both the HUC boundary fetch and the initial segment fetch.
+const isLoadingPhase2 = ref(false)
+
+const showLayer = (layer: any) => {
+  if (layer && !map.hasLayer(layer)) map.addLayer(layer)
+}
+const hideLayer = (layer: any) => {
+  if (layer && map.hasLayer(layer)) map.removeLayer(layer)
+}
+
+// ============================================================================
+// PHASE FUNCTIONS
+//
+// Each function is the single source of truth for the map's layer + zoom state
+// in its phase. Transitions are explicit (perimeter/HUC clicks, Back navigation,
+// initial load); there is no zoom-driven conditional layer management.
+// ============================================================================
+
+// Phase 0 — Overview. Zoomed out to defaultViewZoom.
+// Layers: HUC choropleth (hucWmsLayer) + a transparent perimeter overlay whose
+// clicks advance the map to Phase 1.
+const enterPhase0 = () => {
+  currentPhase = MapPhase.Overview
+  isLoadingPhase2.value = false
+  hideLayer(detailedHucLayer)
+  clearSegmentLayers(map)
+  hideLayer(segWmsLayer)
+  hideLayer(simplifiedHucsLayer)
+  showLayer(hucWmsLayer)
+  showLayer(perimeterLayer)
+  map.setView(config.defaultCenter, defaultViewZoom)
+}
+
+// Phase 1 — HUC selection. Zoomed in to hucSelectZoom at the given center.
+// Layers: HUC-8 choropleth (hucWmsLayer) + invisible simplifiedHucsLayer (hover/click targets)
+// + segWmsLayer stream overlay. The perimeter is hidden.
+const enterPhase1 = (center: [number, number]) => {
+  currentPhase = MapPhase.WmsHuc
+  isLoadingPhase2.value = false
+  hideLayer(detailedHucLayer)
+  clearSegmentLayers(map)
+  hideLayer(perimeterLayer)
+  showLayer(hucWmsLayer)
+  showLayer(simplifiedHucsLayer)
+  // Clear any stale hover highlight left over from a HUC click that advanced to
+  // Phase 2 before its mouseout fired.
+  simplifiedHucsLayer?.resetStyle?.()
+  showLayer(segWmsLayer)
+  map.setView(center, hucSelectZoom)
+}
+
+// Phase 2 — HUC selected. Zoom is driven by fitBounds() to the selected HUC.
+// Layers: detailed HUC boundary + stream segment GeoJSON. All overview/WMS
+// layers hidden. The Phase 1 view is left fully intact while the data loads;
+// loadPhase2Data swaps everything in atomically once it's ready.
+const enterPhase2 = (hucId: string) => {
+  currentPhase = MapPhase.HucSelected
+  isLoadingPhase2.value = true
+  loadPhase2Data(hucId)
+}
+
+const fetchHuc = async (hucId: string) => {
+  const hucUrl =
+    region === 'alaska'
+      ? `${config.hucBaseUrl}&cql_filter=ID_2='${hucId}'`
+      : `${config.hucBaseUrl}&cql_filter=huc8=${hucId}`
+  const r = await fetch(hucUrl)
+  if (!r.ok)
+    throw new Error(`Failed to fetch HUC ${hucId} (status ${r.status})`)
+  return r.json()
+}
+
+// The Phase 2 zoom is pinned to segmentSelectZoom (clamped to the map's max).
+// fitBounds would otherwise zoom out to fit large HUCs, packing the stream
+// network too densely; this is also the value that caps zoom-in for small HUCs.
+const phase2Zoom = () => Math.min(segmentSelectZoom, config.maxZoom)
+
+// Saved center from the URL ([lat, lng]), or null if absent/invalid. A fresh
+// HUC click clears these, so a present value means we are restoring a Phase 2
+// view (e.g. returning from a segment report after panning).
+const urlCenter = (): [number, number] | null => {
+  const lat = parseFloat(route.query[paramKeys.lat] as string)
+  const lng = parseFloat(route.query[paramKeys.lng] as string)
+  return !isNaN(lat) && !isNaN(lng) ? [lat, lng] : null
+}
+
+// Computes the lat/lng bounds the viewport WOULD show at a given center/zoom,
+// without moving the map — so segments are fetched for the same visible extent
+// before the atomic swap happens.
+const viewportBoundsAt = (center: any, zoom: number) => {
+  const half = map.getSize().divideBy(2)
+  const centerPx = map.project(center, zoom)
+  const sw = map.unproject(centerPx.add($L.point(-half.x, half.y)), zoom)
+  const ne = map.unproject(centerPx.add($L.point(half.x, -half.y)), zoom)
+  return $L.latLngBounds(sw, ne)
+}
+
+// Loads the HUC boundary and its segments BEFORE touching the visible map, then
+// swaps layers and moves the map in a single synchronous block. Because nothing
+// above the swap alters the map, the user sees the intact Phase 1 view (under the
+// loading overlay) until the fully-rendered Phase 2 view appears in one paint.
+const loadPhase2Data = async (hucId: string) => {
+  // Capture the saved center synchronously, before any await (or the onMounted
+  // updatePositionInUrl) can overwrite it. Present => restore a panned view;
+  // absent => fresh HUC click, so center on the HUC below.
+  const savedCenter = urlCenter()
+  try {
+    const hucData = await fetchHuc(hucId)
+    const bounds = $L.geoJSON(hucData).getBounds()
+    if (!bounds?.isValid?.()) throw new Error('HUC has no valid bounds')
+
+    const center = savedCenter ?? bounds.getCenter()
+    const zoom = phase2Zoom()
+
+    const segData = await fetchSegmentsForBounds({
+      bounds: viewportBoundsAt(center, zoom),
+      region,
+    })
+
+    // --- Atomic swap (no awaits below: a single render frame) ---
+    hideLayer(perimeterLayer)
+    hideLayer(hucWmsLayer)
+    hideLayer(segWmsLayer)
+    hideLayer(simplifiedHucsLayer)
+    hideLayer(detailedHucLayer)
+    clearSegmentLayers(map)
+
+    detailedHucLayer = $L
+      .geoJSON(hucData, {
+        style: { weight: 0, fillColor: '#111111', fillOpacity: 0.2 },
+      })
+      .addTo(map)
+
+    // Move to the Phase 2 view (saved center if restoring, else the HUC center).
+    // Suppress the moveend-driven refetch (consumed in the moveend handler, which
+    // also covers the animated case where moveend fires after this call returns)
+    // since the segments are added explicitly below.
+    suppressMoveFetch = true
+    map.setView(center, zoom, { animate: false })
+
+    addSegmentsGeoJson({
+      map,
+      $L,
+      data: segData,
+      selectedSegmentId: null,
+      fitBounds: false,
+      mapType: 'main',
+      mapRegion: region,
+    })
+  } catch (err) {
+    console.error('Error loading Phase 2 data:', err)
+    // Revert to Phase 1 to try and keep UI consistent
+    enterPhase1(centerFromUrl())
+  } finally {
+    // Done loading, OK
+    isLoadingPhase2.value = false
+  }
+}
+
+// ============================================================================
+// URL <-> MAP SYNC
+// ============================================================================
+
+// Applies the map state described by the current URL. Deduplicated so repeated
+// calls for the same (phase, huc) are no-ops.
+const syncMapFromUrl = () => {
+  if (!map) return
+  const phase = phaseFromUrl()
+  const rawHucId = route.query[paramKeys.huc]
+  const hucId = typeof rawHucId === 'string' ? rawHucId : undefined
+  const validHucId =
+    typeof hucId === 'string' &&
+    (region === 'alaska'
+      ? /^\d{8}$/.test(hucId) || /^[A-Z0-9]{4}$/.test(hucId)
+      : /^\d{8}$/.test(hucId))
+  const key = `${phase}:${hucId ?? ''}`
+  if (key === lastAppliedKey) return
+  lastAppliedKey = key
+
+  if (phase === MapPhase.HucSelected && validHucId) {
+    enterPhase2(hucId)
+  } else if (phase === MapPhase.WmsHuc) {
+    enterPhase1(centerFromUrl())
+  } else {
+    enterPhase0()
+  }
+}
+
+// Replaces the current history entry's center for the active phase, without
+// changing history depth or phase. Called on pan (moveend).
+const updatePositionInUrl = () => {
+  if (!map) return
+  const c = map.getCenter()
+  const query: Record<string, string> = {
+    ...safeQuery(),
+    [paramKeys.phase]: String(currentPhase),
+  }
+  if (currentPhase >= MapPhase.WmsHuc) {
+    query[paramKeys.lat] = c.lat.toFixed(5)
+    query[paramKeys.lng] = c.lng.toFixed(5)
+  } else {
+    delete query[paramKeys.lat]
+    delete query[paramKeys.lng]
+  }
+  if (currentPhase < MapPhase.HucSelected) delete query[paramKeys.huc]
+  router.replace({ query })
+}
+
+// React to URL phase/huc changes from Back/Forward navigation (and our own
+// forward pushes). Center (lat/lng) changes are intentionally not watched so
+// panning does not re-trigger a phase application.
+watch(
+  () => [route.query[paramKeys.phase], route.query[paramKeys.huc]],
+  () => syncMapFromUrl()
+)
+
+const hucFeatureHandler = (feature: any, layer: any) => {
+  layer.on('mouseover', function (e: any) {
+    if (currentPhase !== MapPhase.WmsHuc) return
+    e.target.setStyle({
+      color: '#ffff00',
+      fillColor: '#ffff00',
+      fillOpacity: 0.5,
+    })
+    let hucName =
+      region === 'alaska' ? feature.properties.Name : feature.properties.name
+    let hucId =
+      region === 'alaska' ? feature.properties.ID_2 : feature.properties.huc8
+    if (hucName && hucId) {
+      layer
+        .bindTooltip(`${hucName} (${hucId})`, {
+          className: 'is-size-6 px-3',
+          opacity: 1,
+        })
+        .openTooltip()
+    }
+  })
+  layer.on('mouseout', function (e: any) {
+    if (currentPhase !== MapPhase.WmsHuc) return
+    e.target.setStyle({
+      color: 'transparent',
+      fillColor: 'transparent',
+      fillOpacity: 0,
+    })
+  })
+  layer.on('click', function () {
+    if (currentPhase !== MapPhase.WmsHuc) return
+    const hucId =
+      region === 'alaska' ? feature.properties.ID_2 : feature.properties.huc8
+    if (!hucId) return
+    // Phase 1 -> Phase 2: push a new history entry for the selected HUC. Clear
+    // the carried-over Phase 1 center so loadPhase2Data centers on the HUC; the
+    // map's own moveend then records the Phase 2 center for later restoration.
+    const query = {
+      ...safeQuery(),
+      [paramKeys.phase]: String(MapPhase.HucSelected),
+      [paramKeys.huc]: String(hucId),
+    }
+    delete query[paramKeys.lat]
+    delete query[paramKeys.lng]
+    router.push({ query })
+  })
+}
+
+// The view the map should be created at, derived from the URL. On a remount
+// (e.g. Back from a segment report) this starts the map at the saved Phase 2
+// center/zoom instead of the default extent, so it never flashes the full
+// region before loadPhase2Data settles it. Falls back to the region default.
+const initialView = (): { center: [number, number]; zoom: number } => {
+  const center = urlCenter()
+  if (center) {
+    if (phaseFromUrl() === MapPhase.HucSelected) {
+      return { center, zoom: phase2Zoom() }
+    }
+    if (phaseFromUrl() === MapPhase.WmsHuc) {
+      return { center, zoom: hucSelectZoom }
+    }
+  }
+  return { center: config.defaultCenter, zoom: defaultViewZoom }
+}
+
 const initializeMap = () => {
+  // Zoom is owned entirely by the phase functions; the user may only pan and
+  // click. Disable every user-driven zoom interaction and the zoom control.
   const mapOptions: any = {
+    zoomControl: false,
     scrollWheelZoom: false,
+    doubleClickZoom: false,
+    boxZoom: false,
+    touchZoom: false,
+    keyboard: false,
     zoomSnap: 0.1,
-    minZoom: config.minZoom,
+    minZoom: Math.min(config.minZoom, defaultViewZoom),
     maxZoom: config.maxZoom,
   }
 
@@ -98,9 +435,8 @@ const initializeMap = () => {
     mapOptions.crs = proj
   }
 
-  map = $L
-    .map(config.mapId, mapOptions)
-    .setView(config.defaultCenter, config.defaultZoom)
+  const view = initialView()
+  map = $L.map(config.mapId, mapOptions).setView(view.center, view.zoom)
 
   if (config.mapId === 'map-conus') {
     $L.tileLayer(
@@ -122,18 +458,16 @@ const initializeMap = () => {
       .addTo(map)
   }
 
-  hucWmsLayer = $L.tileLayer
-    .wms(`${$config.public.geoserverUrl}/wms`, {
-      transparent: true,
-      format: 'image/png',
-      layers: config.hucLayer,
-      styles: 'hydrology:hydroviz-choropleth',
-      zIndex: 10,
-      opacity: 0.85,
-    })
-    .addTo(map)
+  // Create the phase-managed layers detached; the phase functions add/remove them.
+  hucWmsLayer = $L.tileLayer.wms(`${$config.public.geoserverUrl}/wms`, {
+    transparent: true,
+    format: 'image/png',
+    layers: config.hucLayer,
+    styles: 'hydrology:hydroviz-choropleth',
+    zIndex: 10,
+    opacity: 0.85,
+  })
 
-  // Initialize but don't add to map until later.
   segWmsLayer = $L.tileLayer.wms(`${$config.public.geoserverUrl}/wms`, {
     transparent: true,
     format: 'image/png',
@@ -153,217 +487,52 @@ const initializeMap = () => {
       },
       onEachFeature: hucFeatureHandler,
     })
-    simplifiedHucsLayer.addTo(map)
   }
 
   if (perimeter) {
-    perimeterLayer = $L
-      .geoJSON(perimeter, {
-        style: {
-          opacity: 0,
-          fillOpacity: 0,
-          interactive: true,
-        },
-        onEachFeature: function (feature, layer) {
-          layer.on('click', function (e) {
-            if (map.getZoom() < clickToZoomThreshold) {
-              map.setView(e.latlng, clickToZoomThreshold)
-            }
-            map.removeLayer(perimeterLayer)
-          })
-        },
-      })
-      .addTo(map)
-  }
-
-  map.on('zoomend', function () {
-    let zoomLevel = map.getZoom()
-    let segViewThresholdOffset = 0
-
-    // Workaround to keep zoom/layer behavior consistent with huge Alaskan HUCs.
-    if (region === 'alaska') {
-      segViewThresholdOffset = -1
-    }
-
-    if (zoomLevel >= segViewThreshold + segViewThresholdOffset) {
-      if (map.hasLayer(hucWmsLayer)) {
-        map.removeLayer(hucWmsLayer)
-      }
-      if (map.hasLayer(segWmsLayer)) {
-        map.removeLayer(segWmsLayer)
-      }
-      fetchAndAddSegmentsByBounds({
-        map,
-        $L,
-        fitBounds: false,
-        mapType: 'main',
-        region,
-      })
-    } else {
-      clearSegmentLayers(map)
-      if (!map.hasLayer(hucWmsLayer)) {
-        map.addLayer(hucWmsLayer)
-      }
-      if (!map.hasLayer(simplifiedHucsLayer)) {
-        map.addLayer(simplifiedHucsLayer)
-      }
-    }
-    if (
-      zoomLevel < hucSelectThreshold ||
-      zoomLevel >= segViewThreshold + segViewThresholdOffset
-    ) {
-      if (map.hasLayer(simplifiedHucsLayer)) {
-        map.removeLayer(simplifiedHucsLayer)
-      }
-    }
-    if (zoomLevel >= segmentWmsThreshold && zoomLevel <= segViewThreshold) {
-      if (!map.hasLayer(segWmsLayer)) {
-        map.addLayer(segWmsLayer)
-      }
-    } else {
-      if (map.hasLayer(segWmsLayer)) {
-        map.removeLayer(segWmsLayer)
-      }
-    }
-    if (zoomLevel < clickToZoomThreshold) {
-      if (perimeterLayer && !map.hasLayer(perimeterLayer)) {
-        map.addLayer(perimeterLayer)
-      }
-    } else {
-      if (perimeterLayer && map.hasLayer(perimeterLayer)) {
-        map.removeLayer(perimeterLayer)
-      }
-    }
-    if (zoomLevel < segViewThreshold + segViewThresholdOffset) {
-      resetHUC()
-    }
-  })
-
-  map.on('moveend', function () {
-    if (map.getZoom() >= segViewThreshold || hucBasedGeoJson) {
-      fetchAndAddSegmentsByBounds({
-        map,
-        $L,
-        fitBounds: false,
-        mapType: 'main',
-        region,
-      })
-    }
-  })
-}
-
-const resetHUC = () => {
-  if (detailedHucLayer) {
-    map.removeLayer(detailedHucLayer)
-  }
-  hucBasedGeoJson = false
-}
-
-const addDetailedHucLayer = (data: any) => {
-  let huc = data
-  if (map.hasLayer(hucWmsLayer)) {
-    map.removeLayer(hucWmsLayer)
-  }
-  if (detailedHucLayer && map.hasLayer(detailedHucLayer)) {
-    map.removeLayer(detailedHucLayer)
-  }
-  detailedHucLayer = $L
-    .geoJSON(huc, {
+    perimeterLayer = $L.geoJSON(perimeter, {
       style: {
-        weight: 0,
-        fillColor: '#111111',
-        fillOpacity: 0.25,
+        opacity: 0,
+        fillOpacity: 0,
+        interactive: true,
+      },
+      onEachFeature: function (feature, layer) {
+        layer.on('click', function (e: any) {
+          // Phase 0 -> Phase 1: advance, centered on the click point.
+          router.push({
+            query: {
+              ...safeQuery(),
+              [paramKeys.phase]: String(MapPhase.WmsHuc),
+              [paramKeys.lat]: e.latlng.lat.toFixed(5),
+              [paramKeys.lng]: e.latlng.lng.toFixed(5),
+            },
+          })
+        })
       },
     })
-    .addTo(map)
-  let bounds = $L.geoJSON(huc).getBounds()
-  map.fitBounds(bounds, {
-    padding: [50, 50],
-  })
-}
+  }
 
-const hucFeatureHandler = (feature: any, layer: any) => {
-  layer.on('mouseover', function (e: any) {
-    let mapZoom = map.getZoom()
-    if (mapZoom < hucSelectThreshold || mapZoom >= segViewThreshold) {
+  // Panning within a phase: persist the new center, and in Phase 2 refresh the
+  // segment GeoJSON for the new viewport. (No zoomend handler — zoom is owned
+  // entirely by the phase functions.)
+  map.on('moveend', function () {
+    updatePositionInUrl()
+    // Skip the refetch for the programmatic Phase 2 move (loadPhase2Data adds the
+    // segments itself). Consume the flag here so it works whether moveend fires
+    // synchronously or after an animated move.
+    if (suppressMoveFetch) {
+      suppressMoveFetch = false
       return
     }
-    e.target.setStyle({
-      color: '#ffff00',
-      fillColor: '#ffff00',
-      fillOpacity: 0.5,
-    })
-    let hucName =
-      region === 'alaska' ? feature.properties.Name : feature.properties.name
-    let hucId =
-      region === 'alaska' ? feature.properties.ID_2 : feature.properties.huc8
-    if (hucName && hucId) {
-      layer
-        .bindTooltip(`${hucName} (${hucId})`, {
-          className: 'is-size-6 px-3',
-          opacity: 1,
-        })
-        .openTooltip()
-    }
-  })
-  layer.on('mouseout', function (e) {
-    let mapZoom = map.getZoom()
-    if (mapZoom < hucSelectThreshold || mapZoom >= segViewThreshold) {
-      return
-    }
-    e.target.setStyle({
-      color: 'transparent',
-      fillColor: 'transparent',
-      fillOpacity: 0,
-    })
-  })
-  layer.on('click', function (e) {
-    let mapZoom = map.getZoom()
-    if (mapZoom < hucSelectThreshold || mapZoom >= segViewThreshold) {
-      return
-    }
-    e.target.setStyle({
-      color: 'transparent',
-      fillColor: 'transparent',
-      fillOpacity: 0,
-    })
-    hucBasedGeoJson = true
-    if (map.hasLayer(simplifiedHucsLayer)) {
-      map.removeLayer(simplifiedHucsLayer)
-    }
-    if (feature.properties) {
-      // Make the simplified HUC-8 visible when it is clicked.
-      // It will be swapped with a high-vertex HUC-8 before zooming in.
-      simplifiedHucLayer = $L
-        .geoJSON(feature, {
-          style: {
-            weight: 3,
-            color: '#444444',
-            fillOpacity: 0.1,
-          },
-        })
-        .addTo(map)
-
-      let hucUrl =
-        region === 'alaska'
-          ? `${regionConfig[region].hucBaseUrl}&cql_filter=ID_2='${feature.properties.ID_2}'`
-          : `${regionConfig[region].hucBaseUrl}&cql_filter=huc8=${feature.properties.huc8}`
-
-      let hucFetch = fetch(hucUrl)
-
-      hucFetch
-        .then(async hucResponse => {
-          if (!hucResponse.ok) {
-            throw new Error(
-              `Failed to fetch HUC data (huc status: ${hucResponse.status})`
-            )
-          }
-          const hucData = await hucResponse.json()
-          addDetailedHucLayer(hucData)
-        })
-        .catch(error => {
-          console.error('Error loading HUC data:', error)
-        })
+    // Refresh segments for the new viewport when panning within Phase 2.
+    if (currentPhase === MapPhase.HucSelected) {
+      fetchAndAddSegmentsByBounds({
+        map,
+        $L,
+        fitBounds: false,
+        mapType: 'main',
+        region,
+      })
     }
   })
 }
@@ -401,17 +570,51 @@ const loadSimplifiedHucs = async () => {
 onMounted(() => {
   Promise.all([loadSimplifiedHucs(), loadPerimeter()]).then(() => {
     initializeMap()
+    // Apply whatever phase the URL describes (default Phase 0), then ensure the
+    // URL reflects it. Both are replaces, so a fresh load adds no history depth.
+    syncMapFromUrl()
+    updatePositionInUrl()
   })
 })
 </script>
 
 <template>
-  <div :id="config.mapId" style="height: 500px"></div>
+  <div class="map-wrapper" style="height: 80vh; min-height: 500px">
+    <div :id="config.mapId" style="height: 100%"></div>
+    <div v-if="isLoadingPhase2" class="map-loading-overlay">
+      <img :src="waterLoaderUrl" class="map-loading-icon" alt="" />
+      <p class="mt-3 has-text-white is-size-3 is-bold">
+        Loading stream network&hellip;
+      </p>
+    </div>
+  </div>
 </template>
 
 <style lang="scss">
 .leaflet-interactive:focus,
 .leaflet-interactive:active {
   outline: none;
+}
+
+.map-wrapper {
+  position: relative;
+}
+
+.map-loading-overlay {
+  position: absolute;
+  inset: 0;
+  // Above Leaflet panes (max ~700) and controls (~1000).
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(128, 128, 128, 0.5);
+  pointer-events: all;
+}
+
+.map-loading-icon {
+  width: 6rem;
+  height: 6rem;
 }
 </style>
