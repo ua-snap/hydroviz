@@ -9,7 +9,7 @@
   </div>
   <div class="section">
     <div class="container">
-      <h2 class="title is-3">Alaska</h2>
+      <h2 class="title is-3">Alaska &amp; Western Canada</h2>
       <Map region="alaska" />
     </div>
   </div>
