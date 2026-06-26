@@ -19,7 +19,7 @@
     <div class="container">
       <h2 class="title is-3">Alaska</h2>
       <p class="block is-size-4 clamp">
-        Data for Alaska and Canada is based on the
+        Data for Alaska and parts of Western Canada is based on the
         <a
           href="https://www.usgs.gov/software/precipitation-runoff-modeling-system-prms"
           >Arctic Rivers dataset</a
