@@ -167,6 +167,9 @@ const enterPhase1 = (center: [number, number]) => {
   hideLayer(perimeterLayer)
   showLayer(hucWmsLayer)
   showLayer(simplifiedHucsLayer)
+  // Clear any stale hover highlight left over from a HUC click that advanced to
+  // Phase 2 before its mouseout fired.
+  simplifiedHucsLayer?.resetStyle?.()
   showLayer(segWmsLayer)
   map.setView(center, hucSelectZoom)
 }
