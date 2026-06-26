@@ -332,18 +332,17 @@ const buildChart = hg => {
     y: hydroYearHistoricalDataMean,
     type: 'scatter',
     mode: 'line',
-    line: { color: '#f0f0f0', width: 3 },
+    line: { color: '#f0f0f0', width: 2 },
     name: 'Mean historical, 1976-2005',
   }
 
+  // First put the two historical traces at the bottom of the stack...
   traces.push(historicalMinTrace)
   traces.push(historicalMaxTrace)
-  traces.push(historicalMeanTrace)
 
   if (appContext.value === 'extremes' && !isAlaskaData) {
     traces2.push(historicalMinTrace)
     traces2.push(historicalMaxTrace)
-    traces2.push(historicalMeanTrace)
   }
 
   // Only add projected data for CONUS (non-Alaska) data
@@ -351,6 +350,13 @@ const buildChart = hg => {
     processProjectedAlaskaData(hg, traces)
   } else {
     processProjectedConusData(hg, scenarios, traces, traces2)
+  }
+
+  // Now put the historical mean on top because it makes the key comparison
+  // easier to see (how do the projections relate to the historical calibration mean?)
+  traces.push(historicalMeanTrace)
+  if (appContext.value === 'extremes' && !isAlaskaData) {
+    traces2.push(historicalMeanTrace)
   }
 
   // These numbers correspond to the 1st of each month in a 366-day year,
