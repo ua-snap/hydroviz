@@ -27,7 +27,7 @@ const regionConfig = {
     defaultCenter: [37.8, -96] as [number, number],
     minZoom: 4,
     maxZoom: 12,
-    crs: 'EPSG:4326',
+    crs: 'EPSG:3857',
     segLayer: 'hydrology:seg_h8_outlet_stats_simplified_subset',
     hucLayer: 'hydrology:huc8_conus_stats_simplified',
     perimeterAsset: '@/assets/conus_perimeter.json',
