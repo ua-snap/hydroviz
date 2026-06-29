@@ -103,7 +103,10 @@ export const statisticCategories = [
   'duration',
   'timing',
   'rate_of_change',
-  'water_temperature',
+  'water_temperature_annual',
+  'water_temperature_minumum_monthly',
+  'water_temperature_mean_monthly',
+  'water_temperature_maximum_monthly',
 ] as const
 export type StatisticCategory = (typeof statisticCategories)[number]
 
