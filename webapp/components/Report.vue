@@ -15,13 +15,9 @@ let {
 import { scenarioFullNames } from '~/types/modelsScenarios'
 
 onMounted(() => {
-  // Prefer HUC mode when both hucId and segmentId are set so behavior matches ReportMap
-  if (hucId.value !== null) {
-    streamSegmentStore.fetchHucStats()
-  } else if (segmentId.value !== null) {
-    streamSegmentStore.fetchStreamStats()
-  }
+  streamSegmentStore.fetchStreamStats()
 })
+
 onUnmounted(() => {
   streamSegmentStore.clearStats()
 })

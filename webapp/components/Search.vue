@@ -5,7 +5,7 @@ const inputValue = ref('')
 onMounted(() => {
   let config = {
     selector: '#search',
-    placeHolder: 'Search for a stream segment or HUC',
+    placeHolder: 'Search for a HUC-8 watershed',
     data: {
       src: async (query: string) => {
         // Escape single quotes for safe use inside CQL string literals
@@ -57,13 +57,6 @@ onMounted(() => {
       },
       keys: ['name'],
     },
-    // resultItem: {
-    //   element: (element: HTMLElement, match: any) => {
-    //     let item = match.value
-    //     element.innerHTML =
-    //       item.name + '<span class="category">' + item.category + '</span>'
-    //   },
-    // },
     threshold: 3,
     debounce: 200,
   }
@@ -74,22 +67,29 @@ onMounted(() => {
     let selection = event.detail.selection.value
     let id = selection.id
 
+    // http://localhost:3000/?cp=2&chuc=17040212&ap=0&clat=42.68395&clng=-114.56318
     if (selection.region === 'conus') {
-      navigateTo(`/conus/huc/${id}`)
+      navigateTo({
+        path: '/',
+        query: { cp: 2, chuc: id },
+        hash: '#conus-map',
+      })
     } else if (selection.region === 'alaska') {
-      navigateTo(`/alaska/huc/${id}`)
+      navigateTo({
+        path: '/',
+        query: { ap: 2, ahuc: id },
+        hash: '#alaska-map',
+      })
     }
   })
 })
 </script>
 
 <template>
-  <div class="field">
-    <label class="label" for="search"
-      >Search by stream segment name or HUC8 ID</label
-    >
-    <input id="search" v-model="inputValue" class="input" />
-  </div>
+  <label class="label is-sr-only" for="search"
+    >Search by stream segment name or HUC8 ID</label
+  >
+  <input id="search" v-model="inputValue" class="input" />
 </template>
 
 <style lang="scss" scoped>
@@ -101,7 +101,7 @@ onMounted(() => {
   height: 40px;
   outline: none;
   padding-left: 10px;
-  width: 600px;
+  max-width: 30rem;
   background: none;
 }
 
