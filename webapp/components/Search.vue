@@ -85,9 +85,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <label class="label is-sr-only" for="search"
-    >Search by stream segment name or HUC8 ID</label
-  >
+  <label class="label is-sr-only" for="search">Search by HUC-8 ID</label>
   <input id="search" v-model="inputValue" class="input" />
 </template>
 

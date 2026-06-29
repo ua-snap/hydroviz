@@ -6,7 +6,6 @@ let {
   streamHydrograph,
   streamMonthlyFlow,
   streamMaxFlowDates,
-  hucId,
   segmentId,
   segmentName,
   segmentRegion,
