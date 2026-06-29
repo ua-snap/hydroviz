@@ -3,7 +3,7 @@ const { $autoComplete, $config, $_ } = useNuxtApp()
 const inputValue = ref('')
 
 onMounted(() => {
-  let config = {
+  let autoCompleteConfig = {
     selector: '#search',
     placeHolder: 'Search for a HUC-8 watershed',
     data: {
@@ -61,13 +61,12 @@ onMounted(() => {
     debounce: 200,
   }
 
-  let searchAutoComplete = new $autoComplete(config)
+  let searchAutoComplete = new $autoComplete(autoCompleteConfig)
 
   searchAutoComplete.input.addEventListener('selection', function (event: any) {
     let selection = event.detail.selection.value
     let id = selection.id
 
-    // http://localhost:3000/?cp=2&chuc=17040212&ap=0&clat=42.68395&clng=-114.56318
     if (selection.region === 'conus') {
       navigateTo({
         path: '/',

@@ -3,7 +3,7 @@ const { $L, $config } = useNuxtApp()
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 import { fetchAndAddSegmentsByBounds, getHandleCoord } from '~/utils/map'
 const streamSegmentStore = useStreamSegmentStore()
-let { isLoading, hucId, segmentRegion, segmentId } =
+let { isLoading, segmentRegion, segmentId, segmentHuc8Id } =
   storeToRefs(streamSegmentStore)
 let map: any = null
 
@@ -74,11 +74,11 @@ const getHucOutletSegmentId = async (
 const addHuc = async () => {
   const hucUrl =
     segmentRegion.value === 'alaska'
-      ? `${hucBaseUrl}&cql_filter=ID_2='${hucId.value}'`
-      : `${hucBaseUrl}&cql_filter=huc8=${hucId.value}`
+      ? `${hucBaseUrl}&cql_filter=ID_2='${segmentHuc8Id.value}'`
+      : `${hucBaseUrl}&cql_filter=huc8=${segmentHuc8Id.value}`
 
   // Get the outlet segment ID for this HUC
-  const outletSegmentId = await getHucOutletSegmentId(hucId.value)
+  const outletSegmentId = await getHucOutletSegmentId(segmentHuc8Id.value)
 
   fetch(hucUrl)
     .then(response => response.json())
@@ -97,13 +97,13 @@ const addHuc = async () => {
 
       segmentId.value = outletSegmentId
 
-      // After fitting bounds, add all segments in the viewport with the outlet highlighted
-      fetchAndAddSegmentsByBounds({
-        map,
-        $L,
-        fitBounds: false,
-        mapType: 'report',
-      })
+      // // After fitting bounds, add all segments in the viewport with the outlet highlighted
+      // fetchAndAddSegmentsByBounds({
+      //   map,
+      //   $L,
+      //   fitBounds: false,
+      //   mapType: 'report',
+      // })
     })
     .catch(error => {
       console.error('Error fetching HUC GeoJSON data:', error)
@@ -150,11 +150,8 @@ const initializeMap = () => {
     }
   ).addTo(map)
 
-  if (hucId.value !== null) {
-    addHuc()
-  } else {
-    addSegment()
-  }
+  addHuc()
+  addSegment()
 
   map.on('moveend', function (e) {
     fetchAndAddSegmentsByBounds({
