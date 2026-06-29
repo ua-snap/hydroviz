@@ -148,7 +148,7 @@ onUnmounted(() => {
     </section>
     <section class="section" v-if="segmentRegion == 'alaska'">
       <div class="container">
-        <VizMaxTempDates :stream-max-temp-dates="streamMaxTempDates" />
+        <VizMaxTemperatureDates :stream-max-temp-dates="streamMaxTempDates" />
       </div>
     </section>
 

@@ -12,14 +12,15 @@ import type { Data } from 'plotly.js'
 
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-const { appContext, appEra } = storeToRefs(streamSegmentStore)
+const { segmentId, gaugeId, appContext, appEra } =
+  storeToRefs(streamSegmentStore)
 
 const props = defineProps(['streamMaxTempDates'])
 
 onMounted(() => {
   initializeChart(
     $Plotly,
-    'max-temp-dates',
+    'max-temperature-dates',
     buildChart,
     toRaw(props.streamMaxTempDates)
   )
@@ -28,7 +29,7 @@ onMounted(() => {
 watch([appContext, appEra], () => {
   initializeChart(
     $Plotly,
-    'max-temp-dates',
+    'max-temperature-dates',
     buildChart,
     toRaw(props.streamMaxTempDates)
   )
@@ -48,8 +49,10 @@ const buildChart = () => {
     projected: 'circle',
   }
 
-  let titleText =
-    'Modeled water temperature at date of annual maximum, 2034-2065'
+  let gaugeIdLine = gaugeId.value
+    ? `<br><span style="font-size: 0.8em;">Gage ID: ${gaugeId.value}</span>`
+    : ''
+  let titleText = `Modeled water temperature at date of annual maximum, 2034-2065${gaugeIdLine}`
 
   let historicalTemp = [props.streamMaxTempDates['historical']['temperature']]
   let historicalTempDate = [props.streamMaxTempDates['historical']['date']]
@@ -122,7 +125,19 @@ const buildChart = () => {
     traceorder: 'reversed',
   }
 
-  const layout = getLayout(titleText, '', {}, {}, legendConfig)
+  let isTwoLineTitle = gaugeId.value ? true : false
+  const isAlaskaData = true
+
+  const layout = getLayout(
+    'maxTempDates',
+    titleText,
+    '',
+    {},
+    {},
+    legendConfig,
+    isTwoLineTitle,
+    isAlaskaData
+  )
 
   let firstOfMonthValues = [
     1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335,
@@ -183,15 +198,13 @@ const buildChart = () => {
     domain: firstPlotDomain,
   }
 
-  layout['margin'] = { t: 100 }
-  layout['height'] = 500
+  let pngName = `max-temperature-dates_${segmentId.value}_2034-2065`
+  let config = getConfig(pngName)
 
-  const config = getConfig('max-temp-dates')
-
-  $Plotly.newPlot('max-temp-dates', traces, layout, config)
+  $Plotly.newPlot('max-temperature-dates', traces, layout, config)
 }
 </script>
 
 <template>
-  <div id="max-temp-dates" class="mb-5"></div>
+  <div id="max-temperature-dates" class="mb-5"></div>
 </template>

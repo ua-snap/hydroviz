@@ -14,7 +14,7 @@ const props = defineProps(['streamMonthlyTemperature'])
 
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { appContext, appEra } = storeToRefs(streamSegmentStore)
+let { segmentId, gaugeId, appContext, appEra } = storeToRefs(streamSegmentStore)
 
 const monthKeys = [
   'oct',
@@ -123,7 +123,10 @@ const buildChart = () => {
     showLegend = false
   })
 
-  const titleText = 'Mean monthly modeled water temperature, 2034-2065'
+  let gaugeIdLine = gaugeId.value
+    ? `<br><span style="font-size: 0.8em;">Gage ID: ${gaugeId.value}</span>`
+    : ''
+  const titleText = `Mean monthly modeled water temperature, 2034-2065${gaugeIdLine}`
 
   let xAxisSettings = {
     tickvals: $_.range(Object.values(monthLabels).length),
@@ -146,15 +149,22 @@ const buildChart = () => {
     x: 0.5,
   }
 
+  let isTwoLineTitle = gaugeId.value ? true : false
+  const isAlaskaData = true
+
   let layout = getLayout(
+    'monthlyTemperature',
     titleText,
     'Mean monthly temperature, °C',
     xAxisSettings,
     yAxisSettings,
-    legendConfig
+    legendConfig,
+    isTwoLineTitle,
+    isAlaskaData
   )
 
-  const config = getConfig()
+  const pngName = `monthly-temperature_${segmentId.value}_2034-2065`
+  const config = getConfig(pngName)
 
   $Plotly.newPlot('monthly-temperature', traces, layout, config)
 }

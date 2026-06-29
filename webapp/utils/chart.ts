@@ -47,36 +47,47 @@ const getLayoutPositions = (
   let marginBottom: null | number = null
   let footerY: null | number = null
 
+  const generalizedChartTypes: Record<string, string> = {
+    hydrograph: 'hydrograph',
+    temperatureHydrograph: 'hydrograph',
+    monthlyFlow: 'monthlyBoxPlots',
+    monthlyTemperature: 'monthlyBoxPlots',
+    maxFlowDates: 'maxDates',
+    maxTempDates: 'maxDates',
+  }
+
+  let generalizedChartType = generalizedChartTypes[chartType]
+
   if (isTwoLineTitle) {
     if (isAlaskaData) {
-      if (chartType === 'hydrograph') {
+      if (generalizedChartType === 'hydrograph') {
         height = 515
         marginTop = 100
         marginBottom = 145
         footerY = -0.5
-      } else if (chartType === 'monthlyFlow') {
+      } else if (generalizedChartType === 'monthlyBoxPlots') {
         height = 535
         marginTop = 120
-        marginBottom = 150
-        footerY = -0.56
-      } else if (chartType === 'maxFlowDates') {
+        marginBottom = 140
+        footerY = -0.44
+      } else if (generalizedChartType === 'maxDates') {
         height = 560
         marginTop = 120
         marginBottom = 130
         footerY = -0.35
       }
     } else {
-      if (chartType === 'hydrograph') {
+      if (generalizedChartType === 'hydrograph') {
         height = 535
         marginTop = 100
         marginBottom = 160
         footerY = -0.55
-      } else if (chartType === 'monthlyFlow') {
+      } else if (generalizedChartType === 'monthlyBoxPlots') {
         height = 520
         marginTop = 100
         marginBottom = 145
         footerY = -0.48
-      } else if (chartType === 'maxFlowDates') {
+      } else if (generalizedChartType === 'maxDates') {
         height = 555
         marginTop = 120
         marginBottom = 130
@@ -85,34 +96,34 @@ const getLayoutPositions = (
     }
   } else {
     if (isAlaskaData) {
-      if (chartType === 'hydrograph') {
+      if (generalizedChartType === 'hydrograph') {
         height = 505
         marginTop = 80
         marginBottom = 150
         footerY = -0.5
-      } else if (chartType === 'monthlyFlow') {
+      } else if (generalizedChartType === 'monthlyBoxPlots') {
         height = 505
         marginTop = 100
         marginBottom = 130
         footerY = -0.43
-      } else if (chartType === 'maxFlowDates') {
+      } else if (generalizedChartType === 'maxDates') {
         height = 530
         marginTop = 100
         marginBottom = 120
         footerY = -0.35
       }
     } else {
-      if (chartType === 'hydrograph') {
+      if (generalizedChartType === 'hydrograph') {
         height = 520
         marginTop = 80
         marginBottom = 165
         footerY = -0.55
-      } else if (chartType === 'monthlyFlow') {
+      } else if (generalizedChartType === 'monthlyBoxPlots') {
         height = 505
         marginTop = 80
         marginBottom = 145
         footerY = -0.48
-      } else if (chartType === 'maxFlowDates') {
+      } else if (generalizedChartType === 'maxDates') {
         height = 535
         marginTop = 100
         marginBottom = 130
