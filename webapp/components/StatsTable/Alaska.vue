@@ -9,9 +9,6 @@ const props = defineProps(['streamStats', 'wtStats', 'category', 'tableTitle'])
 // Support both streamStats and wtStats props
 const statsData = computed(() => props.wtStats || props.streamStats)
 
-// Hide the statistic ID column for water temperature
-const showStatisticId = computed(() => props.category !== 'water_temperature')
-
 var statsInCategory = $_.filter(statistics, {
   category: props.category,
 })
@@ -27,20 +24,18 @@ const tableCaptionHtml = computed(() => {
       <caption class="mb-4" v-html="tableCaptionHtml"></caption>
       <thead>
         <tr>
-          <th v-if="showStatisticId" scope="col" width="10%">Statistic</th>
-          <th scope="col" :width="showStatisticId ? '30%' : '40%'">
-            Description
-          </th>
-          <th scope="col" :width="showStatisticId ? '20%' : '15%'">Units</th>
-          <th scope="col" :width="showStatisticId ? '20%' : '22.5%'">
+          <th scope="col" width="10%">Statistic</th>
+          <th scope="col" width="30%">Description</th>
+          <th scope="col" width="20%">Units</th>
+          <th scope="col" width="20%">
             Modeled Historical<br />(1990&ndash;2021)
           </th>
-          <th scope="col" :width="showStatisticId ? '20%' : '22.5%'">Median</th>
+          <th scope="col" width="20%">Median</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="stat in statsInCategory" :key="stat.id">
-          <th v-if="showStatisticId" scope="row">
+          <th scope="row">
             <code>{{ stat.id }}</code>
           </th>
           <td v-html="stat.description"></td>
