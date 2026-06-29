@@ -33,83 +33,6 @@ const setMapMaxBounds = () => {
   map.setMaxBounds(paddedBounds)
 }
 
-const getHucOutletSegmentId = async (
-  hucIdValue: string
-): Promise<number | null> => {
-  try {
-    const isAlaska = segmentRegion.value === 'alaska'
-    const url = isAlaska
-      ? `${segBaseUrl}&cql_filter=ID_2='${hucIdValue}'`
-      : `${segBaseUrl}&cql_filter=huc8=${hucIdValue}`
-
-    const response = await fetch(url)
-    const data = await response.json()
-
-    const features = Array.isArray(data?.features) ? data.features : []
-    if (features.length === 0) {
-      console.error('No features returned for HUC:', hucIdValue)
-      return null
-    }
-
-    const outletProperty = isAlaska ? 'outlet' : 'h8_outlet'
-    const segmentIdProperty = isAlaska ? 'COMID' : 'seg_id_nat'
-
-    // Find the outlet segment.
-    const outletFeature = features.find(
-      (feature: any) => feature?.properties?.[outletProperty] === 1
-    )
-
-    if (!outletFeature || !outletFeature.properties) {
-      console.error('No outlet feature found for HUC:', hucIdValue)
-      return null
-    }
-
-    return outletFeature.properties[segmentIdProperty]
-  } catch (error) {
-    console.error('Error fetching outlet segment for HUC:', error)
-    return null
-  }
-}
-
-const addHuc = async () => {
-  const hucUrl =
-    segmentRegion.value === 'alaska'
-      ? `${hucBaseUrl}&cql_filter=ID_2='${segmentHuc8Id.value}'`
-      : `${hucBaseUrl}&cql_filter=huc8=${segmentHuc8Id.value}`
-
-  // Get the outlet segment ID for this HUC
-  const outletSegmentId = await getHucOutletSegmentId(segmentHuc8Id.value)
-
-  fetch(hucUrl)
-    .then(response => response.json())
-    .then(data => {
-      let geoJsonLayer = $L
-        .geoJSON(data, {
-          style: {
-            weight: 0,
-            color: '#111111',
-            interactive: false,
-          },
-        })
-        .addTo(map)
-      map.fitBounds(geoJsonLayer.getBounds(), { padding: [25, 25] })
-      setMapMaxBounds()
-
-      segmentId.value = outletSegmentId
-
-      // // After fitting bounds, add all segments in the viewport with the outlet highlighted
-      // fetchAndAddSegmentsByBounds({
-      //   map,
-      //   $L,
-      //   fitBounds: false,
-      //   mapType: 'report',
-      // })
-    })
-    .catch(error => {
-      console.error('Error fetching HUC GeoJSON data:', error)
-    })
-}
-
 const addSegment = async () => {
   if (!segmentId.value) {
     const route = useRoute()
@@ -150,7 +73,6 @@ const initializeMap = () => {
     }
   ).addTo(map)
 
-  addHuc()
   addSegment()
 
   map.on('moveend', function (e) {
