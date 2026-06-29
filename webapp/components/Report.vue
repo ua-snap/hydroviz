@@ -208,7 +208,7 @@ onUnmounted(() => {
         <StatsTable
           v-if="segmentRegion == 'alaska'"
           :wt-stats="streamWtStats"
-          category="water_temperature_minumum_monthly"
+          category="water_temperature_minimum_monthly"
           tableTitle="Minimum Monthly Mean Water Temperature"
         />
         <StatsTable

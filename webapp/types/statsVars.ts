@@ -104,7 +104,7 @@ export const statisticCategories = [
   'timing',
   'rate_of_change',
   'water_temperature_annual',
-  'water_temperature_minumum_monthly',
+  'water_temperature_minimum_monthly',
   'water_temperature_mean_monthly',
   'water_temperature_maximum_monthly',
 ] as const
@@ -907,7 +907,7 @@ const statistics: Statistic[] = [
   },
   {
     id: 'wt_min_jan',
-    category: 'water_temperature_minumum_monthly',
+    category: 'water_temperature_minimum_monthly',
     code_base: 'matlab',
     difference_method: 'absolute',
     description_full:
@@ -919,7 +919,7 @@ const statistics: Statistic[] = [
   },
   {
     id: 'wt_min_feb',
-    category: 'water_temperature_minumum_monthly',
+    category: 'water_temperature_minimum_monthly',
     code_base: 'matlab',
     difference_method: 'absolute',
     description_full:
@@ -931,7 +931,7 @@ const statistics: Statistic[] = [
   },
   {
     id: 'wt_min_mar',
-    category: 'water_temperature_minumum_monthly',
+    category: 'water_temperature_minimum_monthly',
     code_base: 'matlab',
     difference_method: 'absolute',
     description_full:
@@ -943,7 +943,7 @@ const statistics: Statistic[] = [
   },
   {
     id: 'wt_min_apr',
-    category: 'water_temperature_minumum_monthly',
+    category: 'water_temperature_minimum_monthly',
     code_base: 'matlab',
     difference_method: 'absolute',
     description_full:
@@ -955,7 +955,7 @@ const statistics: Statistic[] = [
   },
   {
     id: 'wt_min_may',
-    category: 'water_temperature_minumum_monthly',
+    category: 'water_temperature_minimum_monthly',
     code_base: 'matlab',
     difference_method: 'absolute',
     description_full:
@@ -967,7 +967,7 @@ const statistics: Statistic[] = [
   },
   {
     id: 'wt_min_jun',
-    category: 'water_temperature_minumum_monthly',
+    category: 'water_temperature_minimum_monthly',
     code_base: 'matlab',
     difference_method: 'absolute',
     description_full:
@@ -979,7 +979,7 @@ const statistics: Statistic[] = [
   },
   {
     id: 'wt_min_jul',
-    category: 'water_temperature_minumum_monthly',
+    category: 'water_temperature_minimum_monthly',
     code_base: 'matlab',
     difference_method: 'absolute',
     description_full:
@@ -991,7 +991,7 @@ const statistics: Statistic[] = [
   },
   {
     id: 'wt_min_aug',
-    category: 'water_temperature_minumum_monthly',
+    category: 'water_temperature_minimum_monthly',
     code_base: 'matlab',
     difference_method: 'absolute',
     description_full:
@@ -1003,7 +1003,7 @@ const statistics: Statistic[] = [
   },
   {
     id: 'wt_min_sep',
-    category: 'water_temperature_minumum_monthly',
+    category: 'water_temperature_minimum_monthly',
     code_base: 'matlab',
     difference_method: 'absolute',
     description_full:
@@ -1015,7 +1015,7 @@ const statistics: Statistic[] = [
   },
   {
     id: 'wt_min_oct',
-    category: 'water_temperature_minumum_monthly',
+    category: 'water_temperature_minimum_monthly',
     code_base: 'matlab',
     difference_method: 'absolute',
     description_full:
@@ -1027,7 +1027,7 @@ const statistics: Statistic[] = [
   },
   {
     id: 'wt_min_nov',
-    category: 'water_temperature_minumum_monthly',
+    category: 'water_temperature_minimum_monthly',
     code_base: 'matlab',
     difference_method: 'absolute',
     description_full:
@@ -1039,7 +1039,7 @@ const statistics: Statistic[] = [
   },
   {
     id: 'wt_min_dec',
-    category: 'water_temperature_minumum_monthly',
+    category: 'water_temperature_minimum_monthly',
     code_base: 'matlab',
     difference_method: 'absolute',
     description_full:
