@@ -3,25 +3,30 @@
     <div class="container">
       <h1 class="title is-1">Hydrologic Outlooks</h1>
       <header class="block">
-        <h3 class="subtitle is-3">
-          Long-term projections across multiple variables, scenarios, and models
+        <h3 class="title is-3">
+          Future projections across multiple variables, scenarios, and models.
         </h3>
+        <h4 class="subtitle is-4">
+          View summary text and graphics and download site-specific datasets for
+          a broad range of projections of hydrologic change.
+        </h4>
+
         <p class="is-size-4">
-          Zoom, click, or search by <strong>stream</strong> or
-          <strong>watershed</strong> to view summary text and graphics and
-          download site-specific datasets for a broad range of projections of
-          hydrologic change.
+          Use the maps below to find a <strong>stream segment</strong> in the
+          <strong>Continental United States</strong> and
+          <strong>Alaska</strong>.
+        </p>
+
+        <p class="is-size-4 mt-4">
+          Search HUC-8 watersheds by name or ID. <Search />
         </p>
       </header>
-
-      <p class="block is-size-4">
-        This tool is based on
-        <a
-          href="https://www.usgs.gov/software/precipitation-runoff-modeling-system-prms"
-          >PRMS</a
-        >
-        (the Precipitation Runoff Modeling System), USGS.
-      </p>
     </div>
   </section>
 </template>
+
+<style lang="scss" scoped>
+h3.title.is-3 {
+  font-weight: 600;
+}
+</style>
