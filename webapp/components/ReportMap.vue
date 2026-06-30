@@ -1,23 +1,10 @@
 <script setup lang="ts">
-const { $L, $config } = useNuxtApp()
+const { $L } = useNuxtApp()
 import { useStreamSegmentStore } from '~/stores/streamSegment'
-import { fetchAndAddSegmentsByBounds, getHandleCoord } from '~/utils/map'
+import { fetchAndAddSegmentsByBounds } from '~/utils/map'
 const streamSegmentStore = useStreamSegmentStore()
-let { isLoading, segmentRegion, segmentId, segmentHuc8Id } =
-  storeToRefs(streamSegmentStore)
+let { isLoading, segmentRegion, segmentId } = storeToRefs(streamSegmentStore)
 let map: any = null
-
-const wfsBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&outputFormat=application%2Fjson&srsName=EPSG:4326`
-
-const hucBaseUrl =
-  segmentRegion.value === 'alaska'
-    ? `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_watersheds_stats_simplified`
-    : `${wfsBaseUrl}&typeName=hydrology%3Ahuc8`
-
-const segBaseUrl =
-  segmentRegion.value === 'alaska'
-    ? `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_segments_joined_3338_simplified`
-    : `${wfsBaseUrl}&typeName=hydrology%3Aseg_h8_outlet_stats_simplified`
 
 // Set maxBounds to a large square around current map viewport.
 const setMapMaxBounds = () => {
