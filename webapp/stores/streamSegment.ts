@@ -7,12 +7,12 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const apiFailed = ref<boolean>(false)
 
   const segmentId = ref(null)
-  const segmentUsgsGaugeId = ref(null)
+  const segmentUsgsGageId = ref(null)
   const segmentHuc8Id = ref(null)
   const segmentIsHuc8Outlet = ref(null)
   const segmentRegion = ref(null)
   const segmentName = ref(null)
-  const gaugeId = ref(null)
+  const gageId = ref(null)
   const streamSummary = shallowRef(null)
   const streamHydrograph = shallowRef(null)
   const streamMonthlyFlow = shallowRef(null)
@@ -84,13 +84,13 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
 
     try {
       segmentName.value = dataResponse['name']
-      gaugeId.value = dataResponse['gauge_id']
+      gageId.value = dataResponse['gage_id']
       streamSummary.value = dataResponse['summary']
       streamHydrograph.value = dataResponse['hydrograph']
       streamMonthlyFlow.value = dataResponse['monthly_flow']
       streamMaxFlowDates.value = dataResponse['max_flow_dates']
       streamStats.value = dataResponse['stats']
-      segmentUsgsGaugeId.value = dataResponse['gauge_id']
+      segmentUsgsGageId.value = dataResponse['gage_id']
       segmentHuc8Id.value = dataResponse['huc8']
       segmentIsHuc8Outlet.value =
         dataResponse['h8_outlet'] || dataResponse['huc8_outlet'] // different key depending on AK vs. CONUS
@@ -103,11 +103,11 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const clearStats = (): void => {
     segmentId.value = null
     segmentRegion.value = null
-    segmentUsgsGaugeId.value = null
+    segmentUsgsGageId.value = null
     segmentHuc8Id.value = null
     segmentIsHuc8Outlet.value = null
     segmentName.value = null
-    gaugeId.value = null
+    gageId.value = null
     streamSummary.value = null
     streamHydrograph.value = null
     streamMonthlyFlow.value = null
@@ -120,12 +120,12 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
 
   return {
     segmentId,
-    segmentUsgsGaugeId,
+    segmentUsgsGageId,
     segmentHuc8Id,
     segmentIsHuc8Outlet,
     segmentRegion: segmentRegion,
     segmentName,
-    gaugeId,
+    gageId,
     streamSummary,
     streamHydrograph,
     streamMonthlyFlow,

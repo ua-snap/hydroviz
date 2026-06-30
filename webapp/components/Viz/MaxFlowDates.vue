@@ -12,7 +12,7 @@ import { scenarioFullNames } from '~/types/modelsScenarios'
 
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-const { segmentId, gaugeId, appContext, appEra } =
+const { segmentId, gageId, appContext, appEra } =
   storeToRefs(streamSegmentStore)
 
 const props = defineProps(['streamMaxFlowDates'])
@@ -69,11 +69,11 @@ const buildChart = () => {
   }
 
   let titleText: string
-  let gaugeIdLine = gaugeId.value
-    ? `<br><span style="font-size: 0.8em;">Gage ID: ${gaugeId.value}</span>`
+  let gageIdLine = gageId.value
+    ? `<br><span style="font-size: 0.8em;">Gage ID: ${gageId.value}</span>`
     : ''
   if (isAlaskaData) {
-    titleText = `Modeled flow rate at date of annual maximum daily flow, 2034-2065${gaugeIdLine}`
+    titleText = `Modeled flow rate at date of annual maximum daily flow, 2034-2065${gageIdLine}`
 
     let historicalFlow = [props.streamMaxFlowDates['historical']['flow']]
     let historicalFlowDate = [props.streamMaxFlowDates['historical']['date']]
@@ -135,7 +135,7 @@ const buildChart = () => {
 
     projectedTraces.push(trace)
   } else {
-    titleText = `Modeled flow rate at date of annual maximum daily flow, ${appEra.value}${gaugeIdLine}`
+    titleText = `Modeled flow rate at date of annual maximum daily flow, ${appEra.value}${gageIdLine}`
     scenarios.forEach(scenario => {
       let historicalFlow = [props.streamMaxFlowDates['historical']['flow']]
       let historicalFlowDate = [props.streamMaxFlowDates['historical']['date']]
@@ -240,7 +240,7 @@ const buildChart = () => {
     traceorder: 'reversed',
   }
 
-  let isTwoLineTitle = gaugeId.value ? true : false
+  let isTwoLineTitle = gageId.value ? true : false
   let layout = getLayout(
     'maxFlowDates',
     titleText,
