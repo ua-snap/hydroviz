@@ -28,11 +28,11 @@ const regionConfig = {
     minZoom: 4,
     maxZoom: 12,
     crs: 'EPSG:3857',
-    segLayer: 'hydrology:seg_h8_outlet_stats_simplified_subset',
+    segLayer: 'hydrology:seg_h8_outlet_stats_simplified_subset_v2',
     hucLayer: 'hydrology:huc8_conus_stats_simplified',
     perimeterAsset: '@/assets/conus_perimeter.json',
     hucsAsset: '@/assets/conus_hucs_simplified.json',
-    segBaseUrl: `${wfsBaseUrl}&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_subset`,
+    segBaseUrl: `${wfsBaseUrl}&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_subset_v2`,
     hucBaseUrl: `${wfsBaseUrl}&typeName=hydrology%3Ahuc8&srsName=EPSG:4326`,
   },
   alaska: {
