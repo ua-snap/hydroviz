@@ -208,8 +208,7 @@ export const addSegmentsGeoJson = ({
       })
       .on('click', function (e: any) {
         const streamSegmentStore = useStreamSegmentStore()
-        let { hucId, segmentId, isLoading } = storeToRefs(streamSegmentStore)
-        hucId.value = null
+        let { segmentId, isLoading } = storeToRefs(streamSegmentStore)
         segmentId.value = null
         isLoading.value = true
         const routePrefix =

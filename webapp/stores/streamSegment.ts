@@ -13,7 +13,6 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const segmentRegion = ref(null)
   const segmentName = ref(null)
   const gaugeId = ref(null)
-  const hucId = ref(null)
   const streamSummary = shallowRef(null)
   const streamHydrograph = shallowRef(null)
   const streamMonthlyFlow = shallowRef(null)
@@ -26,60 +25,6 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const appContext = ref<AppContext>('mid')
   const appEra = ref<Era>('2046-2075')
   const { $config } = useNuxtApp()
-
-  // If we have a hucId but not a segmentId, set segmentId to HUC outlet.
-  const fetchHucStats = async (): Promise<void> => {
-    isLoading.value = true
-    const hucBaseUrl =
-      segmentRegion.value === 'alaska'
-        ? `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aarctic_rivers_segments_joined_3338_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326`
-        : `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_subset&outputFormat=application%2Fjson&srsName=EPSG:4326`
-    const hucFilter =
-      segmentRegion.value === 'alaska'
-        ? `&cql_filter=ID_2='${hucId.value}'`
-        : `&cql_filter=huc8=${hucId.value}`
-    let hucUrl = `${hucBaseUrl}${hucFilter}`
-
-    try {
-      const response = await fetch(hucUrl)
-      const data = await response.json()
-
-      apiFailed.value = false
-
-      const features = Array.isArray(data?.features) ? data.features : []
-      if (features.length === 0) {
-        console.error('No features returned for HUC:', hucId.value)
-        return
-      }
-
-      // Find the first feature in the response where properties.h8_outlet is 1.
-      // TODO: What do we do if there is more than 1 outlet stream segment?
-      let outletFeature = null
-      let outletPropertyName =
-        segmentRegion.value === 'alaska' ? 'outlet' : 'h8_outlet'
-      outletFeature = features.find(
-        (feature: any) => feature?.properties?.[outletPropertyName] === 1
-      )
-
-      if (!outletFeature || !outletFeature.properties) {
-        console.error('No outlet feature found for HUC:', hucId.value)
-        return
-      }
-
-      segmentId.value =
-        segmentRegion.value === 'alaska'
-          ? outletFeature.properties.COMID
-          : outletFeature.properties.seg_id_nat
-
-      if (segmentId.value != null) {
-        await fetchStreamStats()
-      }
-    } catch (error) {
-      console.error('Error fetching HUC data:', error)
-    } finally {
-      isLoading.value = false
-    }
-  }
 
   const fetchStreamStats = async (): Promise<void> => {
     var dataResponse
@@ -176,11 +121,10 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     streamMonthlyFlow.value = null
     streamMaxFlowDates.value = null
     streamStats.value = null
-    streamMonthlyTemperature.value = null
     streamWtHydrograph.value = null
-    streamWtStats.value = null
+    streamMonthlyTemperature.value = null
     streamMaxTempDates.value = null
-    hucId.value = null
+    streamWtStats.value = null
     isLoading.value = false
     apiSlow.value = false
     apiFailed.value = false
@@ -204,9 +148,7 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     streamMaxFlowDates,
     streamStats,
     fetchStreamStats,
-    fetchHucStats,
     clearStats,
-    hucId,
     isLoading,
     apiSlow,
     apiFailed,
