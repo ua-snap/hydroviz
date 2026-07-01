@@ -2,7 +2,14 @@
 import { computed } from 'vue'
 import { fnc } from '~/utils/general'
 
-const julianDateStats = ['spr_ord', 'sum_ord', 'th1', 'tl1']
+const julianDateStats = [
+  'spr_ord',
+  'sum_ord',
+  'th1',
+  'tl1',
+  'wt_ann_max_temp_doy_mean',
+  'wt_7d_max_temp_doy_mean',
+]
 
 const props = defineProps({
   future: {

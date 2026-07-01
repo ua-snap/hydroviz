@@ -5,6 +5,7 @@ import {
   getConfig,
   initializeChart,
   getDataRange,
+  convertTo360,
 } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
@@ -34,12 +35,6 @@ watch([appContext, appEra], () => {
     toRaw(props.streamMaxFlowDates)
   )
 })
-
-// Values exceeding 360 cannot be plotted on a Plotly.js polarscatter chart.
-// So, slightly squeeze 366 calendar to a 360 degree representation.
-const convertTo360 = (doy: number) => {
-  return ((doy - 1) / 366) * 360
-}
 
 const buildChart = () => {
   let historicalTraces: Data[] = []

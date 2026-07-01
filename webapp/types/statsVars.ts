@@ -1,4 +1,4 @@
-type StreamflowStatisticName =
+type StatisticName =
   | 'dh1'
   | 'dh2'
   | 'dh3'
@@ -38,6 +38,7 @@ type StreamflowStatisticName =
   | 'ma21'
   | 'ma22'
   | 'ma23'
+  | 'ma99'
   | 'mh14'
   | 'mh20'
   | 'ml17'
@@ -51,20 +52,67 @@ type StreamflowStatisticName =
   | 'sum_ord'
   | 'th1'
   | 'tl1'
+  | 'wt_days_gt13_mean'
+  | 'wt_days_gt18_mean'
+  | 'wt_days_gt20_mean'
+  | 'wt_mean_jan'
+  | 'wt_mean_feb'
+  | 'wt_mean_mar'
+  | 'wt_mean_apr'
+  | 'wt_mean_may'
+  | 'wt_mean_jun'
+  | 'wt_mean_jul'
+  | 'wt_mean_aug'
+  | 'wt_mean_sep'
+  | 'wt_mean_oct'
+  | 'wt_mean_nov'
+  | 'wt_mean_dec'
+  | 'wt_min_jan'
+  | 'wt_min_feb'
+  | 'wt_min_mar'
+  | 'wt_min_apr'
+  | 'wt_min_may'
+  | 'wt_min_jun'
+  | 'wt_min_jul'
+  | 'wt_min_aug'
+  | 'wt_min_sep'
+  | 'wt_min_oct'
+  | 'wt_min_nov'
+  | 'wt_min_dec'
+  | 'wt_max_jan'
+  | 'wt_max_feb'
+  | 'wt_max_mar'
+  | 'wt_max_apr'
+  | 'wt_max_may'
+  | 'wt_max_jun'
+  | 'wt_max_jul'
+  | 'wt_max_aug'
+  | 'wt_max_sep'
+  | 'wt_max_oct'
+  | 'wt_max_nov'
+  | 'wt_max_dec'
+  | 'wt_ann_max_temp_mean'
+  | 'wt_ann_max_temp_doy_mean'
+  | 'wt_7d_max_temp_mean'
+  | 'wt_7d_max_temp_doy_mean'
+  | 'wt_cdd_may_sept_mean'
 
-export const streamflowStatisticCategories = [
+export const statisticCategories = [
   'magnitude',
   'frequency',
   'duration',
   'timing',
   'rate_of_change',
+  'water_temperature_annual',
+  'water_temperature_minimum_monthly',
+  'water_temperature_mean_monthly',
+  'water_temperature_maximum_monthly',
 ] as const
-export type StreamflowStatisticCategory =
-  (typeof streamflowStatisticCategories)[number]
+export type StatisticCategory = (typeof statisticCategories)[number]
 
-interface StreamflowStatistic {
-  id: StreamflowStatisticName
-  category: StreamflowStatisticCategory
+interface Statistic {
+  id: StatisticName
+  category: StatisticCategory
   code_base: 'mhit' | 'matlab'
   difference_method: 'ratio' | 'absolute'
   description_full: string
@@ -73,7 +121,7 @@ interface StreamflowStatistic {
   units_short: string
 }
 
-const streamflowStatistics: StreamflowStatistic[] = [
+const statistics: Statistic[] = [
   {
     id: 'dh1',
     category: 'duration',
@@ -646,10 +694,505 @@ const streamflowStatistics: StreamflowStatistic[] = [
     units: 'Julian day',
     units_short: 'Julian day',
   },
+  {
+    id: 'wt_days_gt13_mean',
+    category: 'water_temperature_annual',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Mean annual count of days with stream temperature > 13&deg;C',
+    description: 'Mean annual count of days with stream temperature > 13&deg;C',
+    units: 'days per year',
+    units_short: 'days/yr',
+  },
+  {
+    id: 'wt_days_gt18_mean',
+    category: 'water_temperature_annual',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Mean annual count of days with stream temperature > 18&deg;C',
+    description: 'Mean annual count of days with stream temperature > 18&deg;C',
+    units: 'days per year',
+    units_short: 'days/yr',
+  },
+  {
+    id: 'wt_days_gt20_mean',
+    category: 'water_temperature_annual',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Mean annual count of days with stream temperature > 20&deg;C',
+    description: 'Mean annual count of days with stream temperature > 20&deg;C',
+    units: 'days per year',
+    units_short: 'days/yr',
+  },
+  {
+    id: 'wt_ann_max_temp_mean',
+    category: 'water_temperature_annual',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full: 'Mean of the annual maximum daily stream temperature',
+    description: 'Mean of the annual maximum daily stream temperature',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_ann_max_temp_doy_mean',
+    category: 'water_temperature_annual',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Mean Julian day of the annual maximum daily stream temperature',
+    description:
+      'Mean Julian day of the annual maximum daily stream temperature',
+    units: 'Julian day',
+    units_short: 'Julian day',
+  },
+  {
+    id: 'wt_7d_max_temp_mean',
+    category: 'water_temperature_annual',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Mean of the annual maximum 7-day rolling average stream temperature',
+    description:
+      'Mean of the annual maximum 7-day rolling average stream temperature',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_7d_max_temp_doy_mean',
+    category: 'water_temperature_annual',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Mean Julian day of the center of the annual maximum 7-day rolling average',
+    description:
+      'Mean Julian day of the center of the annual maximum 7-day rolling average',
+    units: 'Julian day',
+    units_short: 'Julian day',
+  },
+  {
+    id: 'wt_cdd_may_sept_mean',
+    category: 'water_temperature_annual',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Mean annual cumulative degree days above 0&deg;C, May through September',
+    description:
+      'Mean annual cumulative degree days above 0&deg;C, May through September',
+    units: 'degree-days Celsius',
+    units_short: '&deg;C&sdot;days',
+  },
+  {
+    id: 'wt_mean_jan',
+    category: 'water_temperature_mean_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full: 'Mean of monthly mean stream temperatures for January',
+    description: 'Mean of monthly mean stream temperatures for January',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_mean_feb',
+    category: 'water_temperature_mean_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full: 'Mean of monthly mean stream temperatures for February',
+    description: 'Mean of monthly mean stream temperatures for February',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_mean_mar',
+    category: 'water_temperature_mean_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full: 'Mean of monthly mean stream temperatures for March',
+    description: 'Mean of monthly mean stream temperatures for March',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_mean_apr',
+    category: 'water_temperature_mean_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full: 'Mean of monthly mean stream temperatures for April',
+    description: 'Mean of monthly mean stream temperatures for April',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_mean_may',
+    category: 'water_temperature_mean_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full: 'Mean of monthly mean stream temperatures for May',
+    description: 'Mean of monthly mean stream temperatures for May',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_mean_jun',
+    category: 'water_temperature_mean_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full: 'Mean of monthly mean stream temperatures for June',
+    description: 'Mean of monthly mean stream temperatures for June',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_mean_jul',
+    category: 'water_temperature_mean_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full: 'Mean of monthly mean stream temperatures for July',
+    description: 'Mean of monthly mean stream temperatures for July',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_mean_aug',
+    category: 'water_temperature_mean_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full: 'Mean of monthly mean stream temperatures for August',
+    description: 'Mean of monthly mean stream temperatures for August',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_mean_sep',
+    category: 'water_temperature_mean_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full: 'Mean of monthly mean stream temperatures for September',
+    description: 'Mean of monthly mean stream temperatures for September',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_mean_oct',
+    category: 'water_temperature_mean_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full: 'Mean of monthly mean stream temperatures for October',
+    description: 'Mean of monthly mean stream temperatures for October',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_mean_nov',
+    category: 'water_temperature_mean_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full: 'Mean of monthly mean stream temperatures for November',
+    description: 'Mean of monthly mean stream temperatures for November',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_mean_dec',
+    category: 'water_temperature_mean_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full: 'Mean of monthly mean stream temperatures for December',
+    description: 'Mean of monthly mean stream temperatures for December',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_min_jan',
+    category: 'water_temperature_minimum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Minimum monthly mean stream temperature for January across all years in era',
+    description:
+      'Minimum monthly mean stream temperature for January across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_min_feb',
+    category: 'water_temperature_minimum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Minimum monthly mean stream temperature for February across all years in era',
+    description:
+      'Minimum monthly mean stream temperature for February across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_min_mar',
+    category: 'water_temperature_minimum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Minimum monthly mean stream temperature for March across all years in era',
+    description:
+      'Minimum monthly mean stream temperature for March across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_min_apr',
+    category: 'water_temperature_minimum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Minimum monthly mean stream temperature for April across all years in era',
+    description:
+      'Minimum monthly mean stream temperature for April across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_min_may',
+    category: 'water_temperature_minimum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Minimum monthly mean stream temperature for May across all years in era',
+    description:
+      'Minimum monthly mean stream temperature for May across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_min_jun',
+    category: 'water_temperature_minimum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Minimum monthly mean stream temperature for June across all years in era',
+    description:
+      'Minimum monthly mean stream temperature for June across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_min_jul',
+    category: 'water_temperature_minimum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Minimum monthly mean stream temperature for July across all years in era',
+    description:
+      'Minimum monthly mean stream temperature for July across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_min_aug',
+    category: 'water_temperature_minimum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Minimum monthly mean stream temperature for August across all years in era',
+    description:
+      'Minimum monthly mean stream temperature for August across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_min_sep',
+    category: 'water_temperature_minimum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Minimum monthly mean stream temperature for September across all years in era',
+    description:
+      'Minimum monthly mean stream temperature for September across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_min_oct',
+    category: 'water_temperature_minimum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Minimum monthly mean stream temperature for October across all years in era',
+    description:
+      'Minimum monthly mean stream temperature for October across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_min_nov',
+    category: 'water_temperature_minimum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Minimum monthly mean stream temperature for November across all years in era',
+    description:
+      'Minimum monthly mean stream temperature for November across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_min_dec',
+    category: 'water_temperature_minimum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Minimum monthly mean stream temperature for December across all years in era',
+    description:
+      'Minimum monthly mean stream temperature for December across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_max_jan',
+    category: 'water_temperature_maximum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Maximum monthly mean stream temperature for January across all years in era',
+    description:
+      'Maximum monthly mean stream temperature for January across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_max_feb',
+    category: 'water_temperature_maximum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Maximum monthly mean stream temperature for February across all years in era',
+    description:
+      'Maximum monthly mean stream temperature for February across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_max_mar',
+    category: 'water_temperature_maximum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Maximum monthly mean stream temperature for March across all years in era',
+    description:
+      'Maximum monthly mean stream temperature for March across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_max_apr',
+    category: 'water_temperature_maximum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Maximum monthly mean stream temperature for April across all years in era',
+    description:
+      'Maximum monthly mean stream temperature for April across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_max_may',
+    category: 'water_temperature_maximum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Maximum monthly mean stream temperature for May across all years in era',
+    description:
+      'Maximum monthly mean stream temperature for May across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_max_jun',
+    category: 'water_temperature_maximum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Maximum monthly mean stream temperature for June across all years in era',
+    description:
+      'Maximum monthly mean stream temperature for June across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_max_jul',
+    category: 'water_temperature_maximum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Maximum monthly mean stream temperature for July across all years in era',
+    description:
+      'Maximum monthly mean stream temperature for July across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_max_aug',
+    category: 'water_temperature_maximum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Maximum monthly mean stream temperature for August across all years in era',
+    description:
+      'Maximum monthly mean stream temperature for August across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_max_sep',
+    category: 'water_temperature_maximum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Maximum monthly mean stream temperature for September across all years in era',
+    description:
+      'Maximum monthly mean stream temperature for September across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_max_oct',
+    category: 'water_temperature_maximum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Maximum monthly mean stream temperature for October across all years in era',
+    description:
+      'Maximum monthly mean stream temperature for October across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_max_nov',
+    category: 'water_temperature_maximum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Maximum monthly mean stream temperature for November across all years in era',
+    description:
+      'Maximum monthly mean stream temperature for November across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
+  {
+    id: 'wt_max_dec',
+    category: 'water_temperature_maximum_monthly',
+    code_base: 'matlab',
+    difference_method: 'absolute',
+    description_full:
+      'Maximum monthly mean stream temperature for December across all years in era',
+    description:
+      'Maximum monthly mean stream temperature for December across all years in era',
+    units: 'degrees Celsius',
+    units_short: '&deg;C',
+  },
 ]
 
-export {
-  streamflowStatistics,
-  type StreamflowStatistic,
-  type StreamflowStatisticName,
-}
+export { statistics, type Statistic, type StatisticName }
