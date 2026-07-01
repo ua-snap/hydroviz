@@ -18,6 +18,10 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   const streamMonthlyFlow = shallowRef(null)
   const streamMaxFlowDates = shallowRef(null)
   const streamStats = shallowRef(null)
+  const streamMonthlyTemperature = shallowRef(null)
+  const streamWtHydrograph = shallowRef(null)
+  const streamWtStats = shallowRef(null)
+  const streamMaxTempDates = shallowRef(null)
   const appContext = ref<AppContext>('mid')
   const appEra = ref<Era>('2046-2075')
   const { $config } = useNuxtApp()
@@ -90,6 +94,10 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
       streamMonthlyFlow.value = dataResponse['monthly_flow']
       streamMaxFlowDates.value = dataResponse['max_flow_dates']
       streamStats.value = dataResponse['stats']
+      streamWtHydrograph.value = dataResponse['wt_hydrograph']
+      streamWtStats.value = dataResponse['wt_stats']
+      streamMonthlyTemperature.value = dataResponse['monthly_temperature']
+      streamMaxTempDates.value = dataResponse['max_temp_dates']
       segmentUsgsGaugeId.value = dataResponse['gauge_id']
       segmentHuc8Id.value = dataResponse['huc8']
       segmentIsHuc8Outlet.value =
@@ -112,6 +120,10 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     streamMonthlyFlow.value = null
     streamMaxFlowDates.value = null
     streamStats.value = null
+    streamWtHydrograph.value = null
+    streamMonthlyTemperature.value = null
+    streamMaxTempDates.value = null
+    streamWtStats.value = null
     apiSlow.value = false
     apiFailed.value = false
   }
@@ -126,6 +138,10 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     gaugeId,
     streamSummary,
     streamHydrograph,
+    streamMonthlyTemperature,
+    streamWtHydrograph,
+    streamWtStats,
+    streamMaxTempDates,
     streamMonthlyFlow,
     streamMaxFlowDates,
     streamStats,

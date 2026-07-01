@@ -6,6 +6,10 @@ let {
   streamHydrograph,
   streamMonthlyFlow,
   streamMaxFlowDates,
+  streamWtStats,
+  streamWtHydrograph,
+  streamMonthlyTemperature,
+  streamMaxTempDates,
   segmentId,
   segmentName,
   segmentRegion,
@@ -125,6 +129,24 @@ onUnmounted(() => {
       </div>
     </section>
 
+    <section class="section" v-if="segmentRegion == 'alaska'">
+      <div class="container">
+        <VizTemperatureHydrograph :stream-wt-hydrograph="streamWtHydrograph" />
+      </div>
+    </section>
+    <section class="section" v-if="segmentRegion == 'alaska'">
+      <div class="container">
+        <VizMonthlyTemperature
+          :stream-monthly-temperature="streamMonthlyTemperature"
+        />
+      </div>
+    </section>
+    <section class="section" v-if="segmentRegion == 'alaska'">
+      <div class="container">
+        <VizMaxTemperatureDates :stream-max-temp-dates="streamMaxTempDates" />
+      </div>
+    </section>
+
     <section class="section">
       <div class="container">
         <h4 class="title is-4">Complete statistics</h4>
@@ -171,6 +193,30 @@ onUnmounted(() => {
           :stream-stats="streamStats"
           category="rate_of_change"
           tableTitle="Rate of Change Statistics"
+        />
+        <StatsTable
+          v-if="segmentRegion == 'alaska'"
+          :wt-stats="streamWtStats"
+          category="water_temperature_annual"
+          tableTitle="Annual Water Temperature Statistics"
+        />
+        <StatsTable
+          v-if="segmentRegion == 'alaska'"
+          :wt-stats="streamWtStats"
+          category="water_temperature_minimum_monthly"
+          tableTitle="Minimum Monthly Mean Water Temperature"
+        />
+        <StatsTable
+          v-if="segmentRegion == 'alaska'"
+          :wt-stats="streamWtStats"
+          category="water_temperature_mean_monthly"
+          tableTitle="Mean Monthly Water Temperature"
+        />
+        <StatsTable
+          v-if="segmentRegion == 'alaska'"
+          :wt-stats="streamWtStats"
+          category="water_temperature_maximum_monthly"
+          tableTitle="Maximum Monthly Mean Water Temperature"
         />
       </div>
     </section>
