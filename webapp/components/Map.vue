@@ -569,6 +569,9 @@ const loadSimplifiedHucs = async () => {
 
 onMounted(() => {
   Promise.all([loadSimplifiedHucs(), loadPerimeter()]).then(() => {
+    let streamSegmentStore = useStreamSegmentStore()
+    let { segmentRegion } = storeToRefs(streamSegmentStore)
+    segmentRegion.value = null
     initializeMap()
     // Apply whatever phase the URL describes (default Phase 0), then ensure the
     // URL reflects it. Both are replaces, so a fresh load adds no history depth.

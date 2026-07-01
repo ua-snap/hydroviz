@@ -213,7 +213,6 @@ export const addSegmentsGeoJson = ({
         isLoading.value = true
         const routePrefix =
           region === 'alaska' ? '/alaska/stream' : '/conus/stream'
-        segmentRegion.value = null
         const segId = feature.properties[idProperty]
         navigateTo(routePrefix + '/' + segId)
       })

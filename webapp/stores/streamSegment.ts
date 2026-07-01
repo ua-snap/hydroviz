@@ -110,7 +110,6 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
   // Full reset of app data and loading state
   const clearStats = (): void => {
     segmentId.value = null
-    segmentRegion.value = null
     segmentUsgsGaugeId.value = null
     segmentHuc8Id.value = null
     segmentIsHuc8Outlet.value = null
@@ -125,7 +124,6 @@ export const useStreamSegmentStore = defineStore('streamSegmentStore', () => {
     streamMonthlyTemperature.value = null
     streamMaxTempDates.value = null
     streamWtStats.value = null
-    isLoading.value = false
     apiSlow.value = false
     apiFailed.value = false
   }
