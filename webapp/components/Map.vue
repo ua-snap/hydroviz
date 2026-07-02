@@ -30,8 +30,6 @@ const regionConfig = {
     crs: 'EPSG:3857',
     segLayer: 'hydrology:seg_h8_outlet_stats_simplified_subset',
     hucLayer: 'hydrology:huc8_conus_stats_simplified',
-    perimeterAsset: '@/assets/conus_perimeter.json',
-    hucsAsset: '@/assets/conus_hucs_simplified.json',
     segBaseUrl: `${wfsBaseUrl}&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_subset`,
     hucBaseUrl: `${wfsBaseUrl}&typeName=hydrology%3Ahuc8&srsName=EPSG:4326`,
   },
@@ -44,8 +42,6 @@ const regionConfig = {
     crs: 'EPSG:3338',
     segLayer: 'hydrology:arctic_rivers_segments_joined_3338_simplified',
     hucLayer: 'hydrology:arctic_rivers_watersheds_stats_simplified',
-    perimeterAsset: '@/assets/conus_perimeter.json',
-    hucsAsset: '@/assets/alaska_hucs_simplified4326.json',
     segBaseUrl: `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_segments_joined_3338_simplified`,
     hucBaseUrl: `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_watersheds_stats_simplified&srsName=EPSG:4326`,
   },
@@ -538,9 +534,6 @@ const initializeMap = () => {
 }
 
 const loadPerimeter = async () => {
-  if (!config.perimeterAsset) {
-    return
-  }
   try {
     if (region === 'conus') {
       perimeter = await import('@/assets/conus_perimeter.json')
@@ -553,9 +546,6 @@ const loadPerimeter = async () => {
 }
 
 const loadSimplifiedHucs = async () => {
-  if (!config.hucsAsset) {
-    return
-  }
   try {
     if (region === 'conus') {
       simplifiedHucs = await import('@/assets/conus_hucs_simplified.json')
