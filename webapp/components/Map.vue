@@ -613,7 +613,7 @@ onMounted(() => {
     <button
       v-if="currentPhase > MapPhase.Overview"
       type="button"
-      class="button map-back-button"
+      class="button is-size-5 has-text-weight-semibold map-back-button has-shadow-5"
       @click="goBackPhase"
     >
       &larr;&nbsp;{{ backButtonLabel }}
@@ -643,8 +643,6 @@ onMounted(() => {
   left: 0.75rem;
   // Above Leaflet panes (max ~700), below the loading overlay (1100).
   z-index: 1000;
-  font-weight: 600;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
 }
 
 .map-loading-overlay {
