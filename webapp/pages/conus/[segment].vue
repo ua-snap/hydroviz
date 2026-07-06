@@ -1,22 +1,20 @@
 <script lang="ts" setup>
-import { useStreamSegmentStore } from '~/stores/streamSegment'
-const streamSegmentStore = useStreamSegmentStore()
-let { segmentId } = storeToRefs(streamSegmentStore)
-
+// Legacy route: stream reports moved to /conus/stream/<segment id>.
+// Redirect so old bookmarks and shared links keep working.
 const route = useRoute()
-let segment = parseInt(route.params.segment)
 
-// Sanity test input, numeric + integer + no bigger than total number of segments=56460
-if (!segment || !Number.isInteger(segment) || segment > 56460 || segment < 0) {
-  throw createError('Stream segment ID not valid')
-}
-
-// Set + fetch data.
-segmentId.value = segment
+await navigateTo(
+  {
+    path: `/conus/stream/${route.params.segment}`,
+    query: route.query,
+    hash: route.hash,
+  },
+  { redirectCode: 301, replace: true }
+)
 </script>
 
 <template>
-  <Report />
+  <div></div>
 </template>
 
 <style scoped></style>

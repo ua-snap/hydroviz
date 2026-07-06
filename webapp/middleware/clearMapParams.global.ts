@@ -1,7 +1,6 @@
 import { ALL_MAP_PARAMS } from '~/types/map'
 
-const REPORT_PATTERN =
-  /^\/(conus\/(stream|huc)\/|alaska\/(stream|huc)\/|conus\/\d+$)/
+const REPORT_PATTERN = /^\/(conus|alaska)\/(stream|huc)\//
 
 export default defineNuxtRouteMiddleware((to) => {
   if (!REPORT_PATTERN.test(to.path)) return
