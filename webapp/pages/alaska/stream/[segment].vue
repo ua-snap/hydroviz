@@ -16,7 +16,11 @@ if (
   segment > maxId ||
   segment < minId
 ) {
-  throw createError('Stream segment ID not valid')
+  throw createError({
+    statusCode: 404,
+    message: 'Stream segment ID not valid',
+    fatal: true,
+  })
 }
 
 // Set + fetch data.
