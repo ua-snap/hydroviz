@@ -395,6 +395,12 @@ const hucFeatureHandler = (feature: any, layer: any) => {
     const hucId =
       region === 'alaska' ? feature.properties.ID_2 : feature.properties.huc8
     if (!hucId) return
+    window.trackUmamiEvent('huc-click', {
+      id: String(hucId),
+      name:
+        region === 'alaska' ? feature.properties.Name : feature.properties.name,
+      region,
+    })
     // Phase 1 -> Phase 2: push a new history entry for the selected HUC. Clear
     // the carried-over Phase 1 center so loadPhase2Data centers on the HUC; the
     // map's own moveend then records the Phase 2 center for later restoration.
