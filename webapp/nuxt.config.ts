@@ -100,6 +100,17 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/svg+xml', href: '/icon.svg' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
       ],
+      script: [
+        {
+          src: 'https://umami.snap.uaf.edu/script.js',
+          'data-website-id': 'a5a8e5a7-d390-4919-9502-827c2e1f1ac2',
+          // Only track visits on the production domain, not development.
+          'data-domains': 'hydroviz.org',
+          'data-do-not-track': 'true',
+          async: 'true',
+          defer: 'true',
+        },
+      ],
     },
   },
   runtimeConfig: {

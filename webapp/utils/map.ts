@@ -214,6 +214,11 @@ export const addSegmentsGeoJson = ({
         const routePrefix =
           region === 'alaska' ? '/alaska/stream' : '/conus/stream'
         const segId = feature.properties[idProperty]
+        window.trackUmamiEvent('segment-click', {
+          id: String(segId),
+          region,
+          map: mapType,
+        })
         navigateTo(routePrefix + '/' + segId)
       })
   })

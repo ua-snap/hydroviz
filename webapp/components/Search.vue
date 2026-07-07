@@ -67,6 +67,12 @@ onMounted(() => {
     let selection = event.detail.selection.value
     let id = selection.id
 
+    window.trackUmamiEvent('search-selection', {
+      id: id,
+      name: selection.name,
+      region: selection.region,
+    })
+
     if (selection.region === 'conus') {
       navigateTo({
         path: '/',
