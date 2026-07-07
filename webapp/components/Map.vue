@@ -110,8 +110,9 @@ let detailedHucLayer: any
 let perimeter: any
 let simplifiedHucs: any
 
-// The phase the map is currently displaying. Set only by the enterPhaseN functions.
-let currentPhase: MapPhase = MapPhase.Overview
+// The phase the map is currently displaying. Set only by the enterPhaseN
+// functions. A ref so the template can show/hide the Back button reactively.
+const currentPhase = ref<MapPhase>(MapPhase.Overview)
 // Guards against redundant re-application of the same phase state.
 let lastAppliedKey = ''
 // Set while the Phase 2 swap moves the map itself, so the moveend handler does
@@ -141,7 +142,7 @@ const hideLayer = (layer: any) => {
 // Layers: HUC choropleth (hucWmsLayer) + a transparent perimeter overlay whose
 // clicks advance the map to Phase 1.
 const enterPhase0 = () => {
-  currentPhase = MapPhase.Overview
+  currentPhase.value = MapPhase.Overview
   isLoadingPhase2.value = false
   hideLayer(detailedHucLayer)
   clearSegmentLayers(map)
@@ -156,7 +157,7 @@ const enterPhase0 = () => {
 // Layers: HUC-8 choropleth (hucWmsLayer) + invisible simplifiedHucsLayer (hover/click targets)
 // + segWmsLayer stream overlay. The perimeter is hidden.
 const enterPhase1 = (center: [number, number]) => {
-  currentPhase = MapPhase.WmsHuc
+  currentPhase.value = MapPhase.WmsHuc
   isLoadingPhase2.value = false
   hideLayer(detailedHucLayer)
   clearSegmentLayers(map)
@@ -175,7 +176,7 @@ const enterPhase1 = (center: [number, number]) => {
 // layers hidden. The Phase 1 view is left fully intact while the data loads;
 // loadPhase2Data swaps everything in atomically once it's ready.
 const enterPhase2 = (hucId: string) => {
-  currentPhase = MapPhase.HucSelected
+  currentPhase.value = MapPhase.HucSelected
   isLoadingPhase2.value = true
   loadPhase2Data(hucId)
 }
@@ -314,16 +315,16 @@ const updatePositionInUrl = () => {
   const c = map.getCenter()
   const query: Record<string, string> = {
     ...safeQuery(),
-    [paramKeys.phase]: String(currentPhase),
+    [paramKeys.phase]: String(currentPhase.value),
   }
-  if (currentPhase >= MapPhase.WmsHuc) {
+  if (currentPhase.value >= MapPhase.WmsHuc) {
     query[paramKeys.lat] = c.lat.toFixed(5)
     query[paramKeys.lng] = c.lng.toFixed(5)
   } else {
     delete query[paramKeys.lat]
     delete query[paramKeys.lng]
   }
-  if (currentPhase < MapPhase.HucSelected) delete query[paramKeys.huc]
+  if (currentPhase.value < MapPhase.HucSelected) delete query[paramKeys.huc]
   router.replace({ query })
 }
 
@@ -335,9 +336,34 @@ watch(
   () => syncMapFromUrl()
 )
 
+// On-map Back button, shown in Phases 1 and 2 for people who don't reach for
+// the browser's Back button. Pushes the previous phase's URL state rather than
+// calling history.back(), so it works even when the current phase was entered
+// directly (shared link, search result) with no in-app history behind it.
+const goBackPhase = () => {
+  const query = { ...safeQuery() }
+  delete query[paramKeys.huc]
+  if (currentPhase.value === MapPhase.HucSelected) {
+    // Phase 2 -> Phase 1, keeping the current center so the view stays put.
+    query[paramKeys.phase] = String(MapPhase.WmsHuc)
+  } else {
+    // Phase 1 -> Phase 0, back to the default overview extent.
+    query[paramKeys.phase] = String(MapPhase.Overview)
+    delete query[paramKeys.lat]
+    delete query[paramKeys.lng]
+  }
+  router.push({ query })
+}
+
+const backButtonLabel = computed(() =>
+  currentPhase.value === MapPhase.HucSelected
+    ? 'Back to watersheds'
+    : 'Back to full map'
+)
+
 const hucFeatureHandler = (feature: any, layer: any) => {
   layer.on('mouseover', function (e: any) {
-    if (currentPhase !== MapPhase.WmsHuc) return
+    if (currentPhase.value !== MapPhase.WmsHuc) return
     e.target.setStyle({
       color: '#ffff00',
       fillColor: '#ffff00',
@@ -357,7 +383,7 @@ const hucFeatureHandler = (feature: any, layer: any) => {
     }
   })
   layer.on('mouseout', function (e: any) {
-    if (currentPhase !== MapPhase.WmsHuc) return
+    if (currentPhase.value !== MapPhase.WmsHuc) return
     e.target.setStyle({
       color: 'transparent',
       fillColor: 'transparent',
@@ -365,7 +391,7 @@ const hucFeatureHandler = (feature: any, layer: any) => {
     })
   })
   layer.on('click', function () {
-    if (currentPhase !== MapPhase.WmsHuc) return
+    if (currentPhase.value !== MapPhase.WmsHuc) return
     const hucId =
       region === 'alaska' ? feature.properties.ID_2 : feature.properties.huc8
     if (!hucId) return
@@ -521,7 +547,7 @@ const initializeMap = () => {
       return
     }
     // Refresh segments for the new viewport when panning within Phase 2.
-    if (currentPhase === MapPhase.HucSelected) {
+    if (currentPhase.value === MapPhase.HucSelected) {
       fetchAndAddSegmentsByBounds({
         map,
         $L,
@@ -574,6 +600,14 @@ onMounted(() => {
 <template>
   <div class="map-wrapper" style="height: 80vh; min-height: 500px">
     <div :id="config.mapId" style="height: 100%"></div>
+    <button
+      v-if="currentPhase > MapPhase.Overview"
+      type="button"
+      class="button is-size-5 has-text-weight-semibold map-back-button has-shadow-5"
+      @click="goBackPhase"
+    >
+      &larr;&nbsp;{{ backButtonLabel }}
+    </button>
     <div v-if="isLoadingPhase2" class="map-loading-overlay">
       <img :src="waterLoaderUrl" class="map-loading-icon" alt="" />
       <p class="mt-3 has-text-white is-size-3 is-bold">
@@ -591,6 +625,14 @@ onMounted(() => {
 
 .map-wrapper {
   position: relative;
+}
+
+.map-back-button {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  // Above Leaflet panes (max ~700), below the loading overlay (1100).
+  z-index: 1000;
 }
 
 .map-loading-overlay {
