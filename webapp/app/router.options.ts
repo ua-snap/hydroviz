@@ -7,11 +7,18 @@ export default <RouterConfig>{
 
     // Hash target (e.g. search -> "#conus-map"): wait for the element to exist,
     // since the map sections render/resize asynchronously, then scroll to it.
-    if (to.hash) {
+    // S3 hashbang redirect URLs ("#!/...", see layouts/default.vue) are not
+    // element anchors and are not valid selectors, so skip them.
+    if (to.hash && !to.hash.startsWith('#!')) {
       const el = await new Promise<Element | null>(resolve => {
         const start = Date.now()
         const tick = () => {
-          const found = document.querySelector(to.hash)
+          let found: Element | null = null
+          try {
+            found = document.querySelector(to.hash)
+          } catch {
+            return resolve(null)
+          }
           if (found) resolve(found)
           else if (Date.now() - start < 3000) requestAnimationFrame(tick)
           else resolve(null)
