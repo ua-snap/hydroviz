@@ -22,12 +22,9 @@ export default defineNuxtConfig({
       script: [
         {
           src: 'https://umami.snap.uaf.edu/script.js',
-          // TODO: replace with the website ID from Umami once the production
-          // site is registered there.
-          'data-website-id': '00000000-0000-0000-0000-000000000000',
+          'data-website-id': 'a5a8e5a7-d390-4919-9502-827c2e1f1ac2',
           // Only track visits on the production domain, not development.
-          // TODO: replace with the finalized production domain.
-          'data-domains': 'hydroviz.snap.uaf.edu',
+          'data-domains': 'hydroviz.org',
           'data-do-not-track': 'true',
           async: 'true',
           defer: 'true',
