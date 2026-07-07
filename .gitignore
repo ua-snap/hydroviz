@@ -2,6 +2,7 @@
 
 __pycache__/
 .vscode/
+.claude/launch.json
 
 # local folder can be created from tests
 tmp/
