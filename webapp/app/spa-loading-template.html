@@ -1,0 +1,57 @@
+<div id="loading-indicator" class="center">
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Water flowing loading animation">
+	<title>Water flowing</title>
+	<desc>A blue droplet with gently flowing waves, white foam and rising bubbles.</desc>
+	<style>
+	.flowA{animation:flow 2.5s linear infinite}
+	.flowB{animation:flow 3.6s linear infinite}
+	.bob{animation:bob 3s ease-in-out infinite}
+	.b{fill:#fff;opacity:0}
+	.b1{animation:rise 2.8s ease-in 0s infinite}
+	.b2{animation:rise 3.4s ease-in .8s infinite}
+	.b3{animation:rise 2.4s ease-in 1.5s infinite}
+	@keyframes flow{from{transform:translateX(0)}to{transform:translateX(-40px)}}
+	@keyframes bob{0%,100%{transform:translateY(2px)}50%{transform:translateY(-2px)}}
+	@keyframes rise{0%{transform:translateY(0);opacity:0}15%{opacity:.8}85%{opacity:.4}100%{transform:translateY(-42px);opacity:0}}
+	</style>
+	<defs>
+	<clipPath id="drop"><circle cx="60" cy="60" r="50"/></clipPath>
+	</defs>
+	<g clip-path="url(#drop)">
+	<g class="bob">
+	<g class="flowB">
+	<path fill="#2a9fe6" fill-opacity=".4" d="M-60 66 Q-50 71 -40 66 T-20 66 T0 66 T20 66 T40 66 T60 66 T80 66 T100 66 T120 66 T140 66 T160 66 T180 66 L180 120 L-60 120 Z"/>
+	</g>
+	<g class="flowA">
+	<path fill="#2a9fe6" fill-opacity=".9" d="M-60 62 Q-50 56 -40 62 T-20 62 T0 62 T20 62 T40 62 T60 62 T80 62 T100 62 T120 62 T140 62 T160 62 T180 62 L180 120 L-60 120 Z"/>
+	<path fill="none" stroke="#fff" stroke-width="2" stroke-opacity=".85" stroke-linecap="round" d="M-60 61 Q-50 55 -40 61 T-20 61 T0 61 T20 61 T40 61 T60 61 T80 61 T100 61 T120 61 T140 61 T160 61 T180 61"/>
+	</g>
+	<circle class="b b1" cx="46" cy="94" r="2.5"/>
+	<circle class="b b2" cx="63" cy="90" r="3"/>
+	<circle class="b b3" cx="76" cy="95" r="2"/>
+	</g>
+	</g>
+	<circle cx="60" cy="60" r="50" fill="none" stroke="#2a9fe6" stroke-width="3"/>
+	</svg>
+	<p>Loading <span>Hydrologic Outlooks</span>&hellip;</p>
+</div>
+
+<script>
+document.getElementById('loading-indicator').style.display = 'block'
+</script>
+
+<style>
+	.center {
+		display: none;
+		width: 250px;
+		margin: 100px auto;
+		text-align: center;
+	}
+	.center p {
+		font-size: 24px;
+		font-family: sans-serif;
+	}
+	.center p span {
+		font-weight: 600;
+	}
+</style>
