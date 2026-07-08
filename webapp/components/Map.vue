@@ -604,6 +604,14 @@ onMounted(() => {
 </script>
 
 <template>
+  <p
+    class="is-size-5 mb-2"
+    :style="{
+      visibility: currentPhase === MapPhase.HucSelected ? 'visible' : 'hidden',
+    }"
+  >
+    🔴 Watershed outflow segments in the map below are shown in red.
+  </p>
   <div class="map-wrapper" style="height: 80vh; min-height: 500px">
     <div :id="config.mapId" style="height: 100%"></div>
     <button
