@@ -85,9 +85,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <p v-if="hucId" class="is-size-5 mb-2">
-    Outflow segments in the map below are
-    <strong style="color: #ff0000">red</strong>.
+  <p class="is-size-5 mb-2">
+    🔴 Watershed outflow segments in the map below are shown in red.
   </p>
   <div id="report-map" style="height: 400px" class="mb-6"></div>
 </template>
