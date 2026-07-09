@@ -6,6 +6,7 @@ import {
   initializeChart,
   getDataRange,
   getOffsetXTickVals,
+  getGageIdLine,
 } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
@@ -14,7 +15,7 @@ const props = defineProps(['streamMonthlyTemperature'])
 
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { segmentId, gaugeId, appContext, appEra } = storeToRefs(streamSegmentStore)
+let { segmentId, gageId, appContext, appEra } = storeToRefs(streamSegmentStore)
 
 const monthKeys = [
   'oct',
@@ -123,10 +124,8 @@ const buildChart = () => {
     showLegend = false
   })
 
-  let gaugeIdLine = gaugeId.value
-    ? `<br><span style="font-size: 0.8em;">Gage ID: ${gaugeId.value}</span>`
-    : ''
-  const titleText = `Mean monthly modeled water temperature, 2034-2065${gaugeIdLine}`
+  let gageIdLine = getGageIdLine(gageId.value)
+  const titleText = `Mean monthly modeled water temperature, 2034-2065${gageIdLine}`
 
   let xAxisSettings = {
     tickvals: $_.range(Object.values(monthLabels).length),
@@ -149,7 +148,7 @@ const buildChart = () => {
     x: 0.5,
   }
 
-  let isTwoLineTitle = gaugeId.value ? true : false
+  let isTwoLineTitle = gageId.value ? true : false
   const isAlaskaData = true
 
   let layout = getLayout(

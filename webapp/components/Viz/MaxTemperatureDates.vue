@@ -6,13 +6,14 @@ import {
   initializeChart,
   getDataRange,
   convertTo360,
+  getGageIdLine,
 } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
 
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-const { segmentId, gaugeId, appContext, appEra } =
+const { segmentId, gageId, appContext, appEra } =
   storeToRefs(streamSegmentStore)
 
 const props = defineProps(['streamMaxTempDates'])
@@ -49,10 +50,8 @@ const buildChart = () => {
     projected: 'circle',
   }
 
-  let gaugeIdLine = gaugeId.value
-    ? `<br><span style="font-size: 0.8em;">Gage ID: ${gaugeId.value}</span>`
-    : ''
-  let titleText = `Modeled water temperature at date of annual maximum, 2034-2065${gaugeIdLine}`
+  let gageIdLine = getGageIdLine(gageId.value)
+  let titleText = `Modeled water temperature at date of annual maximum, 2034-2065${gageIdLine}`
 
   let historicalTemp = [props.streamMaxTempDates['historical']['temperature']]
   let historicalTempDate = [props.streamMaxTempDates['historical']['date']]
@@ -125,7 +124,7 @@ const buildChart = () => {
     traceorder: 'reversed',
   }
 
-  let isTwoLineTitle = gaugeId.value ? true : false
+  let isTwoLineTitle = gageId.value ? true : false
   const isAlaskaData = true
 
   const layout = getLayout(

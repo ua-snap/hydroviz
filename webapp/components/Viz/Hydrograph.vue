@@ -8,6 +8,7 @@ import {
   getDataRange,
   convertDoysToHydroYearDoys,
   processLowessAndHydroYear,
+  getGageIdLine,
 } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
@@ -17,7 +18,7 @@ const props = defineProps(['streamHydrograph'])
 
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { segmentId, gaugeId, appContext, appEra } = storeToRefs(streamSegmentStore)
+let { segmentId, gageId, appContext, appEra } = storeToRefs(streamSegmentStore)
 
 const doys = $_.range(1, 366 + 1)
 const hydroDoys = convertDoysToHydroYearDoys(doys)
@@ -341,12 +342,10 @@ const buildChart = hg => {
   let scenarioLabel2: string
   let titleText: string
   let titleBase: string = ''
-  let gaugeIdLine = gaugeId.value
-    ? `<br><span  style="font-size: 0.8em;">Gage ID: ${gaugeId.value}</span>`
-    : ''
+  let gageIdLine = getGageIdLine(gageId.value)
 
   if (isAlaskaData) {
-    titleText = `Modeled flow rate, 2034-2065${gaugeIdLine}`
+    titleText = `Modeled flow rate, 2034-2065${gageIdLine}`
   } else {
     if (appContext.value === 'mid') {
       scenarioLabel = scenarioFullNames['rcp60']
@@ -356,7 +355,7 @@ const buildChart = hg => {
     }
 
     titleBase = `Modeled flow rate, ${appEra.value}`
-    titleText = `${titleBase}, ${scenarioLabel}${gaugeIdLine}`
+    titleText = `${titleBase}, ${scenarioLabel}${gageIdLine}`
   }
 
   let yAxisLabel = 'Flow rate, cf/s'
@@ -394,7 +393,7 @@ const buildChart = hg => {
     x: 0.5,
   }
 
-  let isTwoLineTitle = gaugeId.value ? true : false
+  let isTwoLineTitle = gageId.value ? true : false
 
   let layout = getLayout(
     'hydrograph',
@@ -422,7 +421,7 @@ const buildChart = hg => {
       $Plotly.newPlot('hydrograph', traces, layout, config)
 
       let scenarioLabel2 = scenarioFullNames['rcp85']
-      let titleText2 = `${titleBase}, ${scenarioLabel2}${gaugeIdLine}`
+      let titleText2 = `${titleBase}, ${scenarioLabel2}${gageIdLine}`
       let layout2 = getLayout(
         'hydrograph',
         titleText2,

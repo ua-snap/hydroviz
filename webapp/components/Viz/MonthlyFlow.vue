@@ -6,6 +6,7 @@ import {
   initializeChart,
   getDataRange,
   getOffsetXTickVals,
+  getGageIdLine,
 } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
@@ -15,7 +16,7 @@ const props = defineProps(['streamMonthlyFlow'])
 
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { segmentId, gaugeId, appContext, appEra } = storeToRefs(streamSegmentStore)
+let { segmentId, gageId, appContext, appEra } = storeToRefs(streamSegmentStore)
 
 const monthLabels = {
   ma21: 'Oct',
@@ -172,12 +173,10 @@ const buildChart = () => {
     })
   }
 
-  let gaugeIdLine = gaugeId.value
-    ? `<br><span style="font-size: 0.8em;">Gage ID: ${gaugeId.value}</span>`
-    : ''
+  let gageIdLine = getGageIdLine(gageId.value)
   const titleText: string = isAlaskaData
-    ? `Mean monthly modeled flow rate, 2034-2065${gaugeIdLine}`
-    : `Mean monthly modeled flow rate, ${appEra.value}${gaugeIdLine}`
+    ? `Mean monthly modeled flow rate, 2034-2065${gageIdLine}`
+    : `Mean monthly modeled flow rate, ${appEra.value}${gageIdLine}`
 
   let xAxisSettings = {
     tickvals: $_.range(Object.values(monthLabels).length),
@@ -200,7 +199,7 @@ const buildChart = () => {
     x: 0.5,
   }
 
-  let isTwoLineTitle = gaugeId.value ? true : false
+  let isTwoLineTitle = gageId.value ? true : false
 
   let layout = getLayout(
     'monthlyFlow',
