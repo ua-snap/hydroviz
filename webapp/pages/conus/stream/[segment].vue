@@ -8,7 +8,11 @@ let segment = parseInt(route.params.segment)
 
 // Sanity test input, numeric + integer + no bigger than total number of segments=56460
 if (!segment || !Number.isInteger(segment) || segment > 56460 || segment < 0) {
-  throw createError('Stream segment ID not valid')
+  throw createError({
+    statusCode: 404,
+    message: 'Stream segment ID not valid',
+    fatal: true,
+  })
 }
 
 // Set + fetch data.

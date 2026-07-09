@@ -11,7 +11,7 @@ onMounted(() => {
         // Escape single quotes for safe use inside CQL string literals
         const safeQuery = query.replace(/'/g, "''")
         const hucUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8_conus_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=huc8,name&cql_filter=name%20ILIKE%20%27%25${safeQuery}%25%27%20OR%20huc8%20LIKE%20%27%25${safeQuery}%25%27`
-        const alaskaHucUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aarctic_rivers_watersheds_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=ID_2,Name&cql_filter=Name%20ILIKE%20%27%25${safeQuery}%25%27%20OR%20ID_2%20LIKE%20%27%25${safeQuery}%25%27`
+        const alaskaHucUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aarctic_rivers_watersheds_stats_simplified_v2&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=ID_2,Name&cql_filter=Name%20ILIKE%20%27%25${safeQuery}%25%27%20OR%20ID_2%20LIKE%20%27%25${safeQuery}%25%27`
 
         let items: any[] = []
 
@@ -66,6 +66,12 @@ onMounted(() => {
   searchAutoComplete.input.addEventListener('selection', function (event: any) {
     let selection = event.detail.selection.value
     let id = selection.id
+
+    window.trackUmamiEvent('search-selection', {
+      id: id,
+      name: selection.name,
+      region: selection.region,
+    })
 
     if (selection.region === 'conus') {
       navigateTo({

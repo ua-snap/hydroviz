@@ -2,11 +2,14 @@
 import { fnc, roundSigFig } from '~/utils/general'
 import { computed } from 'vue'
 
-import { streamflowStatistics } from '~/types/statsVars'
+import { statistics } from '~/types/statsVars'
 const { $_ } = useNuxtApp()
-const props = defineProps(['streamStats', 'category', 'tableTitle'])
+const props = defineProps(['streamStats', 'wtStats', 'category', 'tableTitle'])
 
-var statsInCategory = $_.filter(streamflowStatistics, {
+// Support both streamStats and wtStats props
+const statsData = computed(() => props.wtStats || props.streamStats)
+
+var statsInCategory = $_.filter(statistics, {
   category: props.category,
 })
 
@@ -16,7 +19,7 @@ const tableCaptionHtml = computed(() => {
 </script>
 
 <template>
-  <div v-if="streamStats" class="my-6">
+  <div v-if="statsData" class="my-6">
     <table class="table">
       <caption class="mb-4" v-html="tableCaptionHtml"></caption>
       <thead>
@@ -41,7 +44,7 @@ const tableCaptionHtml = computed(() => {
             <span class="number">{{
               fnc(
                 roundSigFig(
-                  Number(streamStats['historical']['1990-2021'][stat.id])
+                  Number(statsData['historical']['1990-2021'][stat.id])
                 )
               )
             }}</span>
@@ -51,9 +54,7 @@ const tableCaptionHtml = computed(() => {
               {{
                 fnc(
                   roundSigFig(
-                    Number(
-                      streamStats['projected']['2034-2065'][stat.id].median
-                    )
+                    Number(statsData['projected']['2034-2065'][stat.id].median)
                   )
                 )
               }}
@@ -61,12 +62,12 @@ const tableCaptionHtml = computed(() => {
             <Diff
               :past="
                 roundSigFig(
-                  Number(streamStats['historical']['1990-2021'][stat.id])
+                  Number(statsData['historical']['1990-2021'][stat.id])
                 )
               "
               :future="
                 roundSigFig(
-                  Number(streamStats['projected']['2034-2065'][stat.id].median)
+                  Number(statsData['projected']['2034-2065'][stat.id].median)
                 )
               "
             />

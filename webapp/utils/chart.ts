@@ -1,4 +1,5 @@
 import type { Config, Layout } from 'plotly.js'
+import lowess from '@stdlib/stats-lowess'
 
 export const getConfig = (filename: string): Partial<Config> => {
   return {
@@ -46,36 +47,47 @@ const getLayoutPositions = (
   let marginBottom: null | number = null
   let footerY: null | number = null
 
+  const generalizedChartTypes: Record<string, string> = {
+    hydrograph: 'hydrograph',
+    temperatureHydrograph: 'hydrograph',
+    monthlyFlow: 'monthlyBoxPlots',
+    monthlyTemperature: 'monthlyBoxPlots',
+    maxFlowDates: 'maxDates',
+    maxTempDates: 'maxDates',
+  }
+
+  let generalizedChartType = generalizedChartTypes[chartType]
+
   if (isTwoLineTitle) {
     if (isAlaskaData) {
-      if (chartType === 'hydrograph') {
+      if (generalizedChartType === 'hydrograph') {
         height = 515
         marginTop = 100
         marginBottom = 145
         footerY = -0.5
-      } else if (chartType === 'monthlyFlow') {
+      } else if (generalizedChartType === 'monthlyBoxPlots') {
         height = 535
         marginTop = 120
-        marginBottom = 150
-        footerY = -0.56
-      } else if (chartType === 'maxFlowDates') {
+        marginBottom = 140
+        footerY = -0.44
+      } else if (generalizedChartType === 'maxDates') {
         height = 560
         marginTop = 120
         marginBottom = 130
         footerY = -0.35
       }
     } else {
-      if (chartType === 'hydrograph') {
+      if (generalizedChartType === 'hydrograph') {
         height = 535
         marginTop = 100
         marginBottom = 160
         footerY = -0.55
-      } else if (chartType === 'monthlyFlow') {
+      } else if (generalizedChartType === 'monthlyBoxPlots') {
         height = 520
         marginTop = 100
         marginBottom = 145
         footerY = -0.48
-      } else if (chartType === 'maxFlowDates') {
+      } else if (generalizedChartType === 'maxDates') {
         height = 555
         marginTop = 120
         marginBottom = 130
@@ -84,34 +96,34 @@ const getLayoutPositions = (
     }
   } else {
     if (isAlaskaData) {
-      if (chartType === 'hydrograph') {
+      if (generalizedChartType === 'hydrograph') {
         height = 505
         marginTop = 80
         marginBottom = 150
         footerY = -0.5
-      } else if (chartType === 'monthlyFlow') {
+      } else if (generalizedChartType === 'monthlyBoxPlots') {
         height = 505
         marginTop = 100
         marginBottom = 130
         footerY = -0.43
-      } else if (chartType === 'maxFlowDates') {
+      } else if (generalizedChartType === 'maxDates') {
         height = 530
         marginTop = 100
         marginBottom = 120
         footerY = -0.35
       }
     } else {
-      if (chartType === 'hydrograph') {
+      if (generalizedChartType === 'hydrograph') {
         height = 520
         marginTop = 80
         marginBottom = 165
         footerY = -0.55
-      } else if (chartType === 'monthlyFlow') {
+      } else if (generalizedChartType === 'monthlyBoxPlots') {
         height = 505
         marginTop = 80
         marginBottom = 145
         footerY = -0.48
-      } else if (chartType === 'maxFlowDates') {
+      } else if (generalizedChartType === 'maxDates') {
         height = 535
         marginTop = 100
         marginBottom = 130
@@ -236,4 +248,57 @@ export const initializeChart = (
     buildChart(sourceData)
     window.dispatchEvent(new Event('resize'))
   }
+}
+
+// Shift a DOY-indexed dataset to hydro year (Oct 1 - Sept 30)
+export const convertDoysToHydroYearDoys = (series: number[]): number[] => {
+  let octDec = series.slice(273) // through end of array (366)
+  let janSept = series.slice(0, 273)
+  return octDec.concat(janSept)
+}
+
+// Round to significant digits.  Stub.
+function roundTo(num, sig = 3) {
+  return Number(num.toPrecision(sig))
+}
+
+// Converts & LOWESS smooths a timeseries of Y values
+// Need to trick it so there's not discontinuity between day 366/1.
+export const processLowessAndHydroYear = (
+  traceData: number[],
+  doys: number[]
+): number[] => {
+  let hydroYearTraceData = convertDoysToHydroYearDoys(traceData)
+
+  // Bit tricky: we index the day-of-year as 1...366 for the x-axis
+  // for the purpose of the lowess calculation, but the y-values represent
+  // the hydro-year shifted values.  This gives us the correct, smooth
+  // chart form.
+  let smoothed = lowess(doys, hydroYearTraceData, {
+    f: 0.05,
+    sorted: true,
+  })
+  let hydroOrderedSmoothedY = smoothed.y.map((value: number) => {
+    return roundTo(value)
+  })
+  return hydroOrderedSmoothedY
+}
+
+// Get offset x-tick values for monthly charts
+export const getOffsetXTickVals = (
+  xTickValOffsets: Record<string, number>,
+  scenario: string
+): number[] => {
+  const numMonths = 12
+  const xTickVals = Array.from({ length: numMonths }, (_, i) => i)
+  const offset: number = xTickValOffsets[scenario] ?? 0
+  const offsetXTickVals = xTickVals.map(tickVal => tickVal + offset)
+  return offsetXTickVals
+}
+
+// Convert day-of-year to 360-degree representation for polar charts
+// Values exceeding 360 cannot be plotted on a Plotly.js polarscatter chart.
+// So, slightly squeeze 366 calendar to a 360 degree representation.
+export const convertTo360 = (doy: number): number => {
+  return ((doy - 1) / 366) * 360
 }

@@ -2,14 +2,14 @@
 import { eraFullNamesHtml, scenarioFullNames } from '~/types/modelsScenarios'
 import { computed } from 'vue'
 
-import { streamflowStatistics } from '~/types/statsVars'
+import { statistics } from '~/types/statsVars'
 const { $_ } = useNuxtApp()
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
 let { appContext, appEra } = storeToRefs(streamSegmentStore)
 const props = defineProps(['streamStats', 'category', 'tableTitle'])
 
-var statsInCategory = $_.filter(streamflowStatistics, {
+var statsInCategory = $_.filter(statistics, {
   category: props.category,
 })
 
