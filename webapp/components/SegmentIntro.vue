@@ -4,14 +4,14 @@ import { huc8s } from '~/assets/huc8names'
 
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { segmentUsgsGaugeId, segmentHuc8Id, streamSummary, segmentIsHuc8Outlet } =
+let { segmentUsgsGageId, segmentHuc8Id, streamSummary, segmentIsHuc8Outlet } =
   storeToRefs(streamSegmentStore)
 
 const lowFlow = computed(() => {
   return streamSummary.value.ma99_hist.value <= 5
 })
 
-const USGS_STREAM_GAUGE_URL_BASE =
+const USGS_STREAM_GAGE_URL_BASE =
   'https://waterdata.usgs.gov/monitoring-location/'
 </script>
 <template>
@@ -23,10 +23,10 @@ const USGS_STREAM_GAUGE_URL_BASE =
       <span>{{ huc8s[segmentHuc8Id] }} watershed</span>
       (HUC-8 {{ segmentHuc8Id }}).
     </p>
-    <p v-if="segmentUsgsGaugeId">
+    <p v-if="segmentUsgsGageId">
       This stream segment has a corresponding USGS stream gage,
-      {{ segmentUsgsGaugeId }}.
-      <a rel="external" :href="USGS_STREAM_GAUGE_URL_BASE + segmentUsgsGaugeId"
+      {{ segmentUsgsGageId }}.
+      <a rel="external" :href="USGS_STREAM_GAGE_URL_BASE + segmentUsgsGageId"
         >Go to the web page for that gage</a
       >.
     </p>

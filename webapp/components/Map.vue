@@ -26,16 +26,16 @@ const regionConfig = {
   conus: {
     mapId: 'map-conus',
     defaultCenter: [37.8, -96] as [number, number],
-    segLayer: 'hydrology:seg_h8_outlet_stats_simplified_subset',
+    segLayer: 'hydrology:seg_h8_outlet_stats_simplified_subset_v2',
     hucLayer: 'hydrology:huc8_conus_stats_simplified',
     hucBaseUrl: `${wfsBaseUrl}&typeName=hydrology%3Ahuc8&srsName=EPSG:4326`,
   },
   alaska: {
     mapId: 'map-alaska',
     defaultCenter: [64.2, -152.0] as [number, number],
-    segLayer: 'hydrology:arctic_rivers_segments_joined_3338_simplified',
-    hucLayer: 'hydrology:arctic_rivers_watersheds_stats_simplified',
-    hucBaseUrl: `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_watersheds_stats_simplified&srsName=EPSG:4326`,
+    segLayer: 'hydrology:arctic_rivers_segments_joined_3338_simplified_v2',
+    hucLayer: 'hydrology:arctic_rivers_watersheds_stats_simplified_v2',
+    hucBaseUrl: `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_watersheds_stats_simplified_v2&srsName=EPSG:4326`,
   },
 }
 

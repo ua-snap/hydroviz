@@ -1,5 +1,5 @@
 {
-    "gauge_id": "USGS-12161000",
+    "gage_id": "USGS-12161000",
     "h8_outlet": false,
     "huc8": "17110008",
     "hydrograph": {

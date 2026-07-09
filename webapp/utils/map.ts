@@ -252,8 +252,8 @@ const segmentBboxUrl = (bounds: any, mapRegion: 'conus' | 'alaska') => {
   const wfsBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&outputFormat=application%2Fjson&srsName=EPSG:4326`
   const segBaseUrl =
     mapRegion === 'alaska'
-      ? `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_segments_joined_3338_simplified`
-      : `${wfsBaseUrl}&typeName=hydrology%3Aseg_h8_outlet_stats_simplified`
+      ? `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_segments_joined_3338_simplified_v2`
+      : `${wfsBaseUrl}&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_v2`
 
   const minLon = bounds.getWest()
   const maxLon = bounds.getEast()
@@ -310,8 +310,8 @@ export const fetchAndAddSegmentsByBounds = ({
   const wfsBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&outputFormat=application%2Fjson&srsName=EPSG:4326`
   const segBaseUrl =
     mapRegion === 'alaska'
-      ? `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_segments_joined_3338_simplified`
-      : `${wfsBaseUrl}&typeName=hydrology%3Aseg_h8_outlet_stats_simplified`
+      ? `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_segments_joined_3338_simplified_v2`
+      : `${wfsBaseUrl}&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_v2`
 
   if (segmentId.value) {
     // Fetch only the selected segment first to determine map bounds.
