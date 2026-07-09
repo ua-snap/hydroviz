@@ -24,6 +24,13 @@ export const getConfig = (filename: string): Partial<Config> => {
   }
 }
 
+// Build the optional title line that flags a corresponding USGS gage.
+export const getGageIdLine = (gageId: string | null): string => {
+  return gageId
+    ? `<br><span style="font-size: 0.8em;">Corresponding USGS Gage ID: ${gageId}</span>`
+    : ''
+}
+
 const getFooterCredits = (isAlaskaData: boolean): string => {
   if (isAlaskaData) {
     return 'Data provided by Dylan Blaskey, Keith Musselman, Andrew Newman, &amp; Yifan Cheng. (2024). doi:10.18739/A25M62870'

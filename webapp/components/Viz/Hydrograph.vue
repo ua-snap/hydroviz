@@ -8,6 +8,7 @@ import {
   getDataRange,
   convertDoysToHydroYearDoys,
   processLowessAndHydroYear,
+  getGageIdLine,
 } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
@@ -341,9 +342,7 @@ const buildChart = hg => {
   let scenarioLabel2: string
   let titleText: string
   let titleBase: string = ''
-  let gageIdLine = gageId.value
-    ? `<br><span  style="font-size: 0.8em;">Gage ID: ${gageId.value}</span>`
-    : ''
+  let gageIdLine = getGageIdLine(gageId.value)
 
   if (isAlaskaData) {
     titleText = `Modeled flow rate, 2034-2065${gageIdLine}`

@@ -6,6 +6,7 @@ import {
   initializeChart,
   getDataRange,
   convertTo360,
+  getGageIdLine,
 } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
@@ -64,9 +65,7 @@ const buildChart = () => {
   }
 
   let titleText: string
-  let gageIdLine = gageId.value
-    ? `<br><span style="font-size: 0.8em;">Gage ID: ${gageId.value}</span>`
-    : ''
+  let gageIdLine = getGageIdLine(gageId.value)
   if (isAlaskaData) {
     titleText = `Modeled flow rate at date of annual maximum daily flow, 2034-2065${gageIdLine}`
 

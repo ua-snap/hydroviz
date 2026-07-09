@@ -6,6 +6,7 @@ import {
   initializeChart,
   getDataRange,
   getOffsetXTickVals,
+  getGageIdLine,
 } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
@@ -172,9 +173,7 @@ const buildChart = () => {
     })
   }
 
-  let gageIdLine = gageId.value
-    ? `<br><span style="font-size: 0.8em;">Gage ID: ${gageId.value}</span>`
-    : ''
+  let gageIdLine = getGageIdLine(gageId.value)
   const titleText: string = isAlaskaData
     ? `Mean monthly modeled flow rate, 2034-2065${gageIdLine}`
     : `Mean monthly modeled flow rate, ${appEra.value}${gageIdLine}`
