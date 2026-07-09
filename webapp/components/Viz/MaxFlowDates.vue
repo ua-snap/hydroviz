@@ -91,9 +91,6 @@ const buildChart = () => {
         symbol: scenarioSymbols['historical'],
       },
     }
-    if (appContext.value === 'extremes' && scenario === 'rcp45') {
-      historicalTrace['subplot'] = 'polar2'
-    }
 
     historicalTraces.push(historicalTrace)
 

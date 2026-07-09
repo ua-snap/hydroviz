@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
-let { segmentId, segmentRegion } = storeToRefs(streamSegmentStore)
+let { segmentId, segmentRegion, appContext } = storeToRefs(streamSegmentStore)
 
 const route = useRoute()
 let segment = parseInt(route.params.segment)
@@ -26,6 +26,10 @@ if (
 // Set + fetch data.
 segmentId.value = segment
 segmentRegion.value = 'alaska'
+
+// Alaska reports don't offer the middle-of-the-road/future-extremes toggle,
+// so clear any "extremes" context carried over from a CONUS report.
+appContext.value = 'mid'
 </script>
 
 <template>
