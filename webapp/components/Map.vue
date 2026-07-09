@@ -19,51 +19,39 @@ const props = defineProps<{
 const region = props.region || 'conus'
 const wfsBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&outputFormat=application%2Fjson`
 
-// Region-specific configuration
+// Region-specific configuration. Both regions share the USGS National Map
+// basemap in EPSG:3857 (Web Mercator); only the data layers and default
+// center differ.
 const regionConfig = {
   conus: {
     mapId: 'map-conus',
-    defaultZoom: 4,
     defaultCenter: [37.8, -96] as [number, number],
-    minZoom: 4,
-    maxZoom: 12,
-    crs: 'EPSG:3857',
     segLayer: 'hydrology:seg_h8_outlet_stats_simplified_subset_v2',
     hucLayer: 'hydrology:huc8_conus_stats_simplified',
-    segBaseUrl: `${wfsBaseUrl}&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_subset_v2`,
     hucBaseUrl: `${wfsBaseUrl}&typeName=hydrology%3Ahuc8&srsName=EPSG:4326`,
   },
   alaska: {
     mapId: 'map-alaska',
-    defaultZoom: 0,
     defaultCenter: [64.2, -152.0] as [number, number],
-    minZoom: 0,
-    maxZoom: 6,
-    crs: 'EPSG:3338',
     segLayer: 'hydrology:arctic_rivers_segments_joined_3338_simplified_v2',
     hucLayer: 'hydrology:arctic_rivers_watersheds_stats_simplified_v2',
-    segBaseUrl: `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_segments_joined_3338_simplified_v2`,
     hucBaseUrl: `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_watersheds_stats_simplified_v2&srsName=EPSG:4326`,
   },
 }
 
 const config = regionConfig[region]
 
-// Per-phase zoom levels for this region.
-let defaultViewZoom: number
-let hucSelectZoom: number
-let segmentSelectZoom: number
+// Zoom limits, shared by both regions. Zoom is program-driven (phases), so
+// these only bound the phase zooms and the basemap tile range.
+const minZoom = 4
+const maxZoom = 12
 
-if (region === 'alaska') {
-  defaultViewZoom = 0 // phase 0
-  hucSelectZoom = 4 // phase 1
-  segmentSelectZoom = 8 // phase 2
-} else {
-  // conus
-  defaultViewZoom = 4
-  hucSelectZoom = 7
-  segmentSelectZoom = 10
-}
+// Per-phase zoom levels. Alaska's Phase 1 sits one level deeper than CONUS
+// so its ground scale (~256 m/px at Alaska's latitude, where Mercator tiles
+// are compressed) matches the view the old EPSG:3338 tile scheme gave.
+const defaultViewZoom = 4 // phase 0
+const hucSelectZoom = region === 'alaska' ? 8 : 7 // phase 1
+const segmentSelectZoom = 10 // phase 2
 
 // Query param keys per region for phase + HUC + center tracking.
 const paramKeys =
@@ -192,10 +180,10 @@ const fetchHuc = async (hucId: string) => {
   return r.json()
 }
 
-// The Phase 2 zoom is pinned to segmentSelectZoom (clamped to the map's max).
-// fitBounds would otherwise zoom out to fit large HUCs, packing the stream
-// network too densely; this is also the value that caps zoom-in for small HUCs.
-const phase2Zoom = () => Math.min(segmentSelectZoom, config.maxZoom)
+// The Phase 2 zoom is pinned to segmentSelectZoom. fitBounds would otherwise
+// zoom out to fit large HUCs, packing the stream network too densely; this is
+// also the value that caps zoom-in for small HUCs.
+const phase2Zoom = () => segmentSelectZoom
 
 // Saved center from the URL ([lat, lng]), or null if absent/invalid. A fresh
 // HUC click clears these, so a present value means we are restoring a Phase 2
@@ -443,48 +431,19 @@ const initializeMap = () => {
     touchZoom: false,
     keyboard: false,
     zoomSnap: 0.1,
-    minZoom: Math.min(config.minZoom, defaultViewZoom),
-    maxZoom: config.maxZoom,
-  }
-
-  let proj: any = null
-
-  if (config.crs === 'EPSG:3338') {
-    let resolutions = [4096, 2048, 1024, 512, 256, 128, 64]
-    proj = new $L.Proj.CRS(
-      'EPSG:3338',
-      '+proj=aea +lat_1=55 +lat_2=65 +lat_0=50 +lon_0=-154 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=m +no_defs',
-      {
-        // Lower-left corner of GeoServer's gridset bounds for EPSG:3338
-        origin: [-4648005.934316417, 444809.882955059],
-        resolutions: resolutions,
-      }
-    )
-    mapOptions.crs = proj
+    minZoom: minZoom,
+    maxZoom: maxZoom,
   }
 
   const view = initialView()
   map = $L.map(config.mapId, mapOptions).setView(view.center, view.zoom)
 
-  if (config.mapId === 'map-conus') {
-    $L.tileLayer(
-      'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}',
-      {
-        attribution: 'Map data © USGS',
-      }
-    ).addTo(map)
-  } else if (config.mapId === 'map-alaska') {
-    let url = `${$config.public.geoserverUrl}/wms`
-    $L.tileLayer
-      .wms(url, {
-        transparent: true,
-        crs: proj,
-        format: 'image/png',
-        version: '1.3.0',
-        layers: 'atlas_mapproxy:alaska_osm_retina',
-      })
-      .addTo(map)
-  }
+  $L.tileLayer(
+    'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}',
+    {
+      attribution: 'Map data © USGS',
+    }
+  ).addTo(map)
 
   // Create the phase-managed layers detached; the phase functions add/remove them.
   hucWmsLayer = $L.tileLayer.wms(`${$config.public.geoserverUrl}/wms`, {
