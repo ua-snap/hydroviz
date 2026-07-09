@@ -131,11 +131,7 @@ const buildChart = () => {
       let historicalFlow = [props.streamMaxFlowDates['historical']['flow']]
       let historicalFlowDate = [props.streamMaxFlowDates['historical']['date']]
 
-      let customdataHistorical: string[][] = []
       historicalFlowDate.forEach((doy: number, index: number) => {
-        let dayString = doyToDateString(doy)
-
-        customdataHistorical.push([dayString])
         historicalFlowDate[index] = convertTo360(doy)
       })
 
@@ -174,10 +170,7 @@ const buildChart = () => {
         props.streamMaxFlowDates['projected'][appEra.value][scenario]['date']
       )
 
-      let customdataProjected: string[][] = []
       projectedDates.forEach((doy: number, index: number) => {
-        let dayString = doyToDateString(doy)
-        customdataProjected.push([dayString])
         projectedDates[index] = convertTo360(doy)
       })
 
