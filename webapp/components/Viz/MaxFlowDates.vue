@@ -77,7 +77,7 @@ const buildChart = () => {
       historicalFlowDate[index] = convertTo360(doy)
     })
 
-    const historicalTraceLabel = 'Historical, 1976-2005'
+    const historicalTraceLabel = 'Historical, 1990-2021'
 
     let historicalTrace = {
       r: historicalFlow,
@@ -104,7 +104,7 @@ const buildChart = () => {
       projectedDates[index] = convertTo360(doy)
     })
 
-    let traceLabel = 'Projected'
+    let traceLabel = `Projected, ${scenarioFullNames['ssp370']}`
 
     // Use same color/symbol as rcp60 even though Alaska data doesn't have scenarios.
     let scenarioColor = scenarioColors['rcp60']
@@ -142,8 +142,6 @@ const buildChart = () => {
 
       const historicalTraceLabel = 'Historical, 1976-2005'
       const projectedTraceLabel = 'Projected'
-      const historicalHovertextLabel = 'Max historical flow'
-      const projectedHovertextLabel = 'Max projected flow'
 
       let showLegend = false
       if (
@@ -164,8 +162,6 @@ const buildChart = () => {
           color: scenarioColors['historical'],
           symbol: scenarioSymbols['historical'],
         },
-        customdata: customdataHistorical,
-        hovertemplate: `%{customdata[0]}, 1976-2005<br />${historicalHovertextLabel}: %{r:,} cf/s<extra></extra>`,
         showlegend: showLegend,
       }
       if (appContext.value === 'extremes' && scenario === 'rcp45') {
@@ -199,8 +195,6 @@ const buildChart = () => {
           color: scenarioColors[scenario],
           symbol: scenarioSymbols[scenario],
         },
-        customdata: customdataProjected,
-        hovertemplate: `%{customdata[0]}, 2046-2075<br />${projectedHovertextLabel}: %{r:,} cf/s<extra></extra>`,
       }
 
       if (appContext.value === 'mid') {

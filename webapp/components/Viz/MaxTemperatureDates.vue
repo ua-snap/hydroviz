@@ -9,6 +9,7 @@ import {
 } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
+import { scenarioFullNames } from '~/types/modelsScenarios'
 
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
@@ -88,7 +89,7 @@ const buildChart = () => {
     projectedDates[index] = convertTo360(doy)
   })
 
-  let traceLabel = 'Projected'
+  let traceLabel = `Projected, ${scenarioFullNames['ssp370']}`
 
   let scenarioColor = scenarioColors['projected']
   let scenarioSymbol = scenarioSymbols['projected']

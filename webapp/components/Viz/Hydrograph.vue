@@ -278,13 +278,15 @@ const buildChart = hg => {
     historicalFlowData['doy_max']
   )
 
+  let historicalYearRange = isAlaskaData ? '1990-2021' : '1976-2005'
+
   let historicalMinTrace = {
     x: hydroDoys,
     y: hydroYearHistoricalDataMin,
     type: 'scatter',
     mode: 'line',
     line: { color: scenarioColors['historical'].fill, width: 0 },
-    name: 'Minimum historical, 1976-2005',
+    name: `Minimum historical, ${historicalYearRange}`,
     showlegend: false,
   }
 
@@ -295,7 +297,7 @@ const buildChart = hg => {
     fill: 'tonexty',
     mode: 'none',
     fillcolor: scenarioColors['historical'].fill,
-    name: 'Minimum/maximum historical, 1976-2005',
+    name: `Minimum/maximum historical, ${historicalYearRange}`,
   }
 
   let historicalMeanTrace = {
@@ -304,7 +306,7 @@ const buildChart = hg => {
     type: 'scatter',
     mode: 'line',
     line: { color: '#f0f0f0', width: 2 },
-    name: 'Mean historical, 1976-2005',
+    name: `Mean historical, ${historicalYearRange}`,
   }
 
   // First put the two historical traces at the bottom of the stack...
@@ -346,7 +348,8 @@ const buildChart = hg => {
     : ''
 
   if (isAlaskaData) {
-    titleText = `Modeled flow rate, 2034-2065${gaugeIdLine}`
+    scenarioLabel = scenarioFullNames['ssp370']
+    titleText = `Modeled flow rate, 2034-2065, ${scenarioLabel}${gaugeIdLine}`
   } else {
     if (appContext.value === 'mid') {
       scenarioLabel = scenarioFullNames['rcp60']
