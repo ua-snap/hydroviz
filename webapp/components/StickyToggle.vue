@@ -2,6 +2,8 @@
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
 let { appContext, appEra } = storeToRefs(streamSegmentStore)
+
+// This control can only be used for CONUS.
 </script>
 
 <template>
