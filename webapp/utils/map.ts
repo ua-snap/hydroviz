@@ -105,19 +105,15 @@ export const addSegmentsGeoJson = ({
   }
 
   orderedSegments.forEach((feature: any) => {
-    let isSelected: boolean = false
-    if (segmentRegion.value === 'alaska') {
-      isSelected = (selectedSegmentId &&
-        feature.properties.COMID === selectedSegmentId) as boolean
-    } else {
-      isSelected = (selectedSegmentId &&
-        feature.properties.seg_id_nat === selectedSegmentId) as boolean
-    }
+    let isSelected = (selectedSegmentId &&
+      feature.properties[idProperty] === selectedSegmentId) as boolean
 
     let interactive = !isSelected
     let selectedKey = isSelected ? 'selected' : 'unselected'
-    let outletProperty =
-      segmentRegion.value === 'alaska' ? 'outlet' : 'h8_outlet'
+    // The WFS layers use different property names for outlet status:
+    // 'outlet' for Alaska, 'h8_outlet' for CONUS. Use the resolved region
+    // (not segmentRegion, which is null on the main map pages).
+    let outletProperty = region === 'alaska' ? 'outlet' : 'h8_outlet'
     let outletKey =
       feature.properties[outletProperty] === 1 ? 'outlet' : 'regular'
     let segmentColor = segmentColors[mapType][selectedKey][outletKey]
