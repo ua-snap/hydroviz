@@ -12,6 +12,7 @@ import {
 } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
+import { scenarioFullNames } from '~/types/modelsScenarios'
 
 const props = defineProps(['streamWtHydrograph'])
 
@@ -180,8 +181,9 @@ const buildChart = hg => {
     return doyToDateString(doy, true)
   })
 
+  let scenarioName = scenarioFullNames['ssp370']
   let gageIdLine = getGageIdLine(gageId.value)
-  let titleText = `Modeled water temperature, 2034-2065${gageIdLine}`
+  let titleText = `Modeled water temperature, 2034-2065, ${scenarioName}${gageIdLine}`
   let yAxisLabel = 'Water temperature, °C'
 
   let xAxisConfig = {

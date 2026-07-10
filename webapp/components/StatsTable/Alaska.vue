@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { scenarioFullNames } from '~/types/modelsScenarios'
 import { fnc, roundSigFig } from '~/utils/general'
 import { computed } from 'vue'
 
@@ -30,7 +31,9 @@ const tableCaptionHtml = computed(() => {
           <th scope="col" width="20%">
             Modeled Historical<br />(1990&ndash;2021)
           </th>
-          <th scope="col" width="20%">Median</th>
+          <th scope="col" width="20%">
+            Median, {{ scenarioFullNames['ssp370'] }}
+          </th>
         </tr>
       </thead>
       <tbody>

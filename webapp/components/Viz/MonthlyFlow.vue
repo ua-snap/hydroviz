@@ -86,12 +86,14 @@ const buildChart = () => {
     return historicalFlowData[monthKey]
   })
 
+  let historicalYearRange = isAlaskaData ? '1990-2021' : '1976-2005'
+
   let historicalTrace = {
     x: getOffsetXTickVals(xTickValOffsets, 'historical'),
     y: historicalFlowDataArray,
     type: 'scatter',
     mode: 'markers',
-    name: 'Historical, 1976-2005',
+    name: `Historical, ${historicalYearRange}`,
     marker: {
       size: 9,
       symbol: 'diamond',
@@ -130,7 +132,7 @@ const buildChart = () => {
         x0: xTickVals[idx],
         y: projectedFlowData[monthKey],
         type: 'box',
-        name: 'Projected',
+        name: `Projected, ${scenarioFullNames['ssp370']}`,
         marker: { color: scenarioColors['rcp60'].stroke, size: 8 },
         line: { color: scenarioColors['rcp60'].stroke, width: 1.5 },
         fillcolor: scenarioColors['rcp60'].fill,

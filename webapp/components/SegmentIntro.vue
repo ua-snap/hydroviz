@@ -40,6 +40,14 @@ const USGS_STREAM_GAGE_URL_BASE =
       All data in this report can be downloaded in CSV and other formats
       <NuxtLink to="#get-and-use">at the bottom of this page</NuxtLink>.
     </p>
+    <p>
+      <strong>Note:</strong> this tool integrates some of the best
+      <em>available</em> datasets, but not the best <em>possible</em> datasets.
+      Understanding the characteristics and behavior of the data in the context
+      of your area of study is important&mdash;<NuxtLink to="/how-to"
+        >read more.</NuxtLink
+      >
+    </p>
   </div>
 </template>
 

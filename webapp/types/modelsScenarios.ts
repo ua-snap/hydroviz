@@ -38,18 +38,20 @@ export const models: Record<Model, string> = {
   'NorESM1-M': 'NorESM1-M',
 }
 
-type Scenario = 'rcp45' | 'rcp60' | 'rcp85'
+type Scenario = 'rcp45' | 'rcp60' | 'rcp85' | 'ssp370'
 
 export const scenarios: Record<Scenario, string> = {
   rcp45: 'RCP 4.5',
   rcp60: 'RCP 6.0',
   rcp85: 'RCP 8.5',
+  ssp370: 'SSP3-7.0',
 }
 
 export const scenarioFullNames: Record<Scenario, string> = {
   rcp45: 'Stabilizing Emissions (RCP 4.5)',
   rcp60: 'Stabilizing High Emissions (RCP 6.0)',
   rcp85: 'Increasing Emissions (RCP 8.5)',
+  ssp370: 'Regional Rivalry (SSP3-7.0)',
 }
 
 type Era = '2016-2045' | '2046-2075' | '2071-2100'

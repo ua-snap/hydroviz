@@ -10,6 +10,7 @@ import {
 } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
+import { scenarioFullNames } from '~/types/modelsScenarios'
 
 const props = defineProps(['streamMonthlyTemperature'])
 
@@ -113,7 +114,7 @@ const buildChart = () => {
       x0: xTickVals[idx],
       y: tempValues,
       type: 'box',
-      name: 'Projected',
+      name: `Projected, ${scenarioFullNames['ssp370']}`,
       marker: { color: '#4Caf50', size: 8 },
       line: { color: '#4Caf50', width: 1.5 },
       fillcolor: '#b6e5b6',
