@@ -33,7 +33,7 @@ appContext.value = 'mid'
 </script>
 
 <template>
-  <Report />
+  <ReportAlaska />
 </template>
 
 <style scoped></style>

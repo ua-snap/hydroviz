@@ -21,7 +21,7 @@ segmentRegion.value = 'conus'
 </script>
 
 <template>
-  <Report />
+  <ReportConus />
 </template>
 
 <style scoped></style>

@@ -6,13 +6,8 @@ let {
   streamHydrograph,
   streamMonthlyFlow,
   streamMaxFlowDates,
-  streamWtStats,
-  streamWtHydrograph,
-  streamMonthlyTemperature,
-  streamMaxTempDates,
   segmentId,
   segmentName,
-  segmentRegion,
   appContext,
 } = storeToRefs(streamSegmentStore)
 import { scenarioFullNames } from '~/types/modelsScenarios'
@@ -71,11 +66,11 @@ onUnmounted(() => {
       </div>
     </section>
     <!-- StickyToggle must be outside of section/container wrappers -->
-    <StickyToggle v-if="segmentRegion == 'conus'" />
+    <StickyToggle />
     <section class="section">
       <div class="container">
         <div class="content clamp is-size-5 mb-6">
-          <p v-if="segmentRegion == 'conus' && appContext == 'mid'">
+          <p v-if="appContext == 'mid'">
             The chart below is a hydrograph that shows the modeled historical
             mean (white line in center) and range of variation (gray band) with
             the projected middle-of-the-road climate scenario&mdash;{{
@@ -84,7 +79,7 @@ onUnmounted(() => {
             top and bottom lines), and the range of variation for the means are
             shown as a shaded ribbon.
           </p>
-          <p v-if="segmentRegion == 'conus' && appContext == 'extremes'">
+          <p v-if="appContext == 'extremes'">
             The charts below are hydrographs that show the modeled historical
             mean (white line in center) and range of variation (gray band) for
             two climate scenarios: {{ scenarioFullNames.rcp45 }} and
@@ -99,7 +94,7 @@ onUnmounted(() => {
     <section class="section">
       <div class="container">
         <div class="content clamp is-size-5 mb-6">
-          <p v-if="segmentRegion == 'conus' && appContext == 'mid'">
+          <p v-if="appContext == 'mid'">
             The chart below shows the mean modeled monthly flow rate for the
             historical modeled value (diamond) and with the projected
             middle-of-the-road climate scenario&mdash;{{
@@ -111,7 +106,7 @@ onUnmounted(() => {
             &#177;1.5 times the interquartile range, and outliers are shown as
             colored dots.
           </p>
-          <p v-if="segmentRegion == 'conus' && appContext == 'extremes'">
+          <p v-if="appContext == 'extremes'">
             The charts below show the mean modeled monthly flow rate for the
             historical modeled value (diamond) with two climate scenarios:
             {{ scenarioFullNames.rcp45 }} and {{ scenarioFullNames.rcp85 }}. The
@@ -128,7 +123,7 @@ onUnmounted(() => {
     <section class="section">
       <div class="container">
         <div class="content clamp is-size-5 mb-6">
-          <p v-if="segmentRegion == 'conus' && appContext == 'mid'">
+          <p v-if="appContext == 'mid'">
             The chart below shows the modeled annual maximum daily flow rate and
             the date of its occurrence for the historical modeled value
             (diamond) and with the projected middle-of-the-road climate
@@ -136,7 +131,7 @@ onUnmounted(() => {
             chart can help you see changes in the timing and magnitude of annual
             maximum flow rates.
           </p>
-          <p v-if="segmentRegion == 'conus' && appContext == 'extremes'">
+          <p v-if="appContext == 'extremes'">
             The charts below show the modeled annual maximum daily flow rate and
             the date of its occurrence for the historical modeled value
             (diamond) and for two climate scenarios,
@@ -149,36 +144,18 @@ onUnmounted(() => {
       </div>
     </section>
 
-    <section class="section" v-if="segmentRegion == 'alaska'">
-      <div class="container">
-        <VizTemperatureHydrograph :stream-wt-hydrograph="streamWtHydrograph" />
-      </div>
-    </section>
-    <section class="section" v-if="segmentRegion == 'alaska'">
-      <div class="container">
-        <VizMonthlyTemperature
-          :stream-monthly-temperature="streamMonthlyTemperature"
-        />
-      </div>
-    </section>
-    <section class="section" v-if="segmentRegion == 'alaska'">
-      <div class="container">
-        <VizMaxTemperatureDates :stream-max-temp-dates="streamMaxTempDates" />
-      </div>
-    </section>
-
     <section class="section">
       <div class="container">
         <h4 class="title is-4">Complete statistics</h4>
 
         <div class="is-size-5 mb-6">
-          <p v-if="segmentRegion == 'conus' && appContext == 'mid'">
+          <p v-if="appContext == 'mid'">
             The projected values in the tables below show the median values
             across the {{ scenarioFullNames.rcp60 }} climate scenario for 13
             climate models. This represents the middle-of-the-road for future
             model projections in the CMIP5 family of datasets.
           </p>
-          <p v-if="segmentRegion == 'conus' && appContext == 'extremes'">
+          <p v-if="appContext == 'extremes'">
             The projected values in the table below show the extreme values
             across two climate scenarios for 13 climate models. The values in
             the &lsquo;Minimum, {{ scenarioFullNames.rcp45 }}&rsquo; column are
@@ -213,30 +190,6 @@ onUnmounted(() => {
           :stream-stats="streamStats"
           category="rate_of_change"
           tableTitle="Rate of Change Statistics"
-        />
-        <StatsTable
-          v-if="segmentRegion == 'alaska'"
-          :wt-stats="streamWtStats"
-          category="water_temperature_annual"
-          tableTitle="Annual Water Temperature Statistics"
-        />
-        <StatsTable
-          v-if="segmentRegion == 'alaska'"
-          :wt-stats="streamWtStats"
-          category="water_temperature_minimum_monthly"
-          tableTitle="Minimum Monthly Mean Water Temperature"
-        />
-        <StatsTable
-          v-if="segmentRegion == 'alaska'"
-          :wt-stats="streamWtStats"
-          category="water_temperature_mean_monthly"
-          tableTitle="Mean Monthly Water Temperature"
-        />
-        <StatsTable
-          v-if="segmentRegion == 'alaska'"
-          :wt-stats="streamWtStats"
-          category="water_temperature_maximum_monthly"
-          tableTitle="Maximum Monthly Mean Water Temperature"
         />
       </div>
     </section>
