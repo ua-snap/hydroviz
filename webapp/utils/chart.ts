@@ -1,6 +1,15 @@
 import type { Config, Layout } from 'plotly.js'
 import lowess from '@stdlib/stats-lowess'
 
+const generalizedChartTypes: Record<string, string> = {
+  hydrograph: 'hydrograph',
+  temperatureHydrograph: 'hydrograph',
+  monthlyFlow: 'monthlyBoxPlots',
+  monthlyTemperature: 'monthlyBoxPlots',
+  maxFlowDates: 'maxDates',
+  maxTempDates: 'maxDates',
+}
+
 export const getConfig = (filename: string): Partial<Config> => {
   return {
     responsive: true, // changes the height / width dynamically for charts
@@ -31,15 +40,37 @@ export const getGageIdLine = (gageId: string | null): string => {
     : ''
 }
 
-const getFooterCredits = (isAlaskaData: boolean): string => {
-  if (isAlaskaData) {
-    return 'Data provided by Dylan Blaskey, Keith Musselman, Andrew Newman, &amp; Yifan Cheng. (2024). doi:10.18739/A25M62870'
+const getFooterText = (isAlaskaData: boolean, chartType: string): string => {
+  let projectedModels = isAlaskaData
+    ? 'four climate model runs'
+    : '13 climate models'
+
+  let historicalModel = isAlaskaData
+    ? 'a dynamically downscaled ERA5 baseline'
+    : 'Maurer calibration'
+
+  let generalizedChartType = generalizedChartTypes[chartType]!
+
+  let footerText = ''
+
+  if (generalizedChartType == 'hydrograph') {
+    footerText += `Projected range is from ${projectedModels}, historical range is from ${historicalModel}.<br>`
   } else {
-    return (
+    // Make the first letter of projectedModels uppercase for the footer text.
+    projectedModels =
+      projectedModels.charAt(0).toUpperCase() + projectedModels.slice(1)
+    footerText += `${projectedModels} are shown as a distribution, historical is ${historicalModel}.<br>`
+  }
+
+  if (isAlaskaData) {
+    footerText +=
+      'Data provided by Dylan Blaskey, Keith Musselman, Andrew Newman, &amp; Yifan Cheng. (2024). doi:10.18739/A25M62870'
+  } else {
+    footerText +=
       'Historical data provided by U.S. Geological Survey National Water Information System. doi:10.5066/F7P55KJN<br>' +
       'Projected data provided by LaFontaine, J.H., and Riley, J.W., 2023. doi:10.5066/P9EBKREQ'
-    )
   }
+  return footerText
 }
 
 // Keep plot area, footer position, and margins consistent across chart types.
@@ -53,88 +84,78 @@ const getLayoutPositions = (
   let marginTop: null | number = null
   let marginBottom: null | number = null
   let footerY: null | number = null
-
-  const generalizedChartTypes: Record<string, string> = {
-    hydrograph: 'hydrograph',
-    temperatureHydrograph: 'hydrograph',
-    monthlyFlow: 'monthlyBoxPlots',
-    monthlyTemperature: 'monthlyBoxPlots',
-    maxFlowDates: 'maxDates',
-    maxTempDates: 'maxDates',
-  }
-
   let generalizedChartType = generalizedChartTypes[chartType]
 
   if (isTwoLineTitle) {
     if (isAlaskaData) {
       if (generalizedChartType === 'hydrograph') {
-        height = 515
+        height = 542
         marginTop = 100
-        marginBottom = 145
-        footerY = -0.5
+        marginBottom = 167
+        footerY = -0.52
       } else if (generalizedChartType === 'monthlyBoxPlots') {
-        height = 535
+        height = 545
+        marginTop = 120
+        marginBottom = 150
+        footerY = -0.45
+      } else if (generalizedChartType === 'maxDates') {
+        height = 570
         marginTop = 120
         marginBottom = 140
-        footerY = -0.44
-      } else if (generalizedChartType === 'maxDates') {
-        height = 560
-        marginTop = 120
-        marginBottom = 130
-        footerY = -0.35
+        footerY = -0.37
       }
     } else {
       if (generalizedChartType === 'hydrograph') {
-        height = 535
+        height = 552
         marginTop = 100
-        marginBottom = 160
-        footerY = -0.55
+        marginBottom = 177
+        footerY = -0.57
       } else if (generalizedChartType === 'monthlyBoxPlots') {
-        height = 520
+        height = 540
         marginTop = 100
-        marginBottom = 145
-        footerY = -0.48
+        marginBottom = 165
+        footerY = -0.5
       } else if (generalizedChartType === 'maxDates') {
-        height = 555
+        height = 575
         marginTop = 120
-        marginBottom = 130
-        footerY = -0.4
+        marginBottom = 150
+        footerY = -0.42
       }
     }
   } else {
     if (isAlaskaData) {
       if (generalizedChartType === 'hydrograph') {
-        height = 505
+        height = 522
         marginTop = 80
-        marginBottom = 150
-        footerY = -0.5
+        marginBottom = 167
+        footerY = -0.52
       } else if (generalizedChartType === 'monthlyBoxPlots') {
-        height = 505
+        height = 525
         marginTop = 100
-        marginBottom = 130
-        footerY = -0.43
+        marginBottom = 150
+        footerY = -0.45
       } else if (generalizedChartType === 'maxDates') {
-        height = 530
+        height = 550
         marginTop = 100
-        marginBottom = 120
-        footerY = -0.35
+        marginBottom = 140
+        footerY = -0.37
       }
     } else {
       if (generalizedChartType === 'hydrograph') {
-        height = 520
+        height = 532
+        marginTop = 80
+        marginBottom = 177
+        footerY = -0.57
+      } else if (generalizedChartType === 'monthlyBoxPlots') {
+        height = 525
         marginTop = 80
         marginBottom = 165
-        footerY = -0.55
-      } else if (generalizedChartType === 'monthlyBoxPlots') {
-        height = 505
-        marginTop = 80
-        marginBottom = 145
-        footerY = -0.48
+        footerY = -0.5
       } else if (generalizedChartType === 'maxDates') {
-        height = 535
+        height = 555
         marginTop = 100
-        marginBottom = 130
-        footerY = -0.4
+        marginBottom = 150
+        footerY = -0.42
       }
     }
   }
@@ -197,7 +218,7 @@ export const getLayout = (
     hovermode: false,
     annotations: [
       {
-        text: getFooterCredits(isAlaskaData),
+        text: getFooterText(isAlaskaData, chartType),
         xref: 'paper',
         yref: 'paper',
         x: 0.5,
