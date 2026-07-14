@@ -101,7 +101,12 @@ onMounted(() => {
 
 <template>
   <p class="is-size-5 mb-2">
-    🔴 Watershed outflow segments in the map below are shown in red.
+    <span
+      class="outflow-legend-swatch"
+      :style="{ backgroundColor: outletRed }"
+      aria-hidden="true"
+    ></span>
+    Watershed outflow segments in the map below are shown in red.
   </p>
   <div class="report-map-wrapper mb-6">
     <div id="report-map"></div>
@@ -116,5 +121,10 @@ onMounted(() => {
 
 #report-map {
   height: 60vh;
+<style lang="scss">
+.outflow-legend-swatch {
+  display: inline-block;
+  width: 0.8em;
+  height: 0.8em;
 }
 </style>
