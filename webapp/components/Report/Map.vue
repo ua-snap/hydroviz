@@ -121,7 +121,8 @@ onMounted(() => {
 
 #report-map {
   height: 60vh;
-<style lang="scss">
+}
+
 .outflow-legend-swatch {
   display: inline-block;
   width: 0.8em;
