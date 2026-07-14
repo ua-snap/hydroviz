@@ -49,11 +49,14 @@ const getFooterText = (isAlaskaData: boolean, chartType: string): string => {
     ? 'a dynamically downscaled ERA5 baseline'
     : 'Maurer calibration'
 
-  let generalizedChartType = generalizedChartTypes[chartType]!
+  const generalizedChartType = generalizedChartTypes[chartType]
+  if (!generalizedChartType) {
+    throw new Error(`Unknown chartType "${chartType}"`)
+  }
 
   let footerText = ''
 
-  if (generalizedChartType == 'hydrograph') {
+  if (generalizedChartType === 'hydrograph') {
     footerText += `Projected range is from ${projectedModels}, historical range is from ${historicalModel}.<br>`
   } else {
     // Make the first letter of projectedModels uppercase for the footer text.
