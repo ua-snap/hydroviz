@@ -4,6 +4,7 @@ import {
   fetchSegmentsForBounds,
   addSegmentsGeoJson,
   clearSegmentLayers,
+  outletRed,
 } from '~/utils/map'
 import { MapPhase, ALL_MAP_PARAMS } from '~/types/map'
 import waterLoaderUrl from '@/assets/water-loader.svg'
@@ -569,7 +570,12 @@ onMounted(() => {
       visibility: currentPhase === MapPhase.HucSelected ? 'visible' : 'hidden',
     }"
   >
-    🔴 Watershed outflow segments in the map below are shown in red.
+    <span
+      class="outflow-legend-swatch"
+      :style="{ backgroundColor: outletRed }"
+      aria-hidden="true"
+    ></span>
+    Watershed outflow segments in the map below are shown in red.
   </p>
   <div class="map-wrapper" style="height: 80vh; min-height: 500px">
     <div :id="config.mapId" style="height: 100%"></div>
@@ -598,6 +604,12 @@ onMounted(() => {
 
 .map-wrapper {
   position: relative;
+}
+
+.outflow-legend-swatch {
+  display: inline-block;
+  width: 0.8em;
+  height: 0.8em;
 }
 
 .map-back-button {
