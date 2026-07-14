@@ -87,8 +87,10 @@ const getLayoutPositions = (
   let marginTop: null | number = null
   let marginBottom: null | number = null
   let footerY: null | number = null
-  let generalizedChartType = generalizedChartTypes[chartType]
-
+  const generalizedChartType = generalizedChartTypes[chartType]
+  if (!generalizedChartType) {
+    throw new Error(`Unknown chartType "${chartType}"`)
+  }
   if (isTwoLineTitle) {
     if (isAlaskaData) {
       if (generalizedChartType === 'hydrograph') {
