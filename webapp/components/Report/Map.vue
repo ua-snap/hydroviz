@@ -2,7 +2,6 @@
 const { $L } = useNuxtApp()
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 import { fetchAndAddSegmentsByBounds, fetchSegmentById } from '~/utils/map'
-import waterLoaderUrl from '@/assets/water-loader.svg'
 const streamSegmentStore = useStreamSegmentStore()
 let { isLoading, segmentRegion, segmentId } = storeToRefs(streamSegmentStore)
 let map: any = null
@@ -104,37 +103,18 @@ onMounted(() => {
   <p class="is-size-5 mb-2">
     🔴 Watershed outflow segments in the map below are shown in red.
   </p>
-  <div class="mb-6">
+  <div class="report-map-wrapper mb-6">
     <div id="report-map"></div>
-    <div v-if="!mapReady" class="report-map-loading-overlay">
-      <img :src="waterLoaderUrl" class="report-map-loading-icon" alt="" />
-      <p class="mt-3 has-text-white is-size-5 has-text-weight-semibold">
-        Loading map&hellip;
-      </p>
-    </div>
+    <MapLoadingOverlay v-if="!mapReady">Loading map&hellip;</MapLoadingOverlay>
   </div>
 </template>
 
 <style lang="scss" scoped>
+.report-map-wrapper {
+  position: relative;
+}
+
 #report-map {
   height: 60vh;
-}
-
-.report-map-loading-overlay {
-  position: absolute;
-  inset: 0;
-  // Above Leaflet panes (max ~700) and controls (~1000).
-  z-index: 1100;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: rgba(128, 128, 128, 0.5);
-  pointer-events: all;
-}
-
-.report-map-loading-icon {
-  width: 4rem;
-  height: 4rem;
 }
 </style>
