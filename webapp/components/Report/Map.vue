@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { $L } = useNuxtApp()
 import { useStreamSegmentStore } from '~/stores/streamSegment'
-import { fetchAndAddSegmentsByBounds } from '~/utils/map'
+import { fetchAndAddSegmentsByBounds, outletRed } from '~/utils/map'
 const streamSegmentStore = useStreamSegmentStore()
 let { isLoading, segmentRegion, segmentId } = storeToRefs(streamSegmentStore)
 let map: any = null
@@ -86,9 +86,20 @@ onMounted(() => {
 
 <template>
   <p class="is-size-5 mb-2">
-    🔴 Watershed outflow segments in the map below are shown in red.
+    <span
+      class="outflow-legend-swatch"
+      :style="{ backgroundColor: outletRed }"
+      aria-hidden="true"
+    ></span>
+    Watershed outflow segments in the map below are shown in red.
   </p>
   <div id="report-map" style="height: 400px" class="mb-6"></div>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+.outflow-legend-swatch {
+  display: inline-block;
+  width: 0.8em;
+  height: 0.8em;
+}
+</style>

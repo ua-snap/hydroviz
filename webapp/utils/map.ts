@@ -1,5 +1,11 @@
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 
+// Outflow (outlet) segments are always drawn in the same red, #ff6100
+// (oklch(0.7066 0.2256 41.22)), on both the main and report maps so the
+// "outflow segments are shown in red" text above each map holds true.
+// Exported so that text can show a legend swatch in the same color.
+export const outletRed = '#ff6100'
+
 const segmentColors: Record<string, any> = {
   main: {
     selected: {
@@ -8,19 +14,19 @@ const segmentColors: Record<string, any> = {
       hover: '#ffff00',
     },
     unselected: {
-      outlet: '#ff0000',
+      outlet: outletRed,
       regular: '#0000ff',
       hover: '#ffff00',
     },
   },
   report: {
     selected: {
-      outlet: '#ff0000',
+      outlet: outletRed,
       regular: '#0000ff',
       hover: '#ffff00',
     },
     unselected: {
-      outlet: '#ff7777',
+      outlet: outletRed,
       regular: '#7777ff',
       hover: '#ffff00',
     },
@@ -113,9 +119,10 @@ export const addSegmentsGeoJson = ({
     // The WFS layers use different property names for outlet status:
     // 'outlet' for Alaska, 'h8_outlet' for CONUS. Use the resolved region
     // (not segmentRegion, which is null on the main map pages).
+    // Outlet status is a boolean in the current (v2) layers but was 0/1 in
+    // earlier versions, so accept any truthy value.
     let outletProperty = region === 'alaska' ? 'outlet' : 'h8_outlet'
-    let outletKey =
-      feature.properties[outletProperty] === 1 ? 'outlet' : 'regular'
+    let outletKey = feature.properties[outletProperty] ? 'outlet' : 'regular'
     let segmentColor = segmentColors[mapType][selectedKey][outletKey]
     let hoverColor = segmentColors[mapType][selectedKey].hover
 
