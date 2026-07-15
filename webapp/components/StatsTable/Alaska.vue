@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { scenarioFullNames } from '~/types/modelsScenarios'
 import { fnc, roundSigFig } from '~/utils/general'
+import { nullValueFooter } from '~/utils/table'
 import { computed } from 'vue'
 
 import { statistics } from '~/types/statsVars'
@@ -16,6 +17,18 @@ var statsInCategory = $_.filter(statistics, {
 
 const tableCaptionHtml = computed(() => {
   return props.tableTitle + ', Mid-Century (2034&ndash;2065)'
+})
+
+const hasNullValues = computed(() => {
+  if (!statsData.value) return false
+  const checkNull = (val: any) => val === null || val === undefined
+  return statsInCategory.some((stat: any) => {
+    const values = [
+      statsData.value['historical']['1990-2021'][stat.id],
+      statsData.value['projected']['2034-2065'][stat.id]?.median,
+    ]
+    return values.some(checkNull)
+  })
 })
 </script>
 
@@ -77,6 +90,11 @@ const tableCaptionHtml = computed(() => {
           </td>
         </tr>
       </tbody>
+      <tfoot v-if="hasNullValues">
+        <tr>
+          <td colspan="5" v-html="nullValueFooter"></td>
+        </tr>
+      </tfoot>
     </table>
   </div>
 </template>
