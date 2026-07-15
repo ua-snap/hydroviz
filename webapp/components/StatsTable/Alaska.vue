@@ -57,35 +57,13 @@ const hasNullValues = computed(() => {
           <td v-html="stat.description"></td>
           <td v-html="stat.units_short"></td>
           <td>
-            <span class="number">{{
-              fnc(
-                roundSigFig(
-                  Number(statsData['historical']['1990-2021'][stat.id])
-                )
-              )
-            }}</span>
+            <StatValue :value="statsData['historical']['1990-2021'][stat.id]" />
           </td>
           <td>
-            <span class="number">
-              {{
-                fnc(
-                  roundSigFig(
-                    Number(statsData['projected']['2034-2065'][stat.id].median)
-                  )
-                )
-              }}
-            </span>
-            <Diff
-              :past="
-                roundSigFig(
-                  Number(statsData['historical']['1990-2021'][stat.id])
-                )
-              "
-              :future="
-                roundSigFig(
-                  Number(statsData['projected']['2034-2065'][stat.id].median)
-                )
-              "
+            <StatValue
+              :value="statsData['projected']['2034-2065'][stat.id].median"
+              :past="statsData['historical']['1990-2021'][stat.id]"
+              :statId="stat.id"
             />
           </td>
         </tr>
