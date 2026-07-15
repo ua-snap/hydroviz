@@ -79,7 +79,7 @@ const hasNullValues = computed(() => {
       </tbody>
       <tfoot v-if="hasNullValues">
         <tr>
-          <td colspan="5" v-html="nullValueFooter"></td>
+          <td colspan="5">{{ nullValueFooter }}</td>
         </tr>
       </tfoot>
     </table>
