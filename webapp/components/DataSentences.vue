@@ -107,6 +107,7 @@ function orMoreIf100Percent(amount: number): string {
 
 <template>
   <div class="content clamp is-size-5">
+    <h4 class="title is-4">Key changes by mid-century</h4>
     <ul>
       <li>
         Historically, this stream has a mean annual flow
@@ -169,8 +170,9 @@ function orMoreIf100Percent(amount: number): string {
     </p>
     <p v-if="segmentRegion == 'conus'">
       Historical data uses the Maurer calibration, 1976&ndash;2005. Future
-      projections for mid-century (2046&ndash;2075) use the mean of 13 global
-      circulation models and a middle-of-the-road emissions scenario (RCP 6.0).
+      projections referenced above are for mid-century (2046&ndash;2075) and use
+      the mean of 13 global climate models (earth system models) and a
+      middle-of-the-road emissions scenario (RCP 6.0).
     </p>
   </div>
 </template>

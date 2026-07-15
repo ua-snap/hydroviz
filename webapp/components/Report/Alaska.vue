@@ -11,8 +11,6 @@ let {
   streamWtHydrograph,
   streamMonthlyTemperature,
   streamMaxTempDates,
-  segmentId,
-  segmentName,
 } = storeToRefs(streamSegmentStore)
 
 const router = useRouter()
@@ -49,10 +47,7 @@ onUnmounted(() => {
   <div v-if="streamStats">
     <section class="section">
       <div class="container">
-        <h3 class="title is-3">
-          Statistics for {{ segmentName }}
-          <span class="segmentId">ID{{ segmentId }}</span>
-        </h3>
+        <SegmentTitle />
         <SegmentIntro />
         <ReportMap class="my-6" />
         <DataSentences />

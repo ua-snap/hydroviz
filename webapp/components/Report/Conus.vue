@@ -6,8 +6,6 @@ let {
   streamHydrograph,
   streamMonthlyFlow,
   streamMaxFlowDates,
-  segmentId,
-  segmentName,
   appContext,
 } = storeToRefs(streamSegmentStore)
 import { scenarioFullNames } from '~/types/modelsScenarios'
@@ -46,10 +44,7 @@ onUnmounted(() => {
   <div v-if="streamStats">
     <section class="section">
       <div class="container">
-        <h3 class="title is-3">
-          Statistics for {{ segmentName }}
-          <span class="segmentId">ID{{ segmentId }}</span>
-        </h3>
+        <SegmentTitle />
         <SegmentIntro />
         <ReportMap class="my-6" />
         <DataSentences />

@@ -33,7 +33,7 @@ const USGS_STREAM_GAGE_URL_BASE =
     <p v-if="lowFlow">
       <strong>This stream segment has a low mean annual flow.</strong>
       Headwaters and other small or intermittent streams have high statistical
-      variability. Charts and visualizations may look strange for this stream
+      variability. Charts and visualizations may look irregular for this stream
       segment.
     </p>
     <p>
@@ -42,11 +42,9 @@ const USGS_STREAM_GAGE_URL_BASE =
     </p>
     <p>
       <strong>Note:</strong> this tool integrates some of the best
-      <em>available</em> datasets, but not the best <em>possible</em> datasets.
-      Understanding the characteristics and behavior of the data in the context
-      of your area of study is important&mdash;<NuxtLink to="/how-to"
-        >read more.</NuxtLink
-      >
+      <em>available</em> datasets, but understanding model uncertainty and the
+      characteristics of the data in the context of your area of study is
+      important&mdash;<NuxtLink to="/how-to">read more.</NuxtLink>
     </p>
   </div>
 </template>
