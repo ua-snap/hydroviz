@@ -7,7 +7,6 @@ import {
   outletRed,
 } from '~/utils/map'
 import { MapPhase, ALL_MAP_PARAMS } from '~/types/map'
-import waterLoaderUrl from '@/assets/water-loader.svg'
 
 const { $L, $config } = useNuxtApp()
 const route = useRoute()
@@ -587,12 +586,9 @@ onMounted(() => {
     >
       &larr;&nbsp;{{ backButtonLabel }}
     </button>
-    <div v-if="isLoadingPhase2" class="map-loading-overlay">
-      <img :src="waterLoaderUrl" class="map-loading-icon" alt="" />
-      <p class="mt-3 has-text-white is-size-3 is-bold">
-        Loading stream network&hellip;
-      </p>
-    </div>
+    <MapLoadingOverlay v-if="isLoadingPhase2">
+      Loading stream network&hellip;
+    </MapLoadingOverlay>
   </div>
 </template>
 
@@ -616,25 +612,7 @@ onMounted(() => {
   position: absolute;
   top: 0.75rem;
   left: 0.75rem;
-  // Above Leaflet panes (max ~700), below the loading overlay (1100).
+  // Above Leaflet panes (max ~700), below MapLoadingOverlay (1100).
   z-index: 1000;
-}
-
-.map-loading-overlay {
-  position: absolute;
-  inset: 0;
-  // Above Leaflet panes (max ~700) and controls (~1000).
-  z-index: 1100;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: rgba(128, 128, 128, 0.5);
-  pointer-events: all;
-}
-
-.map-loading-icon {
-  width: 6rem;
-  height: 6rem;
 }
 </style>

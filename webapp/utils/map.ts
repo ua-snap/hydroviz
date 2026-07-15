@@ -71,7 +71,6 @@ export const addSegmentsGeoJson = ({
   fitBounds = true,
   mapType = 'main',
   mapRegion = 'conus',
-  preload = false,
 }: {
   map: any
   $L: any
@@ -80,7 +79,6 @@ export const addSegmentsGeoJson = ({
   fitBounds?: boolean
   mapType?: 'main' | 'report'
   mapRegion?: 'conus' | 'alaska'
-  preload?: boolean
 }) => {
   const streamSegmentStore = useStreamSegmentStore()
   let { segmentRegion } = storeToRefs(streamSegmentStore)
@@ -104,11 +102,6 @@ export const addSegmentsGeoJson = ({
   let orderedSegments = selectedSegment
     ? [...otherSegments, selectedSegment]
     : otherSegments
-
-  let opacity = 1
-  if (preload) {
-    opacity = 0
-  }
 
   orderedSegments.forEach((feature: any) => {
     let isSelected = (selectedSegmentId &&
@@ -141,7 +134,6 @@ export const addSegmentsGeoJson = ({
         weight: lineWeight,
         color: segmentColor,
         interactive: interactive,
-        opacity: opacity,
       },
     })
 
@@ -162,7 +154,6 @@ export const addSegmentsGeoJson = ({
         color: segmentColor,
         fillColor: segmentColor,
         interactive: interactive,
-        opacity: opacity,
       })
       segmentParts = [line, handle]
     }
@@ -232,32 +223,33 @@ export const addSegmentsGeoJson = ({
       map.fitBounds(selectedSegmentLayer.getBounds(), { padding: [50, 50] })
     }
 
-    if (!preload) {
-      // Only add marker if one doesn't already exist.
-      let markerExists = false
-      map.eachLayer((layer: any) => {
-        if (layer instanceof $L.Marker) {
-          markerExists = true
-        }
-      })
-
-      if (!markerExists) {
-        let latlng = getHandleCoord(selectedSegment)
-        $L.marker(latlng).addTo(map)
+    // Only add marker if one doesn't already exist.
+    let markerExists = false
+    map.eachLayer((layer: any) => {
+      if (layer instanceof $L.Marker) {
+        markerExists = true
       }
+    })
+
+    if (!markerExists) {
+      let latlng = getHandleCoord(selectedSegment)
+      $L.marker(latlng).addTo(map)
     }
   }
 }
 
-// Builds the WFS request URL for all segments intersecting a lat/lng bounds.
-const segmentBboxUrl = (bounds: any, mapRegion: 'conus' | 'alaska') => {
+// Builds the WFS request base URL for a region's stream segment layer.
+const segmentLayerBaseUrl = (mapRegion: 'conus' | 'alaska') => {
   const { $config } = useNuxtApp()
   const wfsBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&outputFormat=application%2Fjson&srsName=EPSG:4326`
-  const segBaseUrl =
-    mapRegion === 'alaska'
-      ? `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_segments_joined_3338_simplified_v2`
-      : `${wfsBaseUrl}&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_v2`
+  return mapRegion === 'alaska'
+    ? `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_segments_joined_3338_simplified_v2`
+    : `${wfsBaseUrl}&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_v2`
+}
 
+// Builds the WFS request URL for all segments intersecting a lat/lng bounds.
+const segmentBboxUrl = (bounds: any, mapRegion: 'conus' | 'alaska') => {
+  const segBaseUrl = segmentLayerBaseUrl(mapRegion)
   const minLon = bounds.getWest()
   const maxLon = bounds.getEast()
   const minLat = bounds.getSouth()
@@ -291,6 +283,34 @@ export const fetchSegmentsForBounds = async ({
   return response.json()
 }
 
+// Fetches (but does not add) the GeoJSON for a single stream segment. Lets the
+// report map fit itself to the segment before its first view is set, so no
+// tiles or segments are ever requested for the wrong place.
+export const fetchSegmentById = async ({
+  segmentId,
+  region = 'conus',
+}: {
+  segmentId: number | string
+  region?: 'conus' | 'alaska'
+}) => {
+  const streamSegmentStore = useStreamSegmentStore()
+  const { segmentRegion } = storeToRefs(streamSegmentStore)
+  const mapRegion = segmentRegion.value || region
+
+  const idFilter =
+    mapRegion === 'alaska' ? `COMID=${segmentId}` : `seg_id_nat=${segmentId}`
+
+  const response = await fetch(
+    segmentLayerBaseUrl(mapRegion) + `&cql_filter=${idFilter}`
+  )
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch segment ${segmentId}: ${response.status} ${response.statusText}`
+    )
+  }
+  return response.json()
+}
+
 export const fetchAndAddSegmentsByBounds = ({
   map,
   $L,
@@ -304,104 +324,12 @@ export const fetchAndAddSegmentsByBounds = ({
   mapType?: 'main' | 'report'
   region?: 'conus' | 'alaska'
 }) => {
-  const { $config } = useNuxtApp()
   const streamSegmentStore = useStreamSegmentStore()
   let { segmentId, segmentRegion } = storeToRefs(streamSegmentStore)
 
   let mapRegion = segmentRegion.value || region
 
-  const wfsBaseUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&outputFormat=application%2Fjson&srsName=EPSG:4326`
-  const segBaseUrl =
-    mapRegion === 'alaska'
-      ? `${wfsBaseUrl}&typeName=hydrology%3Aarctic_rivers_segments_joined_3338_simplified_v2`
-      : `${wfsBaseUrl}&typeName=hydrology%3Aseg_h8_outlet_stats_simplified_v2`
-
-  if (segmentId.value) {
-    // Fetch only the selected segment first to determine map bounds.
-    // The selected segment will be added with an opacity of 0 until fitBounds is called.
-    // It will then be removed and added back to the map with full opacity along with all
-    // other viewport segments. This is "preload" mode.
-    let selectedSegUrl: string
-    if (mapRegion === 'alaska') {
-      selectedSegUrl = segBaseUrl + `&cql_filter=COMID=${segmentId.value}`
-    } else {
-      selectedSegUrl = segBaseUrl + `&cql_filter=seg_id_nat=${segmentId.value}`
-    }
-
-    return fetch(selectedSegUrl)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(
-            `Failed to fetch selected segment: ${response.status} ${response.statusText}`
-          )
-        }
-        return response.json()
-      })
-      .then(selectedData => {
-        // Add and fit bounds to the selected segment
-        addSegmentsGeoJson({
-          map,
-          $L,
-          data: selectedData,
-          selectedSegmentId: segmentId.value,
-          fitBounds,
-          mapType: mapType,
-          mapRegion: mapRegion,
-          preload: true,
-        })
-
-        // Map is now fit to bounds of selected segment. Now fetch everything in map viewport.
-        // No selected segment, so just fetch segments in current viewport.
-        const bounds = map.getBounds()
-        const minLon = bounds.getWest()
-        const maxLon = bounds.getEast()
-        const minLat = bounds.getSouth()
-        const maxLat = bounds.getNorth()
-
-        const segUrl =
-          segBaseUrl +
-          `&cql_filter=BBOX(the_geom,${minLon},${minLat},${maxLon},${maxLat},'EPSG:4326')`
-
-        return fetch(segUrl)
-          .then(response => {
-            if (!response.ok) {
-              throw new Error(
-                `Failed to fetch segment data: ${response.status} ${response.statusText}`
-              )
-            }
-            return response.json()
-          })
-          .then(data => {
-            clearSegmentLayers(map)
-            // Add all viewport segments (including selected)
-            addSegmentsGeoJson({
-              map,
-              $L,
-              data: data,
-              selectedSegmentId: segmentId.value,
-              fitBounds: fitBounds,
-              mapType: mapType,
-              mapRegion: mapRegion,
-            })
-          })
-      })
-      .catch(error => {
-        console.error('Error fetching segment data:', error)
-      })
-  }
-
-  // No selected segment, so just fetch segments in current viewport.
-  const bounds = map.getBounds()
-  const minLon = bounds.getWest()
-  const maxLon = bounds.getEast()
-  const minLat = bounds.getSouth()
-  const maxLat = bounds.getNorth()
-
-  const segUrl =
-    segBaseUrl +
-    `&cql_filter=BBOX(the_geom,${minLon},${minLat},${maxLon},${maxLat},'EPSG:4326')`
-
-  return fetch(segUrl)
+  return fetch(segmentBboxUrl(map.getBounds(), mapRegion))
     .then(response => {
       if (!response.ok) {
         throw new Error(
@@ -412,11 +340,13 @@ export const fetchAndAddSegmentsByBounds = ({
     })
     .then(data => {
       clearSegmentLayers(map)
+      // The selected segment (set only on report pages; null on the main map)
+      // gets its selected styling whenever the viewport includes it.
       addSegmentsGeoJson({
         map,
         $L,
         data,
-        selectedSegmentId: null,
+        selectedSegmentId: segmentId.value,
         fitBounds,
         mapType: mapType,
         mapRegion: mapRegion,
