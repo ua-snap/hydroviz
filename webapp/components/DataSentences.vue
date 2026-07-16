@@ -103,10 +103,20 @@ function orMoreIf100Percent(amount: number): string {
   }
   return ''
 }
+
+const lowFlow = computed(() => {
+  return streamSummary.value.ma99_hist.value <= 1000
+})
 </script>
 
 <template>
   <div class="content clamp is-size-5">
+    <p v-if="lowFlow">
+      <strong>This stream segment has a low mean annual flow.</strong>
+      Headwaters and other small or intermittent streams have high statistical
+      variability. Charts and visualizations may look irregular for this stream
+      segment.
+    </p>
     <h4 class="title is-4">Key changes by mid-century</h4>
     <ul>
       <li>

@@ -448,5 +448,3 @@ const buildChart = hg => {
   <div v-if="appContext === 'extremes' && !isAlaskaData" class="mt-6"></div>
   <div v-if="!isAlaskaData" id="hydrograph2"></div>
 </template>
-
-<style lang="scss" scoped></style>

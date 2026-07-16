@@ -6,24 +6,9 @@ let {
   streamHydrograph,
   streamMonthlyFlow,
   streamMaxFlowDates,
-  segmentId,
-  segmentName,
   appContext,
 } = storeToRefs(streamSegmentStore)
 import { scenarioFullNames } from '~/types/modelsScenarios'
-
-const router = useRouter()
-
-// Returns to the map, restoring its zoom/center/phase via browser history when
-// this report was reached from the map. On a direct visit (shared link) there
-// is no in-app history to go back to, so fall back to the home page.
-const goBackToMap = () => {
-  if (window.history.state?.back) {
-    router.back()
-  } else {
-    navigateTo('/')
-  }
-}
 
 onMounted(() => {
   streamSegmentStore.fetchStreamStats()
@@ -32,24 +17,24 @@ onMounted(() => {
 onUnmounted(() => {
   streamSegmentStore.clearStats()
 })
+
+const lowFlow = computed(() => {
+  return streamStats.value['historical']['1976-2005']['ma99'] < 100
+})
+
+const showLowFlowHydrograph = ref(false)
+const showIfSure = () => {
+  showLowFlowHydrograph.value = true
+}
 </script>
 
 <template>
-  <section class="section pb-0">
-    <div class="container">
-      <a class="content is-size-5" href="/" @click.prevent="goBackToMap"
-        >&larr; Go back, choose another segment</a
-      >
-    </div>
-  </section>
+  <BackToMap />
   <Loading />
   <div v-if="streamStats">
     <section class="section">
       <div class="container">
-        <h3 class="title is-3">
-          Statistics for {{ segmentName }}
-          <span class="segmentId">ID{{ segmentId }}</span>
-        </h3>
+        <SegmentTitle />
         <SegmentIntro />
         <ReportMap class="my-6" />
         <DataSentences />
@@ -100,26 +85,47 @@ onUnmounted(() => {
     <section class="section">
       <div class="container">
         <h4 class="title is-4">Hydrograph</h4>
-        <div class="content clamp is-size-5 mb-6">
-          <p v-if="appContext == 'mid'">
-            The chart below is a hydrograph that shows the modeled historical
-            mean (white line in center) and range of variation (gray band) with
-            the projected middle-of-the-road climate scenario&mdash;{{
-              scenarioFullNames.rcp60
-            }}. The minimum and maximum across 13 climate models are shown (the
-            top and bottom lines), and the range of variation for the means are
-            shown as a shaded ribbon.
-          </p>
-          <p v-if="appContext == 'extremes'">
-            The charts below are hydrographs that show the modeled historical
-            mean (white line in center) and range of variation (gray band) for
-            two climate scenarios: {{ scenarioFullNames.rcp45 }} and
-            {{ scenarioFullNames.rcp85 }}. The minimum and maximum across 13
-            climate models are shown in each chart (top and bottom lines), and
-            the range of variation for the means are shown as a shaded ribbon.
+
+        <!-- Show if sure -->
+        <div
+          v-if="lowFlow && !showLowFlowHydrograph"
+          class="content clamp is-size-5"
+        >
+          <p>
+            ⚠️ Because this stream segment has relatively low mean annual flow
+            (<100 cf/s), a daily hydrograph showing ranges of model outputs can
+            look implausible and show more variation in model behavior than the
+            flow regime, and is not displayed by default. The monthly chart
+            above aggregates these changes and shows a clearer signal of
+            possible future change.
+            <a @click.prevent="showIfSure">Show hydrograph anyway.</a>
           </p>
         </div>
-        <VizHydrograph :stream-hydrograph="streamHydrograph" />
+        <!-- v-if (not v-show) so Plotly mounts into a visible container it can
+             measure; charts drawn while display:none fall back to 700px wide -->
+        <div v-if="!lowFlow || showLowFlowHydrograph">
+          <div class="content clamp is-size-5">
+            <p v-if="appContext == 'mid'">
+              The chart below is a hydrograph that shows the modeled historical
+              mean (white line in center) and range of variation (gray band)
+              with the projected middle-of-the-road climate scenario&mdash;{{
+                scenarioFullNames.rcp60
+              }}. The minimum and maximum across 13 climate models are shown
+              (the top and bottom lines), and the range of variation for the
+              means are shown as a shaded ribbon.
+            </p>
+            <p v-if="appContext == 'extremes'">
+              The charts below are hydrographs that show the modeled historical
+              mean (white line in center) and range of variation (gray band) for
+              two climate scenarios:
+              {{ scenarioFullNames.rcp45 }} and {{ scenarioFullNames.rcp85 }}.
+              The minimum and maximum across 13 climate models are shown in each
+              chart (top and bottom lines), and the range of variation for the
+              means are shown as a shaded ribbon.
+            </p>
+          </div>
+          <VizHydrograph :stream-hydrograph="streamHydrograph" />
+        </div>
       </div>
     </section>
 
