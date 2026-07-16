@@ -20,6 +20,15 @@ onMounted(() => {
 onUnmounted(() => {
   streamSegmentStore.clearStats()
 })
+
+const lowFlow = computed(() => {
+  return streamStats.value['historical']['1990-2021']['ma99'] < 100
+})
+
+const showLowFlowHydrograph = ref(false)
+const showIfSure = () => {
+  showLowFlowHydrograph.value = true
+}
 </script>
 
 <template>
@@ -77,18 +86,36 @@ onUnmounted(() => {
     <section class="section">
       <div class="container">
         <h4 class="title is-4">Hydrograph</h4>
-        <div class="content clamp is-size-5 mb-6">
+        <!-- Show if sure -->
+        <div
+          v-if="lowFlow && !showLowFlowHydrograph"
+          class="content clamp is-size-5"
+        >
           <p>
-            The chart below is a hydrograph that shows the modeled historical
-            mean (white line in center) and range of variation (gray band) with
-            the projected scenario, {{ scenarioFullNames.ssp370 }}. The minimum
-            and maximum across four climate model runs are shown (the top and
-            bottom lines), and the range of variation for the means are shown as
-            a shaded ribbon.
+            ⚠️ Because this stream segment has relatively low mean annual flow
+            (<100 cf/s), a daily hydrograph showing ranges of model outputs can
+            look implausible and show more variation in model behavior than the
+            flow regime, and is not displayed by default. The monthly chart
+            above aggregates these changes and shows a clearer signal of
+            possible future change.
+            <a @click.prevent="showIfSure">Show hydrograph anyway.</a>
           </p>
-          <p>Note that <strong>the y-axis is log scale</strong>.</p>
         </div>
-        <VizHydrograph :stream-hydrograph="streamHydrograph" />
+
+        <div v-if="!lowFlow || showLowFlowHydrograph">
+          <div class="content clamp is-size-5 mb-6">
+            <p>
+              The chart below is a hydrograph that shows the modeled historical
+              mean (white line in center) and range of variation (gray band)
+              with the projected scenario, {{ scenarioFullNames.ssp370 }}. The
+              minimum and maximum across four climate model runs are shown (the
+              top and bottom lines), and the range of variation for the means
+              are shown as a shaded ribbon.
+            </p>
+            <p>Note that <strong>the y-axis is log scale</strong>.</p>
+          </div>
+          <VizHydrograph :stream-hydrograph="streamHydrograph" />
+        </div>
       </div>
     </section>
     <section class="section">

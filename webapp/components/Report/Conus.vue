@@ -19,7 +19,7 @@ onUnmounted(() => {
 })
 
 const lowFlow = computed(() => {
-  return streamStats.value['historical']['1976-2005']['ma99'] < 100
+  return streamStats.value['historical']['1990-2005']['ma99'] < 100
 })
 
 const showLowFlowHydrograph = ref(false)
