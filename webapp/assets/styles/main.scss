@@ -15,6 +15,12 @@ h6 {
 	font-family: $family-sans-serif;
 }
 
+h1,
+h2,
+h3 {
+	font-weight: 600 !important;
+}
+
 .number {
 	font-family: 'IBM Plex Mono', monospace;
 }

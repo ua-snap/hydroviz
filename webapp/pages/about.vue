@@ -1,41 +1,109 @@
 <template>
-  <section class="section">
-    <div class="container">
-      <h1 class="title is-1">About</h1>
-      <div class="content is-size-4">
-        <h3 class="title is-3">Hydrologic Outlooks</h3>
-        <ul>
-          <li>
-            View and access interactive modeled data from gaged and ungaged
-            streams and watersheds (HUC8)
-          </li>
-          <li>
-            Quickly visualize range, uncertainty, means, and extremes for peak
-            flow, low flow, seasonal averages, and other key variables.
-          </li>
-          <li>
-            Access data downloads in flexible CSV format or directly from the
-            API to create customized outputs.
-          </li>
-        </ul>
+  <div class="container mb-6">
+    <h1 class="title is-1 mt-6">Hydrologic Outlooks</h1>
 
-        <h3 class="title is-3">Who is this site for?</h3>
+    <article class="content is-size-5 clamp">
+      <p>
+        Complex datasets that incorporate climate futures often fail to meet the
+        needs of land managers, decision-makers, and rightsholders. This can be
+        due to a lack of trust, poor explanations of how best to use the data,
+        or technological limitations to access.
+      </p>
+
+      <p>
+        The goal of this site is to improve your ability to effectively and
+        appropriately use hydrologic futures in natural resource management,
+        ecological research, and more.
+      </p>
+
+      <p>This tool allows you to:</p>
+
+      <ul>
+        <li>
+          Easily select, view and access interactive modeled data from gaged and
+          ungaged streams and watersheds (HUC8).
+        </li>
+        <li>
+          Quickly visualize range, uncertainty, means, and extremes for peak
+          flow, low flow, seasonal averages, and other key variables.
+        </li>
+        <li>
+          Access data downloads in flexible csv format or directly from the API
+          to create customized outputs.
+        </li>
+      </ul>
+    </article>
+
+    <section class="block">
+      <h2 class="title is-3">Who is this site for?</h2>
+      <div class="content is-size-5 clamp">
         <p>
           This web tool was designed to meet the needs of land managers,
-          hydrologists, ecologists, engineers, and others in need of hydrologic
-          information for use in long-term landscape-level planning. The
-          visualizations in this tool offer a stepping-off point that is
-          intended to allow the user to quickly understand the most important
-          aspects of the dataset, including projected change, range of
-          projections, uncertainties, and key take-aways. For those who require
-          the full range of data for all specific models, emissions scenarios,
-          and time periods in order to create their own graphics and perform
-          their own analyses, the site offers CSV downloads.
+          hydrologists, ecologists, engineers, and anyone else in need of
+          hydrologic information for use in long-term landscape-level planning.
+          The visualizations offer a stepping-off point so you can quickly
+          understand the most important aspects of the datasets, including
+          projected change, range of projections, uncertainties, and key
+          take-aways. If you need the full range of data for all models,
+          emissions scenarios, and time periods, the site offers csv downloads
+          that you can use to create your own graphics and perform your own
+          analyses.
+        </p>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2 class="title is-3">Can modeled data be trusted?</h2>
+      <div class="content is-size-5 clamp">
+        <p>
+          Modeled data is not perfect&mdash;and it&rsquo;s not a forecast. In
+          some cases, the results may appear to be a poor representation of
+          reality. Those who monitor streams and rivers and those who live and
+          work on the land have personal and direct knowledge of the timing of
+          stream flows. A stream gage offers more accurate and precise
+          measurements than any model can. You may need to use local fine-scale
+          ground-truthed models for some purposes, or you may need to rely only
+          on gaged or measured flows. However, not all streams have gages. Even
+          those that do may have intermittent data. And no stream gage can offer
+          projections months, years, or decades into the future.
         </p>
 
-        <h3 class="title is-3">Where did the data come from?</h3>
         <p>
-          The Hydrologic Futures tool is based on
+          Although there is a wide range of uncertainty in the model outputs
+          shared on this site&mdash;discussed in more detail here&mdash;it can
+          still be helpful to incorporate the signals of change that these
+          models show. In other words, models will not show you exactly how a
+          stream will behave on a single day, but they are a powerful tool for
+          assessing trends across time.
+        </p>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2 class="title is-3">Why this approach?</h2>
+      <div class="content is-size-5 clamp">
+        <p>
+          There are multiple ways to model stream networks, as well as specific
+          models used to assess and predict storm water, surface flows, and
+          groundwater. This site focuses on making it quick and easy for you to
+          access and fully interpret datasets that are geographically broad,
+          complete, and continuous.
+        </p>
+
+        <p>
+          This site allows you to select locations, timeframes, and possible
+          climate futures most pertinent to the decisions you need to make. By
+          comparing multiple plausible futures, you can interpret and define
+          uncertainty in a way that makes sense in the context of your own work.
+        </p>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2 class="title is-3">Where did the data come from?</h2>
+      <div class="content is-size-5 clamp">
+        <p>
+          The Hydrologic Futures tool is primarily based on
           <a
             href="https://www.usgs.gov/software/precipitation-runoff-modeling-system-prms"
             >PRMS</a
@@ -52,71 +120,18 @@
           <a
             href="https://www.usgs.gov/data/application-national-hydrologic-model-infrastructure-precipitation-runoff-modeling-system-nhmi"
             >associated calibrations</a
-          >.
-        </p>
-
-        <h3 class="title is-3">
-          What are the most effective ways to use this tool?
-        </h3>
-        <p>
-          Given the sources of uncertainty associated with this dataset, tool
-          outputs are most appropriate for broadly assessing hydrologic change
-          over time, at the level of hydrologic units or landscapes, rather than
-          for generating short-term forecasts for specific stream segments.
-          Visuals within the tool have been designed to depict summaries of
-          change, including range and uncertainty.
-        </p>
-        <p>
-          For those who choose to download data for tailored uses, care should
-          be taken to consider the pros and cons of viewing specific models,
-          scenarios (RCPs) and time periods. Users should also consider whether
-          the most extreme values or more middle-of-the-road models and
-          scenarios are most pertinent to their work, as well as whether they
-          are most interested in average (typical) future hydrologic conditions,
-          or extreme conditions (e.g. high or low flows). Based on these needs,
-          they can select variables, models, scenarios, and output formats
-          accordingly.
-        </p>
-
-        <h3 class="title is-3">How can I access and download data?</h3>
-        <p>
-          Downloads are available for a range of purposes and user groups,
-          including those who want simple images and spreadsheet data (CSVs) and
-          those who want full API access. From the tool, images can be
-          downloaded via the camera icon, data can be copied and pasted from any
-          table, and complete CSVs can be downloaded for single stream segments.
-          From the API, endpoints will allow for accessing hydrographs (flow
-          climatology) or all statistics for a single stream segment.
-        </p>
-
-        <h3 class="title is-3">How should these data and products be cited?</h3>
-        <p>
-          PRMS data are freely distributed, and require no licenses or
-          permissions from USGS, but should be
-          <a
-            href="https://www.usgs.gov/software/precipitation-runoff-modeling-system-prms"
-            >appropriately cited</a
-          >.
-        </p>
-
-        <h3 class="title is-3">
-          What is the full range of data available via this site, and
-          represented in this tool?
-        </h3>
-        <p>
-          A total of 52 hydrologic statistics are available via this tool
-          calculated from modeled daily streamflow data. The full list of
-          variables can be <NuxtLink to="/data">viewed here</NuxtLink>. Global
-          Climate Models are available; some offer data for all four scenarios
-          (RCP 2.6, 4.5, 6.0, and 8.5) and others only for a subset of these
-          scenarios. The full list of model/RCP combinations can be
-          <NuxtLink to="/data">viewed here</NuxtLink>. All outputs are
-          summarized by era: 1976&ndash;2005 (historical), 2016&ndash;2045,
-          2046&ndash;2075 and 2071&ndash;2100. Visualizations within the tool
-          focus on a subset of the full dataset in order to provide the more
-          relevant summaries. All data is provided in CSV downloads.
+          >. In order to incorporate data for Alaska and parts of western
+          Canada, we have also included data from on
+          <a href="https://nps.edu/web/rasm">RASM</a> (the Regional Arctic
+          System Model), based on a dataset published by
+          <a href="https://search.dataone.org/view/doi%3A10.18739%2FA25M62870"
+            >Blaskey et. al, 2024</a
+          >
+          Note that Alaska data is not only based on different hydrologic models
+          than those used for the continental US, but also on different modeled
+          climate futures (Earth System models).
         </p>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 </template>

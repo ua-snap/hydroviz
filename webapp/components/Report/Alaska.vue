@@ -195,7 +195,7 @@ const showIfSure = () => {
       <div class="container">
         <h3 class="title is-3">Complete statistics</h3>
 
-        <div class="is-size-5 mb-6">
+        <div class="is-size-5 mb-6 clamp">
           <p>
             The projected values in the tables below show the median values
             across the {{ scenarioFullNames.ssp370 }} climate scenario for four
