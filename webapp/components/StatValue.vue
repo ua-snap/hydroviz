@@ -24,7 +24,7 @@ const past = computed<number | null>(() => {
 
 const formattedValue = computed(() => {
   if (value.value === null) {
-    return 'N/A'
+    return 'not available<sup>*</sup>'
   }
   return fnc(value.value)
 })
@@ -32,7 +32,7 @@ const formattedValue = computed(() => {
 
 <template>
   <span>
-    <span class="number">{{ formattedValue }}</span>
+    <span class="number" v-html="formattedValue" />
     <Diff
       v-if="past !== null && value !== null"
       :past="past"

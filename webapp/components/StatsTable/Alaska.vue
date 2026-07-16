@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { scenarioFullNames } from '~/types/modelsScenarios'
 import { fnc, roundSigFig } from '~/utils/general'
+import { nullValueFooter } from '~/utils/table'
 import { computed } from 'vue'
 
 import { statistics } from '~/types/statsVars'
@@ -16,6 +17,18 @@ var statsInCategory = $_.filter(statistics, {
 
 const tableCaptionHtml = computed(() => {
   return props.tableTitle + ', Mid-Century (2034&ndash;2065)'
+})
+
+const hasNullValues = computed(() => {
+  if (!statsData.value) return false
+  const checkNull = (val: any) => val === null || val === undefined
+  return statsInCategory.some((stat: any) => {
+    const values = [
+      statsData.value['historical']['1990-2021'][stat.id],
+      statsData.value['projected']['2034-2065'][stat.id]?.median,
+    ]
+    return values.some(checkNull)
+  })
 })
 </script>
 
@@ -44,39 +57,22 @@ const tableCaptionHtml = computed(() => {
           <td v-html="stat.description"></td>
           <td v-html="stat.units_short"></td>
           <td>
-            <span class="number">{{
-              fnc(
-                roundSigFig(
-                  Number(statsData['historical']['1990-2021'][stat.id])
-                )
-              )
-            }}</span>
+            <StatValue :value="statsData['historical']['1990-2021'][stat.id]" />
           </td>
           <td>
-            <span class="number">
-              {{
-                fnc(
-                  roundSigFig(
-                    Number(statsData['projected']['2034-2065'][stat.id].median)
-                  )
-                )
-              }}
-            </span>
-            <Diff
-              :past="
-                roundSigFig(
-                  Number(statsData['historical']['1990-2021'][stat.id])
-                )
-              "
-              :future="
-                roundSigFig(
-                  Number(statsData['projected']['2034-2065'][stat.id].median)
-                )
-              "
+            <StatValue
+              :value="statsData['projected']['2034-2065'][stat.id].median"
+              :past="statsData['historical']['1990-2021'][stat.id]"
+              :statId="stat.id"
             />
           </td>
         </tr>
       </tbody>
+      <tfoot v-if="hasNullValues">
+        <tr>
+          <td colspan="5">{{ nullValueFooter }}</td>
+        </tr>
+      </tfoot>
     </table>
   </div>
 </template>
