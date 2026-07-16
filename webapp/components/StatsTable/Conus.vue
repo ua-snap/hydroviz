@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { eraFullNamesHtml, scenarioFullNames } from '~/types/modelsScenarios'
+import { nullValueFooter } from '~/utils/table'
 import { computed } from 'vue'
 
 import { statistics } from '~/types/statsVars'
@@ -15,6 +16,26 @@ var statsInCategory = $_.filter(statistics, {
 
 const tableCaptionHtml = computed(() => {
   return props.tableTitle + ', ' + eraFullNamesHtml[appEra.value]
+})
+
+const hasNullValues = computed(() => {
+  if (!props.streamStats) return false
+  const checkNull = (val: any) => val === null || val === undefined
+  return statsInCategory.some((stat: any) => {
+    const values = [
+      props.streamStats['historical']['1976-2005'][stat.id],
+      ...(appContext.value === 'mid'
+        ? [
+            props.streamStats['projected'][appEra.value]['rcp60'][stat.id]
+              ?.median,
+          ]
+        : [
+            props.streamStats['projected'][appEra.value]['rcp45'][stat.id]?.min,
+            props.streamStats['projected'][appEra.value]['rcp85'][stat.id]?.max,
+          ]),
+    ]
+    return values.some(checkNull)
+  })
 })
 </script>
 
@@ -56,6 +77,11 @@ const tableCaptionHtml = computed(() => {
           </td>
         </tr>
       </tbody>
+      <tfoot v-if="hasNullValues">
+        <tr>
+          <td colspan="5">{{ nullValueFooter }}</td>
+        </tr>
+      </tfoot>
     </table>
     <table class="table" v-if="appContext == 'extremes'">
       <caption class="mb-4" v-html="tableCaptionHtml"></caption>
@@ -99,6 +125,11 @@ const tableCaptionHtml = computed(() => {
           </td>
         </tr>
       </tbody>
+      <tfoot v-if="hasNullValues">
+        <tr>
+          <td colspan="6">{{ nullValueFooter }}</td>
+        </tr>
+      </tfoot>
     </table>
   </div>
 </template>
