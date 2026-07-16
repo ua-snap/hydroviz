@@ -6,6 +6,8 @@ let {
   streamHydrograph,
   streamMonthlyFlow,
   streamMaxFlowDates,
+  segmentId,
+  segmentName,
   appContext,
 } = storeToRefs(streamSegmentStore)
 import { scenarioFullNames } from '~/types/modelsScenarios'
@@ -44,7 +46,10 @@ onUnmounted(() => {
   <div v-if="streamStats">
     <section class="section">
       <div class="container">
-        <SegmentTitle />
+        <h3 class="title is-3">
+          Statistics for {{ segmentName }}
+          <span class="segmentId">ID{{ segmentId }}</span>
+        </h3>
         <SegmentIntro />
         <ReportMap class="my-6" />
         <DataSentences />
@@ -64,30 +69,7 @@ onUnmounted(() => {
     <StickyToggle />
     <section class="section">
       <div class="container">
-        <div class="content clamp is-size-5 mb-6">
-          <p v-if="appContext == 'mid'">
-            The chart below is a hydrograph that shows the modeled historical
-            mean (white line in center) and range of variation (gray band) with
-            the projected middle-of-the-road climate scenario&mdash;{{
-              scenarioFullNames.rcp60
-            }}. The minimum and maximum across 13 climate models are shown (the
-            top and bottom lines), and the range of variation for the means are
-            shown as a shaded ribbon.
-          </p>
-          <p v-if="appContext == 'extremes'">
-            The charts below are hydrographs that show the modeled historical
-            mean (white line in center) and range of variation (gray band) for
-            two climate scenarios: {{ scenarioFullNames.rcp45 }} and
-            {{ scenarioFullNames.rcp85 }}. The minimum and maximum across 13
-            climate models are shown in each chart (top and bottom lines), and
-            the range of variation for the means are shown as a shaded ribbon.
-          </p>
-        </div>
-        <VizHydrograph :stream-hydrograph="streamHydrograph" />
-      </div>
-    </section>
-    <section class="section">
-      <div class="container">
+        <h4 class="title is-4">Mean monthly flow</h4>
         <div class="content clamp is-size-5 mb-6">
           <p v-if="appContext == 'mid'">
             The chart below shows the mean modeled monthly flow rate for the
@@ -117,6 +99,33 @@ onUnmounted(() => {
     </section>
     <section class="section">
       <div class="container">
+        <h4 class="title is-4">Hydrograph</h4>
+        <div class="content clamp is-size-5 mb-6">
+          <p v-if="appContext == 'mid'">
+            The chart below is a hydrograph that shows the modeled historical
+            mean (white line in center) and range of variation (gray band) with
+            the projected middle-of-the-road climate scenario&mdash;{{
+              scenarioFullNames.rcp60
+            }}. The minimum and maximum across 13 climate models are shown (the
+            top and bottom lines), and the range of variation for the means are
+            shown as a shaded ribbon.
+          </p>
+          <p v-if="appContext == 'extremes'">
+            The charts below are hydrographs that show the modeled historical
+            mean (white line in center) and range of variation (gray band) for
+            two climate scenarios: {{ scenarioFullNames.rcp45 }} and
+            {{ scenarioFullNames.rcp85 }}. The minimum and maximum across 13
+            climate models are shown in each chart (top and bottom lines), and
+            the range of variation for the means are shown as a shaded ribbon.
+          </p>
+        </div>
+        <VizHydrograph :stream-hydrograph="streamHydrograph" />
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h4 class="title is-4">Timing of annual maximum daily flow rate</h4>
         <div class="content clamp is-size-5 mb-6">
           <p v-if="appContext == 'mid'">
             The chart below shows the modeled annual maximum daily flow rate and
