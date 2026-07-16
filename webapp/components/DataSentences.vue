@@ -172,6 +172,12 @@ function orMoreIf100Percent(amount: number): string {
       projections for mid-century (2046&ndash;2075) use the mean of 13 global
       circulation models and a middle-of-the-road emissions scenario (RCP 6.0).
     </p>
+    <p v-if="segmentRegion == 'alaska'">
+      Historical data uses a dynamically downscaled ERA5 baseline,
+      1990&ndash;2021. Future projections for mid-century (2034&ndash;2065) use
+      the mean of four global circulation model runs and the Regional Rivalry
+      shared socioeconomic pathway (SSP3-7.0).
+    </p>
   </div>
 </template>
 
