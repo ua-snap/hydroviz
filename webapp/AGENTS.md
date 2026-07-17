@@ -88,6 +88,43 @@ unless explicitly asked. In particular, never run the `aws s3 website`
 bucket-setup command against an existing bucket — it wipes out the S3 website
 redirection rules that report permalinks depend on.
 
+## Manual testing locations
+
+When verifying changes to report pages, charts, maps, or stats tables, do not
+pick arbitrary stream segment IDs — use the known-good locations below (from
+[issue #220](https://github.com/ua-snap/hydroviz/issues/220)). They cover the
+distinct report variants the app renders, so exercise every case relevant to
+the change. URLs assume the dev server at `http://localhost:3000`.
+
+**Baseline CONUS + Alaska pair for any report-page change** — always check
+both domains, since components are paired (see the CONUS / Alaska split rule):
+
+- Low-flow stream: `/conus/stream/32174` and `/alaska/stream/81015240`
+
+**Special report variants:**
+
+- HUC outflow segments: `/conus/stream/33364` and `/alaska/stream/81014439`
+- Stream with a USGS gage (CONUS): `/conus/stream/52448`
+- Alaska streams with gage links: `/alaska/stream/81000404`,
+  `/alaska/stream/81001685`, `/alaska/stream/81002548`,
+  `/alaska/stream/81003397`, `/alaska/stream/81005122`
+
+**More CONUS options:** a larger curated set of test streams — organized by
+ecoregion, with GNIS names, USGS gage IDs, and notes — lives in
+[`data/tests/test_streams.json` on the `add_test_suite` branch](https://github.com/ua-snap/hydroviz/blob/add_test_suite/data/tests/test_streams.json).
+Use it when a change needs coverage across varied geography or gage
+configurations.
+
+Guidelines:
+
+- For changes touching gage-related UI, test at least one gaged and one
+  ungaged segment.
+- For changes touching flow visualizations or stats, include the low-flow
+  segments — they surface edge cases (near-zero values, sparse data) that
+  average streams do not.
+- For map or segment-styling changes, include a HUC outflow segment, since
+  outflow segments are colored/styled differently.
+
 ## Non-negotiable style rules
 
 - Honor `.prettierrc` (no semicolons, single quotes, 2-space indent, ES5
