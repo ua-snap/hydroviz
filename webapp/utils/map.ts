@@ -1,4 +1,5 @@
 import { useStreamSegmentStore } from '~/stores/streamSegment'
+import { cleanStreamName } from './cleanStreamName'
 
 // Outflow (outlet) segments are always drawn in the same red, #ff6100
 // (oklch(0.7066 0.2256 41.22)), on both the main and report maps so the
@@ -175,7 +176,7 @@ export const addSegmentsGeoJson = ({
     combinedSegment
       .on('mouseover', function (e: any) {
         if (mapRegion === 'conus') {
-          let segmentName = feature.properties.GNIS_NAME
+          let segmentName = cleanStreamName(feature.properties.GNIS_NAME)
           if (segmentName !== '') {
             line
               .bindTooltip(segmentName, {
