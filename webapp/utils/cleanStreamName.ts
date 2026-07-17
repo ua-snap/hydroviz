@@ -21,7 +21,9 @@ export function cleanStreamName(name: string | null | undefined): string {
 
   // Strip leading and trailing quotes (both single and double)
   // Do this multiple times to handle nested quotes
-  for (let i = 0; i < 3; i++) {
+  // Max 3 iterations handles cases like: "'\"text\"'" -> "\"text\"" -> "text"
+  const MAX_QUOTE_STRIP_ITERATIONS = 3
+  for (let i = 0; i < MAX_QUOTE_STRIP_ITERATIONS; i++) {
     const before = cleaned
     cleaned = cleaned.replace(/^["']+/, '').replace(/["']+$/, '')
     if (cleaned === before) break
