@@ -30,8 +30,10 @@ const hasNullValues = computed(() => {
               ?.median,
           ]
         : [
-            props.streamStats['projected'][appEra.value]['rcp45'][stat.id]?.min,
-            props.streamStats['projected'][appEra.value]['rcp85'][stat.id]?.max,
+            props.streamStats['projected'][appEra.value]['rcp45'][stat.id]
+              ?.median,
+            props.streamStats['projected'][appEra.value]['rcp85'][stat.id]
+              ?.median,
           ]),
     ]
     return values.some(checkNull)
@@ -111,14 +113,14 @@ const hasNullValues = computed(() => {
           </td>
           <td>
             <StatValue
-              :value="streamStats['projected'][appEra]['rcp45'][stat.id].min"
+              :value="streamStats['projected'][appEra]['rcp45'][stat.id].median"
               :past="streamStats['historical']['1976-2005'][stat.id]"
               :statId="stat.id"
             />
           </td>
           <td>
             <StatValue
-              :value="streamStats['projected'][appEra]['rcp85'][stat.id].max"
+              :value="streamStats['projected'][appEra]['rcp85'][stat.id].median"
               :past="streamStats['historical']['1976-2005'][stat.id]"
               :statId="stat.id"
             />
