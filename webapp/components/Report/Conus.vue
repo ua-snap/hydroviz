@@ -156,14 +156,11 @@ onUnmounted(() => {
             model projections in the CMIP5 family of datasets.
           </p>
           <p v-if="appContext == 'extremes'">
-            The projected values in the table below show the extreme values
-            across two climate scenarios for 13 climate models. The values in
-            the &lsquo;Minimum, {{ scenarioFullNames.rcp45 }}&rsquo; column are
-            the minimum values across all 13 climate models for the
-            {{ scenarioFullNames.rcp45 }} scenario, and the values in the
-            &lsquo;Maximum, {{ scenarioFullNames.rcp85 }}&rsquo; column are the
-            maximum values across all 13 climate models for the
-            {{ scenarioFullNames.rcp85 }} scenario.
+            The projected values in the tables below show the median values
+            across the {{ scenarioFullNames.rcp45 }} and
+            {{ scenarioFullNames.rcp85 }} climate scenarios for 13 climate
+            models. For each scenario, these values represent the median
+            projection within the CMIP5 family of datasets.
           </p>
         </div>
         <StatsTable
