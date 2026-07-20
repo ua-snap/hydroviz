@@ -54,13 +54,12 @@ const showIfSure = () => {
             All data on this page show a
             <strong>higher emissions</strong> scenario with four runs of one
             climate model, the Community Earth System Model 2 (CESM2). The
-            scenario selected is &ldquo;Regional Rivalry&rdquo;, or SSP3-7.0,
-            which projects one of the higher-emissions futures modeled for this
-            century: greenhouse gas output and radiative forcing climb steadily
-            to about 7 watts per square meter by 2100, driven by continued heavy
-            fossil fuel use and weak global climate cooperation, placing it
-            between the &ldquo;medium&rdquo; and &ldquo;worst-case&rdquo;
-            pathways.
+            scenario is &ldquo;Regional Rivalry&rdquo;, or SSP3-7.0, which
+            projects one of the higher-emissions futures modeled for this
+            century: greenhouse gas outputs climb steadily through 2100, driven
+            by continued heavy fossil fuel use and weak global climate
+            cooperation, placing it between the &ldquo;medium&rdquo; and
+            &ldquo;worst-case&rdquo; pathways.
           </p>
         </div>
       </div>
