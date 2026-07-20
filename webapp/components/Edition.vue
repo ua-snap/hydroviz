@@ -1,7 +1,7 @@
 <script lang="ts" setup></script>
 
 <template>
-  <div class="edition" role="status" aria-label="Beta Edition Notice">&mdash; ☀️&nbsp;Beta Edition &mdash;</div>
+  <div class="edition" role="note" aria-label="Beta Edition Notice">&mdash; ☀️&nbsp;Beta Edition &mdash;</div>
 </template>
 
 <style scoped lang="scss">
