@@ -66,7 +66,13 @@ export default defineNuxtConfig({
       // With ssr: false these are SPA shells, not rendered pages. Listing
       // them makes each URL exist as an S3 object so direct visits return
       // 200 instead of bouncing through the hashbang redirect.
-      routes: ['/', '/about', '/how-to', '/models-and-uncertainty', '/data'],
+      routes: [
+        '/',
+        '/about',
+        '/how-to',
+        '/models-and-uncertainty',
+        '/data-and-methodology',
+      ],
     },
   },
   devtools: { enabled: true },
