@@ -10,7 +10,7 @@
         outputs and fixing bugs. We&rsquo;d love to hear your feedback! Email us
         at
         <a href="mailto:uaf-snap-data-tools@alaska.edu"
-          >uaf&ndash;snap&ndash;data&ndash;tools@alaska.edu</a
+          >uaf-snap-data-tools@alaska.edu</a
         >
         if you encounter a problem.
       </div>
