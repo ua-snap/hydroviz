@@ -190,12 +190,6 @@ const lowFlow = computed(() => {
       the mean of four global circulation model runs and the Regional Rivalry
       shared socioeconomic pathway (SSP3-7.0).
     </p>
-    <p v-if="segmentRegion == 'alaska'">
-      Historical data uses a dynamically downscaled ERA5 baseline,
-      1990&ndash;2021. Future projections for mid-century (2034&ndash;2065) use
-      the mean of four global circulation model runs and the Regional Rivalry
-      shared socioeconomic pathway (SSP3-7.0).
-    </p>
   </div>
 </template>
 
