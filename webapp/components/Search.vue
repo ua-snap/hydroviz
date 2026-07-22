@@ -28,6 +28,8 @@ onMounted(() => {
               fetch(alaskaGageUrl).then(res => res.json()),
             ])
 
+          // 'category' is a stable key the selection handler routes on;
+          // 'label' is the display text shown in the dropdown.
           if (hucRes && Array.isArray(hucRes.features)) {
             hucRes.features.forEach((feature: any) => {
               let hucId = feature.properties.huc8
@@ -36,6 +38,7 @@ onMounted(() => {
                 name: name,
                 id: hucId,
                 category: 'huc',
+                label: 'huc',
                 region: 'conus',
               })
             })
@@ -49,6 +52,7 @@ onMounted(() => {
                 name: name,
                 id: hucId,
                 category: 'huc',
+                label: 'huc',
                 region: 'alaska',
               })
             })
@@ -63,7 +67,8 @@ onMounted(() => {
               items.push({
                 name: name,
                 id: segId,
-                category: 'gage ID',
+                category: 'gage',
+                label: 'gage ID',
                 region: 'conus',
               })
             })
@@ -78,7 +83,8 @@ onMounted(() => {
               items.push({
                 name: name,
                 id: segId,
-                category: 'gage ID',
+                category: 'gage',
+                label: 'gage ID',
                 region: 'alaska',
               })
             })
@@ -98,7 +104,7 @@ onMounted(() => {
       element: (element: HTMLElement, match: any) => {
         let item = match.value
         element.innerHTML =
-          item.name + '<span class="category">' + item.category + '</span>'
+          item.name + '<span class="category">' + item.label + '</span>'
       },
     },
     threshold: 3,
