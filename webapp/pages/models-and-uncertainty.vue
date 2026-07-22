@@ -1,66 +1,123 @@
 <template>
   <section class="section">
     <div class="container">
-      <h1 class="title is-1">Models and Uncertainty</h1>
-      <div class="content is-size-4">
-        <div class="mb-5">
-          <h2 class="title is-4">
-            What climate models and scenarios are used in this tool?
-          </h2>
-          <p>
-            PRMS and the Hydrologic Futures tool use climate projections from
-            thirteen bias-corrected models from the Coupled Model
-            Intercomparison Project Phase 5 (<a
-              href="https://wcrp-cmip.org/cmip-phases/cmip5/"
-              >CMIP5</a
-            >) from the World Climate Research Programme (<a
-              href="https://www.wcrp-climate.org/"
-              >WCRP</a
-            >). All models offer several future scenarios based on differing
-            atmospheric Representative Concentration Pathways (<a
-              href="https://www.ipcc-data.org/guidelines/pages/glossary/glossary_r.html"
-              >RCPs</a
-            >). These are based on different radiative forcing levels in Watts
-            per square meter (W/m&sup2;).
-          </p>
-        </div>
-        <div class="mb-5">
-          <h2 class="title is-4">
-            What are the major sources of data uncertainty?
-          </h2>
-          <p>
-            Data uncertainty stems from several key factors. Spatial uncertainty
-            and short-term temporal uncertainty can largely be attributed to
-            uncertainty in hydrologic input data, particularly the temporal and
-            spatial resolution of precipitation, and lack of stream gages for
-            use in model calibration. Long-term uncertainty can be attributed to
-            the intrinsic uncertainty of future human behavior, as described by
-            <a
-              href="https://www.climatehubs.usda.gov/hubs/northwest/topic/what-are-climate-model-phases-and-scenarios"
-              >RCPs</a
-            >. Additional uncertainty at all levels can arise from
-            simplifications and assumptions in model structure and errors or
-            limitations in meteorological and hydrologic measurements that lead
-            to model differences.
-          </p>
-        </div>
-        <div>
-          <h2 class="title is-4">
-            How are future changes in land use accounted for?
-          </h2>
-          <p>
-            PRMS offers projections with and without additional model parameters
-            that account for potential human land use changes, as assessed in a
-            USGS Land Use and Land Cover (<a
-              href="https://esajournals.onlinelibrary.wiley.com/doi/10.1890/13-1245.1"
-              >LULC</a
-            >) model. These projected changes are landscape-level rather than
-            site-specific, and are based on projected shifts in logging,
-            wildfire, agricultural land use, and other anthropogenic uses. The
-            Hydrologic Futures tool offers this modified dataset via CSV data
-            downloads for more extensive analysis.
-          </p>
-        </div>
+      <h1 class="title is-1">Models, Uncertainty, and Trust</h1>
+      <p class="content is-size-4 clamp">
+        This page outlines the different models used to produce this dataset,
+        and gives important guidance on how to frame uncertainty with
+        interpreting the data. We directly address the question, how can we
+        trust these datasets?
+      </p>
+      <div class="content clamp is-size-5">
+        <h2 class="title is-4">What models are used in this tool?</h2>
+        <p>
+          Both datasets share three common kinds of models: the
+          <strong> streamflow network </strong>, an abstraction of stream
+          location; <strong>climate models</strong>, which provide inputs to the
+          hydrologic models; and the <strong>hydrologic models</strong>
+          themselves. The PRMS dataset also incorporates an additional model for
+          future land use.
+        </p>
+        <p>
+          PRMS uses climate projections from thirteen bias-corrected models from
+          the Coupled Model Intercomparison Project Phase 5 (<a
+            href="https://wcrp-cmip.org/cmip-phases/cmip5/"
+            >CMIP5</a
+          >) from the World Climate Research Programme (<a
+            href="https://www.wcrp-climate.org/"
+            >WCRP</a
+          >). Alaska data is based on
+          <a href="https://wcrp-cmip.org/cmip-phases/cmip6/">CMIP6</a>. For
+          further information, see the Data tab.
+        </p>
+
+        <h4 class="title is-4">
+          What are the major sources of data uncertainty?
+        </h4>
+        <p>Data uncertainty stems from several key factors:</p>
+        <ul>
+          <li>
+            Spatial uncertainty
+            <ul>
+              <li>
+                The stream network is an estimation and may not match local
+                topography perfectly.
+              </li>
+              <li>
+                The spatial resolution of climate data, even after downscaling,
+                is coarser than that of stream networks, and may not perfectly
+                represent fine-scale topographic and localized effects.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Short-term uncertainty in streamflow modeling
+            <ul>
+              <li>
+                Hydrologic input data is limited, particularly regarding the
+                temporal and spatial resolution of precipitation.
+              </li>
+              <li>
+                A limited quantity of data is available from stream gages for
+                use in model calibration.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Long-term uncertainty
+            <ul>
+              <li>
+                Future human behavior is intrinsically uncertain, as described
+                by
+                <a
+                  href="https://www.climatehubs.usda.gov/hubs/northwest/topic/what-are-climate-model-phases-and-scenarios"
+                  >RCP</a
+                >s and
+                <a
+                  href="https://www.sciencedirect.com/science/article/pii/S0959378016300681"
+                  >SSPs</a
+                >.
+              </li>
+              <li>
+                Simplifications and assumptions in earth system model structure
+                and errors or limitations in meteorological and hydrologic
+                measurements lead to earth system model differences and biases.
+                Considering multiple climate models can offset these biases, as
+                detailed in the How-to Guide.
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <h4 class="title is-4">How can we trust these datasets?</h4>
+        <p>
+          One way to approach the question of trust with these datasets is to
+          look at the limitations inherent in the uncertainty of modeling, and
+          make informed choices about how to apply the dataset in practice or
+          frame its outputs for decision making.
+        </p>
+        <ul>
+          <li>
+            Compare model outputs and actual gage data for areas you are
+            familiar with to get an understanding of where the models agree with
+            observational data, and where they differ.
+          </li>
+          <li>
+            Look at the change signal above the absolute values. Framing
+            possible future changes by relative magnitude can incorporate the
+            realities of model uncertainty while still offering useful insight.
+          </li>
+          <li>
+            Site-specific bias correction&mdash;the process of applying
+            observational datasets to perform arithmetic corrections on specific
+            stream segments to better align the model with records&mdash;is a
+            rigorous approach that can address numerical alignment while
+            preserving change signals.
+          </li>
+          <li>
+            Read the literature to learn in depth about model performance and
+            evaluation.
+          </li>
+        </ul>
       </div>
     </div>
   </section>

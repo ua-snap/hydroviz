@@ -34,7 +34,7 @@ const trackNavClick = route => {
             to="/models-and-uncertainty"
             class="navbar-item"
             @click="trackNavClick('/models-and-uncertainty')"
-            >Models and Uncertainty</NuxtLink
+            >Models, Uncertainty, and Trust</NuxtLink
           >
           <NuxtLink
             to="/data"
