@@ -126,10 +126,9 @@
           System Model), based on a dataset published by
           <a href="https://search.dataone.org/view/doi%3A10.18739%2FA25M62870"
             >Blaskey et. al, 2024</a
-          >
-          Note that Alaska data is not only based on different hydrologic models
-          than those used for the continental US, but also on different modeled
-          climate futures (Earth System models).
+          >. Note that Alaska data is not only based on different hydrologic
+          models than those used for the continental US, but also on different
+          modeled climate futures (Earth System models).
         </p>
       </div>
     </section>
