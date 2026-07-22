@@ -14,7 +14,7 @@ const trackNavClick = route => {
   >
     <div class="container">
       <div class="navbar-menu is-active">
-        <div class="navbar-start">
+        <div class="navbar-start is-size-5">
           <NuxtLink to="/" class="navbar-item" @click="trackNavClick('/')"
             >Home</NuxtLink
           >
@@ -31,16 +31,16 @@ const trackNavClick = route => {
             >How-To Guide</NuxtLink
           >
           <NuxtLink
-            to="/models-and-uncertainty"
+            to="/models-uncertainty-trust"
             class="navbar-item"
             @click="trackNavClick('/models-and-uncertainty')"
-            >Models and Uncertainty</NuxtLink
+            >Models, Uncertainty, and Trust</NuxtLink
           >
           <NuxtLink
-            to="/data"
+            to="/data-and-methodology"
             class="navbar-item"
-            @click="trackNavClick('/data')"
-            >Data</NuxtLink
+            @click="trackNavClick('/data-and-methodology')"
+            >Data &amp Methodology</NuxtLink
           >
         </div>
       </div>

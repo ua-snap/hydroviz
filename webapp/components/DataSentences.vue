@@ -103,10 +103,21 @@ function orMoreIf100Percent(amount: number): string {
   }
   return ''
 }
+
+const lowFlow = computed(() => {
+  return streamSummary.value.ma99_hist.value <= 1000
+})
 </script>
 
 <template>
   <div class="content clamp is-size-5">
+    <p v-if="lowFlow">
+      <strong>This stream segment has a low mean annual flow.</strong>
+      Headwaters and other small or intermittent streams have high statistical
+      variability. Charts and visualizations may look irregular for this stream
+      segment.
+    </p>
+    <h4 class="title is-4">Key changes by mid-century</h4>
     <ul>
       <li>
         Historically, this stream has a mean annual flow
@@ -169,8 +180,9 @@ function orMoreIf100Percent(amount: number): string {
     </p>
     <p v-if="segmentRegion == 'conus'">
       Historical data uses the Maurer calibration, 1976&ndash;2005. Future
-      projections for mid-century (2046&ndash;2075) use the mean of 13 global
-      circulation models and a middle-of-the-road emissions scenario (RCP 6.0).
+      projections referenced above are for mid-century (2046&ndash;2075) and use
+      the mean of 13 global climate models (earth system models) and a
+      middle-of-the-road emissions scenario (RCP 6.0).
     </p>
     <p v-if="segmentRegion == 'alaska'">
       Historical data uses a dynamically downscaled ERA5 baseline,

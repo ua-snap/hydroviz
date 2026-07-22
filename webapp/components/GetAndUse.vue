@@ -54,8 +54,8 @@ onUnmounted(() => {
 <template>
   <section class="section" id="get-and-use" ref="sectionEl">
     <div class="container">
-      <div class="content is-size-5">
-        <h3 class="title is-3">Get &amp; use this data</h3>
+      <h3 class="title is-3">Get &amp; use this data</h3>
+      <div class="content is-size-5 clamp">
         <ul>
           <li><CsvDownload /></li>
           <li>
