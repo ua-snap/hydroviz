@@ -16,7 +16,8 @@
         </p>
 
         <p class="is-size-4 mt-4">
-          Search HUC-8 watersheds by name or ID. <Search />
+          Search HUC-8 watersheds by name or ID, or find a stream by its USGS
+          gage ID. <Search />
         </p>
       </header>
     </div>
