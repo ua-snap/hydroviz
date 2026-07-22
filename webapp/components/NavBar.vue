@@ -39,7 +39,7 @@ const trackNavClick = route => {
           <NuxtLink
             to="/data-and-methodology"
             class="navbar-item"
-            @click="trackNavClick('/data')"
+            @click="trackNavClick('/data-and-methodology')"
             >Data &amp Methodology</NuxtLink
           >
         </div>
