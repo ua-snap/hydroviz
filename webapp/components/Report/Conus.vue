@@ -125,6 +125,7 @@ const showIfSure = () => {
                 each chart (top and bottom lines), and the range of variation
                 for the means are shown as a shaded ribbon.
               </p>
+              <p>Note that <strong>the y-axis is log scale</strong>.</p>
             </div>
             <VizHydrograph :stream-hydrograph="streamHydrograph" />
           </div>
