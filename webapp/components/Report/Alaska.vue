@@ -136,23 +136,6 @@ const showIfSure = () => {
 
     <section class="section">
       <div class="container">
-        <h4 class="title is-4">Daily temperatures</h4>
-
-        <div class="content clamp is-size-5 mb-6">
-          <p>
-            The chart below shows the modeled historical mean temperature (white
-            line in center) and range of variation (gray band) with the
-            projected scenario&mdash;{{ scenarioFullNames.ssp370 }}. The minimum
-            and maximum across four climate model runs are shown (the top and
-            bottom lines), and the range of variation for the means are shown as
-            a shaded ribbon.
-          </p>
-        </div>
-        <VizTemperatureHydrograph :stream-wt-hydrograph="streamWtHydrograph" />
-      </div>
-    </section>
-    <section class="section">
-      <div class="container">
         <h4 class="title is-4">Mean monthly temperatures</h4>
 
         <div class="content clamp is-size-5 mb-6">
@@ -172,6 +155,25 @@ const showIfSure = () => {
         />
       </div>
     </section>
+
+    <section class="section">
+      <div class="container">
+        <h4 class="title is-4">Daily temperatures</h4>
+
+        <div class="content clamp is-size-5 mb-6">
+          <p>
+            The chart below shows the modeled historical mean temperature (white
+            line in center) and range of variation (gray band) with the
+            projected scenario&mdash;{{ scenarioFullNames.ssp370 }}. The minimum
+            and maximum across four climate model runs are shown (the top and
+            bottom lines), and the range of variation for the means are shown as
+            a shaded ribbon.
+          </p>
+        </div>
+        <VizTemperatureHydrograph :stream-wt-hydrograph="streamWtHydrograph" />
+      </div>
+    </section>
+
     <section class="section">
       <div class="container">
         <h4 class="title is-4">Timing of annual maximum temperature</h4>
