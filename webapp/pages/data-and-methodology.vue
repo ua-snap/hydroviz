@@ -7,7 +7,7 @@
           Read below for details on source data and the methodology used in this
           web tool, suggestions for how to
           <NuxtLink to="#citation">cite this tool</NuxtLink>, and a
-          <NuxtLink to="#bibliography">bibilography</NuxtLink>.
+          <NuxtLink to="#bibliography">bibliography</NuxtLink>.
         </p>
       </div>
       <div class="content clamp is-size-5">
