@@ -47,6 +47,7 @@ const showIfSure = () => {
             convey trends shown in the data.
             <CsvDownload />
           </p>
+          <ChartDownloadHint />
         </div>
       </div>
     </section>

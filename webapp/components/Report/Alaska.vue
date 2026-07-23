@@ -50,6 +50,7 @@ const showIfSure = () => {
             convey trends shown in the data.
             <CsvDownload />
           </p>
+          <ChartDownloadHint />
           <p>
             All data on this page show a
             <strong>higher emissions</strong> scenario with four runs of one
