@@ -3,6 +3,13 @@
     <h1 class="title is-1 mt-6">Hydrologic Outlooks</h1>
 
     <article class="content is-size-5 clamp">
+      <p class="clamp is-size-4">
+        <strong>
+          The goal of this site is to improve your ability to effectively and
+          appropriately use hydrologic futures in natural resource management,
+          ecological research, and more.
+        </strong>
+      </p>
       <p>
         Complex datasets that incorporate climate futures often fail to meet the
         needs of land managers, decision-makers, and rightsholders. This can be
@@ -10,26 +17,22 @@
         or technological limitations to access.
       </p>
 
-      <p>
-        The goal of this site is to improve your ability to effectively and
-        appropriately use hydrologic futures in natural resource management,
-        ecological research, and more.
-      </p>
-
       <p>This tool allows you to:</p>
 
       <ul>
         <li>
-          Easily select, view and access interactive modeled data from gaged and
-          ungaged streams and watersheds (HUC8).
+          Easily <strong>select, view and access</strong> modeled data from
+          gaged and ungaged streams.
         </li>
         <li>
-          Quickly visualize range, uncertainty, means, and extremes for peak
-          flow, low flow, seasonal averages, and other key variables.
+          Quickly
+          <strong>visualize range, uncertainty, means, and extremes</strong> for
+          <strong> peak flow, low flow, seasonal averages </strong>, and other
+          key variables.
         </li>
         <li>
-          Access data downloads in flexible csv format or directly from the API
-          to create customized outputs.
+          Access <strong>data downloads in flexible CSV format</strong> or
+          directly from the API to create customized outputs.
         </li>
       </ul>
     </article>
@@ -38,16 +41,18 @@
       <h2 class="title is-3">Who is this site for?</h2>
       <div class="content is-size-5 clamp">
         <p>
-          This web tool was designed to meet the needs of land managers,
-          hydrologists, ecologists, engineers, and anyone else in need of
-          hydrologic information for use in long-term landscape-level planning.
-          The visualizations offer a stepping-off point so you can quickly
+          This web tool was designed to meet the needs of
+          <strong> land managers, hydrologists, ecologists, engineers </strong>,
+          and anyone else in need of hydrologic information for use in
+          <strong>long-term landscape-level planning</strong>. The
+          visualizations offer a stepping-off point so you can quickly
           understand the most important aspects of the datasets, including
-          projected change, range of projections, uncertainties, and key
-          take-aways. If you need the full range of data for all models,
-          emissions scenarios, and time periods, the site offers csv downloads
-          that you can use to create your own graphics and perform your own
-          analyses.
+          <strong>
+            projected change, range of projections, uncertainties, and key
+            take-aways </strong
+          >. If you need the full range of data for all models, emissions
+          scenarios, and time periods, the site offers csv downloads that you
+          can use to create your own graphics and perform your own analyses.
         </p>
       </div>
     </section>
@@ -56,11 +61,13 @@
       <h2 class="title is-3">Can modeled data be trusted?</h2>
       <div class="content is-size-5 clamp">
         <p>
-          Modeled data is not perfect&mdash;and it&rsquo;s not a forecast. In
-          some cases, the results may appear to be a poor representation of
-          reality. Those who monitor streams and rivers and those who live and
-          work on the land have personal and direct knowledge of the timing of
-          stream flows. A stream gage offers more accurate and precise
+          <strong
+            >Modeled data is not perfect&mdash;and it&rsquo;s not a
+            forecast</strong
+          >. In some cases, the results may appear to be a poor representation
+          of reality. Those who monitor streams and rivers and those who live
+          and work on the land have personal and direct knowledge of the timing
+          of stream flows. A stream gage offers more accurate and precise
           measurements than any model can. You may need to use local fine-scale
           ground-truthed models for some purposes, or you may need to rely only
           on gaged or measured flows. However, not all streams have gages. Even
@@ -73,9 +80,12 @@
           shared on this site&mdash;<NuxtLink to="/models-uncertainty-trust"
             >discussed in more detail here</NuxtLink
           >&mdash;it can still be helpful to incorporate the signals of change
-          that these models show. In other words, models will not show you
-          exactly how a stream will behave on a single day, but they are a
-          powerful tool for assessing trends across time.
+          that these models show. In other words,
+          <strong>
+            models will not show you exactly how a stream will behave on a
+            single day, but they are a powerful tool for assessing trends across
+            time </strong
+          >.
         </p>
       </div>
     </section>
