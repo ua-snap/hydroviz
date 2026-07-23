@@ -45,7 +45,7 @@
           <p>Data uncertainty stems from several key factors:</p>
           <ul>
             <li>
-              Spatial uncertainty
+              <strong>Spatial uncertainty</strong>
               <ul>
                 <li>
                   The stream network is an estimation and may not match local
@@ -60,7 +60,7 @@
               </ul>
             </li>
             <li>
-              Short-term uncertainty in streamflow modeling
+              <strong>Short-term uncertainty in streamflow modeling</strong>
               <ul>
                 <li>
                   Hydrologic input data is limited, particularly regarding the
@@ -73,7 +73,7 @@
               </ul>
             </li>
             <li>
-              Long-term uncertainty
+              <strong>Long-term uncertainty</strong>
               <ul>
                 <li>
                   Future human behavior is intrinsically uncertain, as described
@@ -151,3 +151,12 @@
     </div>
   </section>
 </template>
+
+<style lang="scss" scoped>
+#uncertainty {
+  ul ul {
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+}
+</style>
