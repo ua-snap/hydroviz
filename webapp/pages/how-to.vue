@@ -5,14 +5,16 @@
       <div class="block content is-size-4 clamp">
         <p>
           Read below for some tips on best practices when using data from this
-          tool, or
-          <a href="#practical-examples"
-            >skip ahead and read some example use cases</a
-          >.
+          tool, ideas on
+          <NuxtLink to="#csv">how to use the CSV downloads</NuxtLink>,
+          <NuxtLink to="#practical-examples">example use cases</NuxtLink>, or
+          <NuxtLink to="/models-uncertainty-trust"
+            >learn more about models and uncertainty.</NuxtLink
+          >
         </p>
       </div>
-      <div class="content block is-size-5 clamp">
-        <h3 class="title is-3">
+      <div class="content block is-size-5 pt-5 clamp">
+        <h3 class="title is-4">
           What are the most effective ways to use this tool?
         </h3>
 
@@ -74,21 +76,53 @@
           </li>
         </ul>
       </div>
-      <div id="practical-examples" class="content block is-size-5 clamp">
-        <h3 class="title is-3">Practical examples</h3>
+      <div id="csv" class="content block is-size-5 pt-5 clamp">
+        <h3 class="title is-4">What can I do with CSV downloads?</h3>
+        <p>
+          The web tool&rsquo;s built-in views show aggregated
+          values&mdash;medians, minimums, etc, across many model runs&mdash;at
+          multi-decadal timescales. The downloaded CSV data lets users go
+          further:
+        </p>
+        <ul>
+          <li>
+            <strong>Build statistical analyses</strong>, complex graphics, or
+            simple tables and charts tailored to a specific need.
+          </li>
+          <li>
+            <strong>Extract output from a single model</strong> to compare
+            against external data or other projects that relied on that model.
+          </li>
+          <li>
+            <strong>Combine or compare across models</strong>&mdash;average a
+            selected set, calculate deltas between two time periods, or find the
+            range or standard deviation across models.
+          </li>
+          <li>
+            <strong>Isolate specific days or custom time periods</strong> that
+            monthly averages don&rsquo;t capture, such as an ecologically
+            defined window like spawning season or spring thaw.
+          </li>
+        </ul>
+      </div>
+      <div id="practical-examples" class="content block is-size-5 clamp pt-5">
+        <h3 class="title is-4">Practical examples</h3>
         <div class="block">
-          <h4 class="title is-4">
+          <h4 class="title is-5">
             Dry-season flows in the Mobile River system
           </h4>
-          <h5 class="subtitle is-4">&ldquo;Rachel Researcher&rdquo;</h5>
+          <h5 class="subtitle is-5">&ldquo;Rachel Researcher&rdquo;</h5>
           <p>
             Alabama&rsquo;s rivers support rich aquatic biodiversity, and the
             Mobile River system ranks among the state&rsquo;s highest
-            conservation priorities (Elkins et al., 2019).
+            conservation priorities (<NuxtLink
+              to="https://www.sciencedirect.com/science/article/pii/S2351989418304451"
+              >Elkins et al., 2019</NuxtLink
+            >).
             <strong>
               Rachel Researcher wants to know whether headwater streams in the
               Mobile-Tensaw watershed (HUC 03160204) face long-term habitat
-              degradation from reduced dry-season flows </strong
+              degradation from reduced dry-season flows</strong
             >.
           </p>
           <ol>
@@ -100,8 +134,9 @@
               turn&mdash;no need to know their names or IDs in advance.
             </li>
             <li>
-              Starting with Chickasaw Creek, she scrolls down to Duration
-              Statistics for each stream.
+              Starting with
+              <NuxtLink to="/conus/stream/8723">Chickasaw Creek</NuxtLink>, she
+              scrolls down to Duration Statistics for each stream.
             </li>
             <li>
               She selects &ldquo;late century (2071&ndash;2100)&rdquo; for a
@@ -122,8 +157,8 @@
           </p>
         </div>
         <div class="block">
-          <h4 class="title is-4">Flow timing and Atlantic salmon habitat</h4>
-          <h5 class="subtitle is-4">&ldquo;Edmund Ecologist&rdquo;</h5>
+          <h4 class="title is-5">Flow timing and Atlantic salmon habitat</h4>
+          <h5 class="subtitle is-5">&ldquo;Edmund Ecologist&rdquo;</h5>
           <p>
             Altered timing of snowmelt, runoff, and seasonal precipitation can
             significantly affect hydrologic flow and the ecosystem events tied
@@ -198,8 +233,8 @@
           </p>
         </div>
         <div class="block">
-          <h4 class="title is-4">Flow timing and Atlantic salmon habitat</h4>
-          <h5 class="subtitle is-4">&ldquo;Ida Ichthyologist&rdquo;</h5>
+          <h4 class="title is-5">Flow timing and Atlantic salmon habitat</h4>
+          <h5 class="subtitle is-5">&ldquo;Ida Ichthyologist&rdquo;</h5>
 
           <p>
             <a href="https://pubmed.ncbi.nlm.nih.gov/38784683/"
@@ -271,6 +306,6 @@
 
 <style lang="scss" scoped>
 .subtitle.is-4 {
-  font-weight: 500;
+  font-weight: 400;
 }
 </style>
