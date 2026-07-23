@@ -102,10 +102,13 @@
         </p>
 
         <p>
-          This site allows you to select locations, timeframes, and possible
-          climate futures most pertinent to the decisions you need to make. By
-          comparing multiple plausible futures, you can interpret and define
-          uncertainty in a way that makes sense in the context of your own work.
+          You can select locations, timeframes, and possible climate futures
+          most pertinent to the decisions you need to make.
+          <strong>
+            By comparing multiple plausible futures, you can interpret and
+            define uncertainty in a way that makes sense in the context of your
+            own work.</strong
+          >
         </p>
       </div>
     </section>
