@@ -70,11 +70,12 @@
 
         <p>
           Although there is a wide range of uncertainty in the model outputs
-          shared on this site&mdash;discussed in more detail here&mdash;it can
-          still be helpful to incorporate the signals of change that these
-          models show. In other words, models will not show you exactly how a
-          stream will behave on a single day, but they are a powerful tool for
-          assessing trends across time.
+          shared on this site&mdash;<NuxtLink to="/models-uncertainty-trust"
+            >discussed in more detail here</NuxtLink
+          >&mdash;it can still be helpful to incorporate the signals of change
+          that these models show. In other words, models will not show you
+          exactly how a stream will behave on a single day, but they are a
+          powerful tool for assessing trends across time.
         </p>
       </div>
     </section>

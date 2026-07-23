@@ -27,8 +27,9 @@
             href="https://www.wcrp-climate.org/"
             >WCRP</a
           >). Alaska data is based on
-          <a href="https://wcrp-cmip.org/cmip-phases/cmip6/">CMIP6</a>. For
-          further information, see the Data tab.
+          <a href="https://wcrp-cmip.org/cmip-phases/cmip6/">CMIP6</a>.
+          <NuxtLink to="/data-and-methodology">Read more details</NuxtLink>
+          about the datasets used in this tool.
         </p>
 
         <h4 class="title is-4">
