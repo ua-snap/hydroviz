@@ -47,7 +47,7 @@
           </p>
           <p>
             <strong
-              ><NuxtLink to="https://earthmaps.io/conus_hydrology"
+              ><NuxtLink :to="`${$config.public.snapApiUrl}/conus_hydrology`"
                 >Read complete details</NuxtLink
               >
               on climate models</strong
@@ -101,7 +101,7 @@
           </p>
           <p>
             <strong
-              ><NuxtLink to="https://earthmaps.io/arctic_hydrology"
+              ><NuxtLink :to="`${$config.public.snapApiUrl}/arctic_hydrology`"
                 >Read complete details</NuxtLink
               >
               on climate models</strong
@@ -687,6 +687,10 @@
     </div>
   </section>
 </template>
+
+<script setup lang="ts">
+const { $config } = useNuxtApp()
+</script>
 
 <style lang="scss" scoped>
 .resource-title {

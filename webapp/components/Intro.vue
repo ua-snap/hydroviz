@@ -12,7 +12,8 @@
           <strong>Continental United States</strong> and
           <strong>Alaska</strong>. View summary text and graphics and download
           site-specific datasets for a broad range of projections of hydrologic
-          change.
+          change. <NuxtLink to="/about">Start with an overview</NuxtLink> of
+          this tool.
         </p>
 
         <p class="is-size-4 mt-4">

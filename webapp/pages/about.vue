@@ -117,32 +117,16 @@
       <h2 class="title is-3">Where did the data come from?</h2>
       <div class="content is-size-5 clamp">
         <p>
-          The Hydrologic Futures tool is primarily based on
-          <a
-            href="https://www.usgs.gov/software/precipitation-runoff-modeling-system-prms"
-            >PRMS</a
-          >
-          (the Precipitation Runoff Modeling System), which was developed by
-          modelers at USGS (United States Geological Survey). PRMS was developed
-          to simulate and evaluate streamflow, hydrologic processes, and water
-          budgets under various climate and land use scenarios. PRMS uses the
-          underlying geospatial fabric (hydrologic response units and stream
-          segments) provided by the National Hydrologic Model Infrastructure (<a
-            href="https://www.usgs.gov/mission-areas/water-resources/science/national-hydrologic-model-infrastructure"
-            >NHMI</a
-          >) and
-          <a
-            href="https://www.usgs.gov/data/application-national-hydrologic-model-infrastructure-precipitation-runoff-modeling-system-nhmi"
-            >associated calibrations</a
-          >. In order to incorporate data for Alaska and parts of western
-          Canada, we have also included data from on
-          <a href="https://nps.edu/web/rasm">RASM</a> (the Regional Arctic
-          System Model), based on a dataset published by
-          <a href="https://search.dataone.org/view/doi%3A10.18739%2FA25M62870"
-            >Blaskey et. al, 2024</a
-          >. Note that Alaska data is not only based on different hydrologic
-          models than those used for the continental US, but also on different
-          modeled climate futures (Earth System models).
+          The Hydrologic Futures tool is built primarily on PRMS (the
+          Precipitation Runoff Modeling System), a USGS model used to simulate
+          streamflow and water budgets under a range of climate and land use
+          scenarios. For Alaska and parts of western Canada, the tool instead
+          relies on a separate regional model, RASM, since both the hydrologic
+          modeling and the climate projections differ from those used for the
+          continental US. For details on the specific models, data, and methods
+          behind the tool, see our
+          <NuxtLink to="/data-and-methodology">data and methodology</NuxtLink>
+          page.
         </p>
       </div>
     </section>
