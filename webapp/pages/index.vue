@@ -6,7 +6,7 @@
       <p class="block is-size-4 clamp">
         This dataset is based on the Precipitation Runoff Modeling System
         (PRMS), USGS, and uses the NHD stream network.
-        <NuxtLink to="data-and-methodology"
+        <NuxtLink to="/data-and-methodology"
           >Read more about this data.</NuxtLink
         >
       </p>
