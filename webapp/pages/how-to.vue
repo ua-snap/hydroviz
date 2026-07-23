@@ -122,7 +122,7 @@
             <strong>
               Rachel Researcher wants to know whether headwater streams in the
               Mobile-Tensaw watershed (HUC 03160204) face long-term habitat
-              degradation from reduced dry-season flows </strong
+              degradation from reduced dry-season flows</strong
             >.
           </p>
           <ol>
