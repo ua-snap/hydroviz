@@ -51,8 +51,10 @@
             projected change, range of projections, uncertainties, and key
             take-aways </strong
           >. If you need the full range of data for all models, emissions
-          scenarios, and time periods, the site offers csv downloads that you
-          can use to create your own graphics and perform your own analyses.
+          scenarios, and time periods, the site offers CSV (spreadsheet)
+          downloads that you can use to create your own graphics and perform
+          your own analyses. Best practices, examples and case studies are
+          outlined in the <NuxtLink to="/how-to">How-To Guide</NuxtLink>.
         </p>
       </div>
     </section>

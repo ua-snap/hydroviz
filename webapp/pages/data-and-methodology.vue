@@ -5,14 +5,13 @@
       <div class="block content is-size-4 clamp">
         <p>
           Read below for details on source data and the methodology used in this
-          web tool, or jump down to ideas for
-          <a href="#csv">using CSV downloads</a>, hints on how to
-          <a href="#citation">cite this tool</a>, and a
-          <a href="#bibliography">bibilography</a>.
+          web tool, suggestions for how to
+          <NuxtLink to="#citation">cite this tool</NuxtLink>, and a
+          <NuxtLink to="#bibliography">bibilography</NuxtLink>.
         </p>
       </div>
       <div class="content clamp is-size-5">
-        <div class="block">
+        <div class="block pt-5">
           <h3 class="title is-3">Sources &amp; Methodology</h3>
           <h4 class="title is-4">Continental United States</h4>
           <p>
@@ -110,36 +109,7 @@
             <strong> full definitions of all variables </strong>.
           </p>
         </div>
-        <div class="block" id="csv">
-          <h3 class="title is-3">What can I do with CSV downloads?</h3>
-          <p>
-            The web tool&rsquo;s built-in views show aggregated
-            values&mdash;medians, minimums, etc, across many model runs&mdash;at
-            multi-decadal timescales. The downloaded CSV data lets users go
-            further:
-          </p>
-          <ul>
-            <li>
-              <strong>Build statistical analyses</strong>, complex graphics, or
-              simple tables and charts tailored to a specific need.
-            </li>
-            <li>
-              <strong>Extract output from a single model</strong> to compare
-              against external data or other projects that relied on that model.
-            </li>
-            <li>
-              <strong>Combine or compare across models</strong>&mdash;average a
-              selected set, calculate deltas between two time periods, or find
-              the range or standard deviation across models.
-            </li>
-            <li>
-              <strong>Isolate specific days or custom time periods</strong> that
-              monthly averages don&rsquo;t capture, such as an ecologically
-              defined window like spawning season or spring thaw.
-            </li>
-          </ul>
-        </div>
-        <div class="block" id="citation">
+        <div class="block pt-5" id="citation">
           <h3 class="title is-3">
             How should these data and products be cited?
           </h3>
@@ -150,16 +120,16 @@
               >PRMS data</a
             >
             and <a href="https://nps.edu/web/rasm">RASM data</a>, are freely
-            distributed, and require no licenses or permissions from USGS, but
-            should be appropriately cited. All of SNAP&rsquo;s products are
-            licensed under
+            distributed, but should be appropriately cited. This tool was built
+            by SNAP&mdash;the Scenarios Network for Alaska + Arctic Planning.
+            All of SNAP&rsquo;s products are licensed under
             <a href="https://creativecommons.org/licenses/by/4.0/"
               >Creative Commons</a
-            >. When citing our work, please include our logo and a link to our
+            >. When using or citing our work, please include a link to our
             <a href="https://uaf-snap.org/">home page</a>.
           </p>
         </div>
-        <div class="block" id="bibliography">
+        <div class="block pt-5" id="bibliography">
           <section>
             <h3>Bibliography</h3>
             <h4>Key references</h4>
