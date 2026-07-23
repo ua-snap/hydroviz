@@ -129,7 +129,7 @@
             </li>
             <li>
               <strong>
-                Look the difference between time periods for a given variable </strong
+                Look at the difference between time periods for a given variable </strong
               >&mdash;the change signal&mdash;rather than the absolute values
               for that variable.
               <strong>
