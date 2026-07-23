@@ -3,22 +3,22 @@
     <div class="container">
       <h1 class="title is-1">Models, Uncertainty, and Trust</h1>
       <p class="content is-size-4 clamp">
-        This page outlines the different models used to produce this dataset,
-        and gives important
+        This page outlines the different types of models used to produce the
+        datasets that this tool offers, and gives important
         <NuxtLink to="#uncertainty"
           >guidance on how to frame uncertainty</NuxtLink
         >
-        with interpreting the data. We directly address the question,
-        <NuxtLink to="#trust"> how can we trust these datasets?</NuxtLink>
+        when interpreting the data and
+        <NuxtLink to="#trust">
+          thinking about the trustworthiness of modeled data.</NuxtLink
+        >
       </p>
       <div class="content clamp is-size-5">
         <div class="block pt-5">
           <h2 class="title is-4">What models are used in this tool?</h2>
           <p>
-            Both datasets share three common kinds of models: the
-            <strong> streamflow network </strong>, an abstraction of stream
-            location; <strong>climate models</strong>, which provide inputs to
-            the hydrologic models; and the <strong>hydrologic models</strong>
+            These hydrologic futures were created using three kinds of models:
+            streamflow network models, climate models, and the hydrologic models
             themselves. The PRMS dataset also incorporates an additional model
             for future land use.
           </p>
@@ -102,33 +102,48 @@
         <div class="block pt-6" id="trust">
           <h2 class="title is-4">How can we trust these datasets?</h2>
           <p>
-            One way to approach the question of trust with these datasets is to
-            look at the limitations inherent in the uncertainty of modeling, and
-            make informed choices about how to apply the dataset in practice or
-            frame its outputs for decision making.
+            <strong>
+              Data used in decision-making needs to be interpreted in a way that
+              is meaningful and trustworthy </strong
+            >. Understanding how to minimize and categorize uncertainty can help
+            you make informed choices about how to apply the dataset and frame
+            its outputs. The following techniques can help. For additional
+            advice and expertise, see our
+            <NuxtLink to="/how-to">How-To Guide</NuxtLink> and this excellent
+            external resource:
+            <NuxtLink to="https://pubs.usgs.gov/publication/70260921">
+              &ldquo;Best practices for incorporating climate change science
+              into Department of the Interior analyses, consultations, and
+              decision making.&rdquo;</NuxtLink
+            >
           </p>
           <ul>
             <li>
-              Compare model outputs and actual gage data for areas you are
-              familiar with to get an understanding of where the models agree
-              with observational data, and where they differ.
+              <strong>
+                Compare model outputs and actual gage data for areas you are
+                familiar with
+              </strong>
+              to get an understanding of where the models agree with
+              observational data, where they differ, and in what ways they
+              differ.
             </li>
             <li>
-              Look at the change signal above the absolute values. Framing
-              possible future changes by relative magnitude can incorporate the
+              <strong>
+                Look the difference between time periods for a given variable </strong
+              >&mdash;the change signal&mdash;rather than the absolute values
+              for that variable.
+              <strong>
+                Framing possible future changes by relative magnitude </strong
+              >, e.g. a 50% increase in maximum daily flow, can incorporate the
               realities of model uncertainty while still offering useful
               insight.
             </li>
             <li>
-              Site-specific bias correction&mdash;the process of applying
-              observational datasets to perform arithmetic corrections on
-              specific stream segments to better align the model with
-              records&mdash;is a rigorous approach that can address numerical
-              alignment while preserving change signals.
-            </li>
-            <li>
-              Read the literature to learn in depth about model performance and
-              evaluation.
+              <strong>Site-specific bias correction</strong> is an approach that
+              can address numerical misalignment while preserving change
+              signals. This is a mathematical approach in which a statistical
+              relationship or scaling factor is calculated to adjust model
+              predictions for a specific site, based on known measurements.
             </li>
           </ul>
         </div>

@@ -13,8 +13,8 @@
           >
         </p>
       </div>
-      <div class="content block is-size-5 clamp">
-        <h3 class="title is-3">
+      <div class="content block is-size-5 pt-5 clamp">
+        <h3 class="title is-4">
           What are the most effective ways to use this tool?
         </h3>
 
@@ -77,7 +77,7 @@
         </ul>
       </div>
       <div id="csv" class="content block is-size-5 pt-5 clamp">
-        <h3 class="title is-3">What can I do with CSV downloads?</h3>
+        <h3 class="title is-4">What can I do with CSV downloads?</h3>
         <p>
           The web tool&rsquo;s built-in views show aggregated
           values&mdash;medians, minimums, etc, across many model runs&mdash;at
@@ -106,12 +106,12 @@
         </ul>
       </div>
       <div id="practical-examples" class="content block is-size-5 clamp pt-5">
-        <h3 class="title is-3">Practical examples</h3>
+        <h3 class="title is-4">Practical examples</h3>
         <div class="block">
-          <h4 class="title is-4">
+          <h4 class="title is-5">
             Dry-season flows in the Mobile River system
           </h4>
-          <h5 class="subtitle is-4">&ldquo;Rachel Researcher&rdquo;</h5>
+          <h5 class="subtitle is-5">&ldquo;Rachel Researcher&rdquo;</h5>
           <p>
             Alabama&rsquo;s rivers support rich aquatic biodiversity, and the
             Mobile River system ranks among the state&rsquo;s highest
@@ -157,8 +157,8 @@
           </p>
         </div>
         <div class="block">
-          <h4 class="title is-4">Flow timing and Atlantic salmon habitat</h4>
-          <h5 class="subtitle is-4">&ldquo;Edmund Ecologist&rdquo;</h5>
+          <h4 class="title is-5">Flow timing and Atlantic salmon habitat</h4>
+          <h5 class="subtitle is-5">&ldquo;Edmund Ecologist&rdquo;</h5>
           <p>
             Altered timing of snowmelt, runoff, and seasonal precipitation can
             significantly affect hydrologic flow and the ecosystem events tied
@@ -233,8 +233,8 @@
           </p>
         </div>
         <div class="block">
-          <h4 class="title is-4">Flow timing and Atlantic salmon habitat</h4>
-          <h5 class="subtitle is-4">&ldquo;Ida Ichthyologist&rdquo;</h5>
+          <h4 class="title is-5">Flow timing and Atlantic salmon habitat</h4>
+          <h5 class="subtitle is-5">&ldquo;Ida Ichthyologist&rdquo;</h5>
 
           <p>
             <a href="https://pubmed.ncbi.nlm.nih.gov/38784683/"
@@ -306,6 +306,6 @@
 
 <style lang="scss" scoped>
 .subtitle.is-4 {
-  font-weight: 500;
+  font-weight: 400;
 }
 </style>
