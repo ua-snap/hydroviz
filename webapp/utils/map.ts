@@ -1,34 +1,32 @@
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 
-// Outflow (outlet) segments are always drawn in the same red, #ff6100
-// (oklch(0.7066 0.2256 41.22)), on both the main and report maps so the
-// "outflow segments are shown in red" text above each map holds true.
-// Exported so that text can show a legend swatch in the same color.
 export const outletRed = '#ff6100'
+export const regularBlue = '#7777ff'
+export const highlightYellow = '#ffff00'
 
 const segmentColors: Record<string, any> = {
   main: {
     selected: {
-      outlet: '#ffff00',
-      regular: '#ffff00',
-      hover: '#ffff00',
+      outlet: highlightYellow,
+      regular: highlightYellow,
+      hover: highlightYellow,
     },
     unselected: {
       outlet: outletRed,
-      regular: '#0000ff',
-      hover: '#ffff00',
+      regular: regularBlue,
+      hover: highlightYellow,
     },
   },
   report: {
     selected: {
       outlet: outletRed,
-      regular: '#0000ff',
-      hover: '#ffff00',
+      regular: regularBlue,
+      hover: highlightYellow,
     },
     unselected: {
       outlet: outletRed,
-      regular: '#7777ff',
-      hover: '#ffff00',
+      regular: regularBlue,
+      hover: highlightYellow,
     },
   },
 }
