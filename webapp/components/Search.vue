@@ -8,8 +8,11 @@ onMounted(() => {
     placeHolder: 'Search for a HUC-8 watershed or USGS gage ID',
     data: {
       src: async (query: string) => {
+        // Strip "USGS-" prefix if present (case-insensitive) to allow users
+        // to paste gage IDs with the prefix
+        const cleanedQuery = query.replace(/^USGS-/i, '')
         // Escape single quotes for safe use inside CQL string literals
-        const safeQuery = query.replace(/'/g, "''")
+        const safeQuery = cleanedQuery.replace(/'/g, "''")
         const hucUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Ahuc8_conus_stats_simplified&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=huc8,name&cql_filter=name%20ILIKE%20%27%25${safeQuery}%25%27%20OR%20huc8%20LIKE%20%27%25${safeQuery}%25%27`
         const alaskaHucUrl = `${$config.public.geoserverUrl}/hydrology/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=hydrology%3Aarctic_rivers_watersheds_stats_simplified_v2&outputFormat=application%2Fjson&srsName=EPSG:4326&propertyName=ID_2,Name&cql_filter=Name%20ILIKE%20%27%25${safeQuery}%25%27%20OR%20ID_2%20LIKE%20%27%25${safeQuery}%25%27`
         // Ungaged CONUS segments have a GAGE_ID of 'NA' rather than an
