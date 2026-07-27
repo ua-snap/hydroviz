@@ -42,7 +42,7 @@ export const getGageIdLine = (gageId: string | null): string => {
 
 // Count the number of lines in a title by counting <br> tags.
 export const getTitleLineCount = (title: string): number => {
-  const brCount = (title.match(/<br>/gi) || []).length
+  const brCount = (title.match(/<br\s*\/?>/gi) || []).length
   return brCount + 1
 }
 
