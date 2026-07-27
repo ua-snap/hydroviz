@@ -24,6 +24,37 @@ cd webapp
 npm run dev
 ```
 
+## Testing
+
+End-to-end smoke tests run with [Playwright](https://playwright.dev/) against
+Chromium and Firefox. The tests mock all external services (the hydroviz data
+API, GeoServer, and basemap tiles) via `page.route`, so they are deterministic
+and run offline — no API or `HYDROVIZ_USE_STATIC_FIXTURES` setup is needed.
+Report-page tests are served the fixture JSON from `assets/fixtures/`, which is
+the same for every segment id, so tests assert on page structure rather than
+data values.
+
+One-time setup (downloads the test browsers):
+
+```
+npx playwright install chromium firefox
+```
+
+Run the suite (starts its own dev server on port 3000, or reuses one already
+running):
+
+```
+npm run test:e2e
+```
+
+Run with the interactive Playwright UI:
+
+```
+npm run test:e2e:ui
+```
+
+Tests live in `tests/e2e/`; shared request mocks are in `tests/e2e/helpers.ts`.
+
 ## Production
 
 This app is built as a fully static single-page app (`ssr: false` in
