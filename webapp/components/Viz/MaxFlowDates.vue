@@ -67,7 +67,7 @@ const buildChart = () => {
   let titleText: string
   let gageIdLine = getGageIdLine(gageId.value)
   if (isAlaskaData) {
-    titleText = `Modeled flow rate at date of annual maximum daily flow, 2034-2065${gageIdLine}`
+    titleText = `Modeled flow rate at date of annual maximum daily flow, 2034-2065<br>${scenarioFullNames['ssp370']}${gageIdLine}`
 
     let historicalFlow = [props.streamMaxFlowDates['historical']['flow']]
     let historicalFlowDate = [props.streamMaxFlowDates['historical']['date']]
@@ -218,7 +218,6 @@ const buildChart = () => {
     traceorder: 'reversed',
   }
 
-  let isTwoLineTitle = gageId.value ? true : false
   let layout = getLayout(
     'maxFlowDates',
     titleText,
@@ -226,7 +225,6 @@ const buildChart = () => {
     {},
     {},
     legendConfig,
-    isTwoLineTitle,
     isAlaskaData
   )
 

@@ -126,7 +126,7 @@ const buildChart = () => {
   })
 
   let gageIdLine = getGageIdLine(gageId.value)
-  const titleText = `Mean monthly modeled water temperature, 2034-2065${gageIdLine}`
+  const titleText = `Mean monthly modeled water temperature, 2034-2065<br>${scenarioFullNames['ssp370']}${gageIdLine}`
 
   let xAxisSettings = {
     tickvals: $_.range(Object.values(monthLabels).length),
@@ -149,7 +149,6 @@ const buildChart = () => {
     x: 0.5,
   }
 
-  let isTwoLineTitle = gageId.value ? true : false
   const isAlaskaData = true
 
   let layout = getLayout(
@@ -159,7 +158,6 @@ const buildChart = () => {
     xAxisSettings,
     yAxisSettings,
     legendConfig,
-    isTwoLineTitle,
     isAlaskaData
   )
 

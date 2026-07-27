@@ -177,7 +177,7 @@ const buildChart = () => {
 
   let gageIdLine = getGageIdLine(gageId.value)
   const titleText: string = isAlaskaData
-    ? `Mean monthly modeled flow rate, 2034-2065${gageIdLine}`
+    ? `Mean monthly modeled flow rate, 2034-2065<br>${scenarioFullNames['ssp370']}${gageIdLine}`
     : `Mean monthly modeled flow rate, ${appEra.value}${gageIdLine}`
 
   let xAxisSettings = {
@@ -201,8 +201,6 @@ const buildChart = () => {
     x: 0.5,
   }
 
-  let isTwoLineTitle = gageId.value ? true : false
-
   let layout = getLayout(
     'monthlyFlow',
     titleText,
@@ -210,7 +208,6 @@ const buildChart = () => {
     xAxisSettings,
     yAxisSettings,
     legendConfig,
-    isTwoLineTitle,
     isAlaskaData
   )
 

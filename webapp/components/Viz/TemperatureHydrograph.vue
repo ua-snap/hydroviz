@@ -209,7 +209,6 @@ const buildChart = hg => {
     x: 0.5,
   }
 
-  let isTwoLineTitle = gageId.value ? true : false
   const isAlaskaData = true
 
   let layout = getLayout(
@@ -219,7 +218,6 @@ const buildChart = hg => {
     xAxisConfig,
     yAxisConfig,
     legendConfig,
-    isTwoLineTitle,
     isAlaskaData
   )
 

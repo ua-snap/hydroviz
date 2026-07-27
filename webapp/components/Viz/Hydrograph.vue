@@ -396,8 +396,6 @@ const buildChart = hg => {
     x: 0.5,
   }
 
-  let isTwoLineTitle = gageId.value ? true : false
-
   let layout = getLayout(
     'hydrograph',
     titleText,
@@ -405,7 +403,6 @@ const buildChart = hg => {
     xAxisConfig,
     yAxisConfig,
     legendConfig,
-    isTwoLineTitle,
     isAlaskaData
   )
 
@@ -432,7 +429,6 @@ const buildChart = hg => {
         xAxisConfig,
         yAxisConfig,
         legendConfig,
-        isTwoLineTitle,
         isAlaskaData
       )
       let pngName2 = `hydrograph_${segmentId.value}_rcp85_${appEra.value}`
