@@ -1,7 +1,7 @@
 import { useStreamSegmentStore } from '~/stores/streamSegment'
 
 export const outletRed = '#ff6100'
-export const regularBlue = '#7777ff'
+export const regularBlue = '#0047ab'
 export const highlightYellow = '#ffff00'
 
 const segmentColors: Record<string, any> = {
