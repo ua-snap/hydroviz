@@ -129,19 +129,21 @@ const getLayoutPositions = (
         3: { height: 600, marginTop: 150, marginBottom: 140, footerY: -0.37 },
       },
     },
-    // CONUS never has 3-line titles, so there are no 3-line layout configurations.
     conus: {
       hydrograph: {
         1: { height: 532, marginTop: 80, marginBottom: 177, footerY: -0.57 },
         2: { height: 552, marginTop: 100, marginBottom: 177, footerY: -0.57 },
+        3: { height: 572, marginTop: 120, marginBottom: 177, footerY: -0.57 },
       },
       monthlyBoxPlots: {
         1: { height: 525, marginTop: 80, marginBottom: 165, footerY: -0.5 },
-        2: { height: 540, marginTop: 100, marginBottom: 165, footerY: -0.5 },
+        2: { height: 545, marginTop: 100, marginBottom: 165, footerY: -0.5 },
+        3: { height: 585, marginTop: 140, marginBottom: 165, footerY: -0.5 },
       },
       maxDates: {
         1: { height: 555, marginTop: 100, marginBottom: 150, footerY: -0.42 },
         2: { height: 575, marginTop: 120, marginBottom: 150, footerY: -0.42 },
+        3: { height: 610, marginTop: 155, marginBottom: 150, footerY: -0.42 },
       },
     },
   }
