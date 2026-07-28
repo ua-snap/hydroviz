@@ -8,6 +8,17 @@ import type { Page } from '@playwright/test'
 // in assets/fixtures/; the failure test fulfills with a 500 instead. This
 // keeps every test deterministic and offline while still exercising the real
 // fetch/loading/error code paths in stores/streamSegment.ts.
+//
+// Live mode (HYDROVIZ_E2E_LIVE=true, or implied by HYDROVIZ_E2E_BASE_URL)
+// turns these helpers into no-ops so the same tests run against the real
+// Data API, GeoServer, and basemap services — for checking that a deployed
+// site and its external dependencies actually work together. The API-failure
+// mock still intercepts in live mode, since it tests how the app responds to
+// a forced outage, not whether the service is up.
+
+export const liveMode =
+  process.env.HYDROVIZ_E2E_LIVE === 'true' ||
+  !!process.env.HYDROVIZ_E2E_BASE_URL
 
 const fixturePath = (name: string) =>
   path.join(process.cwd(), 'assets', 'fixtures', name)
@@ -27,6 +38,7 @@ const transparentPng = Buffer.from(
 // pages render deterministically. The fixture is the same for every segment
 // id, so tests must assert on structure/visibility, not data values.
 export const mockHydrovizApi = async (page: Page) => {
+  if (liveMode) return
   await page.route('**/*_hydrology/hydroviz/**', route => {
     const fixture = route.request().url().includes('arctic_hydrology')
       ? 'alaska_output_example.json'
@@ -52,6 +64,7 @@ export const mockMapServices = async (
   page: Page,
   wfsResponder?: (url: string) => object | undefined
 ) => {
+  if (liveMode) return
   await page.route('**/geoserver/**', route => {
     const url = route.request().url()
     if (url.includes('GetFeature')) {

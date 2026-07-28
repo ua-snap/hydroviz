@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import {
+  liveMode,
   mockHydrovizApi,
   mockHydrovizApiFailure,
   mockMapServices,
@@ -71,9 +72,24 @@ test('data API failure shows the failure message', async ({ page }) => {
 })
 
 test('searching a gage id navigates to its report', async ({ page }) => {
+  // In live mode the autocomplete queries real GeoServer, so search for a
+  // real USGS gage (on segment 52448, a known gaged stream per AGENTS.md).
+  // In mock mode the gage-id WFS query is served one fake CONUS result and
+  // the other three autocomplete queries (HUCs, Alaska gages) fall through
+  // to empty.
+  const search = liveMode
+    ? {
+        query: '12161000',
+        result: 'South Fork Stillaguamish River (USGS-12161000)',
+        reportUrl: /\/conus\/stream\/52448/,
+      }
+    : {
+        query: '01234567',
+        result: 'Test Creek (01234567)',
+        reportUrl: /\/conus\/stream\/32174/,
+      }
+
   await mockMapServices(page, url => {
-    // The gage-id WFS query gets one fake CONUS result; the other three
-    // autocomplete queries (HUCs, Alaska gages) fall through to empty.
     if (url.includes('seg_h8_outlet_stats_simplified_v2')) {
       return {
         type: 'FeatureCollection',
@@ -93,10 +109,10 @@ test('searching a gage id navigates to its report', async ({ page }) => {
   await mockHydrovizApi(page)
 
   await page.goto('/')
-  await page.locator('#search').pressSequentially('01234567')
-  await page.getByText('Test Creek (01234567)').click()
+  await page.locator('#search').pressSequentially(search.query)
+  await page.getByText(search.result).click()
 
-  await expect(page).toHaveURL(/\/conus\/stream\/32174/)
+  await expect(page).toHaveURL(search.reportUrl)
   await expect(
     page.getByRole('heading', { name: /Statistics for/ })
   ).toBeVisible()

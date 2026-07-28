@@ -27,12 +27,12 @@ npm run dev
 ## Testing
 
 End-to-end smoke tests run with [Playwright](https://playwright.dev/) against
-Chromium and Firefox. The tests mock all external services (the hydroviz data
-API, GeoServer, and basemap tiles) via `page.route`, so they are deterministic
-and run offline — no API or `HYDROVIZ_USE_STATIC_FIXTURES` setup is needed.
-Report-page tests are served the fixture JSON from `assets/fixtures/`, which is
-the same for every segment id, so tests assert on page structure rather than
-data values.
+Chromium and Firefox. By default, the tests mock all external services (the
+hydroviz data API, GeoServer, and basemap tiles) via `page.route`, so they are
+deterministic and run offline — no API or `HYDROVIZ_USE_STATIC_FIXTURES` setup
+is needed. Report-page tests are served the fixture JSON from
+`assets/fixtures/`, which is the same for every segment id, so tests assert on
+page structure rather than data values.
 
 One-time setup (downloads the test browsers):
 
@@ -52,6 +52,29 @@ Run with the interactive Playwright UI:
 ```
 npm run test:e2e:ui
 ```
+
+### Live mode
+
+The same tests can run against the real external services (Data API,
+GeoServer, basemap tiles) instead of mocks — useful for verifying that the
+app and its external dependencies actually work together. Live mode is
+slower and depends on service availability, so it is opt-in.
+
+Against a local dev server, with real external services:
+
+```
+HYDROVIZ_E2E_LIVE=true npm run test:e2e
+```
+
+Against a deployed site (implies live mode; no local dev server is started):
+
+```
+HYDROVIZ_E2E_BASE_URL=https://example.com npm run test:e2e
+```
+
+The API-failure test still forces a 500 via request interception in live
+mode, since it tests how the app handles an outage rather than whether the
+service is up.
 
 Tests live in `tests/e2e/`; shared request mocks are in `tests/e2e/helpers.ts`.
 
