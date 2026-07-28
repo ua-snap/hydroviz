@@ -175,10 +175,21 @@ const buildChart = () => {
     })
   }
 
+  let titleText = ''
+  let scenarioSubtitle = ''
   let gageIdLine = getGageIdLine(gageId.value)
-  const titleText: string = isAlaskaData
-    ? `Mean monthly modeled flow rate, 2034-2065<br>${scenarioFullNames['ssp370']}${gageIdLine}`
-    : `Mean monthly modeled flow rate, ${appEra.value}${gageIdLine}`
+  if (isAlaskaData) {
+    scenarioSubtitle = scenarioFullNames['ssp370']
+    titleText = `Mean monthly modeled flow rate, 2034-2065<br>${scenarioSubtitle}${gageIdLine}`
+  } else {
+    if (appContext.value === 'mid') {
+      scenarioSubtitle = scenarioFullNames['rcp60']
+    } else {
+      scenarioSubtitle =
+        scenarioFullNames['rcp45'] + ' &amp; ' + scenarioFullNames['rcp85']
+    }
+    titleText = `Mean monthly modeled flow rate, ${appEra.value}<br>${scenarioSubtitle}${gageIdLine}`
+  }
 
   let xAxisSettings = {
     tickvals: $_.range(Object.values(monthLabels).length),
