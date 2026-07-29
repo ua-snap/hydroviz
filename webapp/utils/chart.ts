@@ -40,6 +40,12 @@ export const getGageIdLine = (gageId: string | null): string => {
     : ''
 }
 
+// Count the number of lines in a title by counting <br> tags.
+export const getTitleLineCount = (title: string): number => {
+  const brCount = (title.match(/<br\s*\/?>/gi) || []).length
+  return brCount + 1
+}
+
 const getFooterText = (isAlaskaData: boolean, chartType: string): string => {
   let projectedModels = isAlaskaData
     ? 'four climate model runs'
@@ -79,92 +85,79 @@ const getFooterText = (isAlaskaData: boolean, chartType: string): string => {
 // Keep plot area, footer position, and margins consistent across chart types.
 // For both web display and exported PNG images.
 const getLayoutPositions = (
-  isTwoLineTitle: boolean,
+  title: string,
   isAlaskaData: boolean,
   chartType: string
 ) => {
-  let height: null | number = null
-  let marginTop: null | number = null
-  let marginBottom: null | number = null
-  let footerY: null | number = null
   const generalizedChartType = generalizedChartTypes[chartType]
   if (!generalizedChartType) {
     throw new Error(`Unknown chartType "${chartType}"`)
   }
-  if (isTwoLineTitle) {
-    if (isAlaskaData) {
-      if (generalizedChartType === 'hydrograph') {
-        height = 542
-        marginTop = 100
-        marginBottom = 167
-        footerY = -0.52
-      } else if (generalizedChartType === 'monthlyBoxPlots') {
-        height = 545
-        marginTop = 120
-        marginBottom = 150
-        footerY = -0.45
-      } else if (generalizedChartType === 'maxDates') {
-        height = 570
-        marginTop = 120
-        marginBottom = 140
-        footerY = -0.37
-      }
-    } else {
-      if (generalizedChartType === 'hydrograph') {
-        height = 552
-        marginTop = 100
-        marginBottom = 177
-        footerY = -0.57
-      } else if (generalizedChartType === 'monthlyBoxPlots') {
-        height = 540
-        marginTop = 100
-        marginBottom = 165
-        footerY = -0.5
-      } else if (generalizedChartType === 'maxDates') {
-        height = 575
-        marginTop = 120
-        marginBottom = 150
-        footerY = -0.42
-      }
-    }
-  } else {
-    if (isAlaskaData) {
-      if (generalizedChartType === 'hydrograph') {
-        height = 522
-        marginTop = 80
-        marginBottom = 167
-        footerY = -0.52
-      } else if (generalizedChartType === 'monthlyBoxPlots') {
-        height = 525
-        marginTop = 100
-        marginBottom = 150
-        footerY = -0.45
-      } else if (generalizedChartType === 'maxDates') {
-        height = 550
-        marginTop = 100
-        marginBottom = 140
-        footerY = -0.37
-      }
-    } else {
-      if (generalizedChartType === 'hydrograph') {
-        height = 532
-        marginTop = 80
-        marginBottom = 177
-        footerY = -0.57
-      } else if (generalizedChartType === 'monthlyBoxPlots') {
-        height = 525
-        marginTop = 80
-        marginBottom = 165
-        footerY = -0.5
-      } else if (generalizedChartType === 'maxDates') {
-        height = 555
-        marginTop = 100
-        marginBottom = 150
-        footerY = -0.42
-      }
-    }
+
+  const titleLines = getTitleLineCount(title)
+
+  // Layout configuration lookup table: region -> chartType -> titleLines -> config
+  const layoutConfigs: Record<
+    string,
+    Record<
+      string,
+      Record<
+        number,
+        {
+          height: number
+          marginTop: number
+          marginBottom: number
+          footerY: number
+        }
+      >
+    >
+  > = {
+    alaska: {
+      hydrograph: {
+        1: { height: 522, marginTop: 80, marginBottom: 167, footerY: -0.52 },
+        2: { height: 542, marginTop: 100, marginBottom: 167, footerY: -0.52 },
+        3: { height: 562, marginTop: 120, marginBottom: 167, footerY: -0.52 },
+      },
+      monthlyBoxPlots: {
+        1: { height: 525, marginTop: 100, marginBottom: 150, footerY: -0.45 },
+        2: { height: 545, marginTop: 120, marginBottom: 150, footerY: -0.45 },
+        3: { height: 565, marginTop: 140, marginBottom: 150, footerY: -0.45 },
+      },
+      maxDates: {
+        1: { height: 550, marginTop: 100, marginBottom: 140, footerY: -0.37 },
+        2: { height: 565, marginTop: 115, marginBottom: 140, footerY: -0.37 },
+        3: { height: 600, marginTop: 150, marginBottom: 140, footerY: -0.37 },
+      },
+    },
+    conus: {
+      hydrograph: {
+        1: { height: 532, marginTop: 80, marginBottom: 177, footerY: -0.57 },
+        2: { height: 552, marginTop: 100, marginBottom: 177, footerY: -0.57 },
+        3: { height: 572, marginTop: 120, marginBottom: 177, footerY: -0.57 },
+      },
+      monthlyBoxPlots: {
+        1: { height: 525, marginTop: 80, marginBottom: 165, footerY: -0.5 },
+        2: { height: 545, marginTop: 100, marginBottom: 165, footerY: -0.5 },
+        3: { height: 585, marginTop: 140, marginBottom: 165, footerY: -0.5 },
+      },
+      maxDates: {
+        1: { height: 555, marginTop: 100, marginBottom: 150, footerY: -0.42 },
+        2: { height: 575, marginTop: 120, marginBottom: 150, footerY: -0.42 },
+        3: { height: 610, marginTop: 155, marginBottom: 150, footerY: -0.42 },
+      },
+    },
   }
-  return { height, marginTop, marginBottom, footerY }
+
+  const region = isAlaskaData ? 'alaska' : 'conus'
+  const config = layoutConfigs[region]?.[generalizedChartType]?.[titleLines]
+
+  if (!config) {
+    throw new Error(
+      `No layout configuration found for region=${region}, chartType=${generalizedChartType}, titleLines=${titleLines}`
+    )
+  }
+
+  return config
 }
 
 export const getLayout = (
@@ -174,11 +167,10 @@ export const getLayout = (
   xAxisConfig?: Partial<Layout['xaxis']>,
   yAxisConfig?: Partial<Layout['yaxis']>,
   legendConfig?: Partial<Layout['legend']>,
-  isTwoLineTitle: boolean = false,
   isAlaskaData: boolean = false
 ): Partial<Layout> => {
   let { height, marginTop, marginBottom, footerY } = getLayoutPositions(
-    isTwoLineTitle,
+    title,
     isAlaskaData,
     chartType
   )
@@ -188,7 +180,11 @@ export const getLayout = (
       font: {
         size: 24,
       },
-      automargin: true,
+      // automargin must stay off: margins are managed by getLayoutPositions,
+      // and Plotly's automargin push path clips multi-line container-ref
+      // titles when the configured margin is within a few px of the title
+      // height (browser-dependent, e.g. Firefox).
+      automargin: false,
       yref: 'container',
       y: 0.93,
     },

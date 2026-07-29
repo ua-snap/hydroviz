@@ -64,10 +64,22 @@ const buildChart = () => {
     rcp85: 'cross',
   }
 
-  let titleText: string
+  let titleText = ''
+  let scenarioSubtitle = ''
   let gageIdLine = getGageIdLine(gageId.value)
   if (isAlaskaData) {
-    titleText = `Modeled flow rate at date of annual maximum daily flow, 2034-2065${gageIdLine}`
+    scenarioSubtitle = scenarioFullNames['ssp370']
+  } else {
+    if (appContext.value === 'mid') {
+      scenarioSubtitle = scenarioFullNames['rcp60']
+    } else {
+      scenarioSubtitle =
+        scenarioFullNames['rcp45'] + ' &amp; ' + scenarioFullNames['rcp85']
+    }
+  }
+
+  if (isAlaskaData) {
+    titleText = `Modeled flow rate at date of annual maximum daily flow, 2034-2065<br>${scenarioSubtitle}${gageIdLine}`
 
     let historicalFlow = [props.streamMaxFlowDates['historical']['flow']]
     let historicalFlowDate = [props.streamMaxFlowDates['historical']['date']]
@@ -126,7 +138,7 @@ const buildChart = () => {
 
     projectedTraces.push(trace)
   } else {
-    titleText = `Modeled flow rate at date of annual maximum daily flow, ${appEra.value}${gageIdLine}`
+    titleText = `Modeled flow rate at date of annual maximum daily flow, ${appEra.value}<br>${scenarioSubtitle}${gageIdLine}`
     scenarios.forEach(scenario => {
       let historicalFlow = [props.streamMaxFlowDates['historical']['flow']]
       let historicalFlowDate = [props.streamMaxFlowDates['historical']['date']]
@@ -218,7 +230,6 @@ const buildChart = () => {
     traceorder: 'reversed',
   }
 
-  let isTwoLineTitle = gageId.value ? true : false
   let layout = getLayout(
     'maxFlowDates',
     titleText,
@@ -226,7 +237,6 @@ const buildChart = () => {
     {},
     {},
     legendConfig,
-    isTwoLineTitle,
     isAlaskaData
   )
 

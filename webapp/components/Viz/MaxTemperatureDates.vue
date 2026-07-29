@@ -52,7 +52,7 @@ const buildChart = () => {
   }
 
   let gageIdLine = getGageIdLine(gageId.value)
-  let titleText = `Modeled water temperature at date of annual maximum, 2034-2065${gageIdLine}`
+  let titleText = `Modeled water temperature at date of annual maximum, 2034-2065<br>${scenarioFullNames['ssp370']}${gageIdLine}`
 
   let historicalTemp = [props.streamMaxTempDates['historical']['temperature']]
   let historicalTempDate = [props.streamMaxTempDates['historical']['date']]
@@ -125,7 +125,6 @@ const buildChart = () => {
     traceorder: 'reversed',
   }
 
-  let isTwoLineTitle = gageId.value ? true : false
   const isAlaskaData = true
 
   const layout = getLayout(
@@ -135,7 +134,6 @@ const buildChart = () => {
     {},
     {},
     legendConfig,
-    isTwoLineTitle,
     isAlaskaData
   )
 
