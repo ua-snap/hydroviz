@@ -180,7 +180,11 @@ export const getLayout = (
       font: {
         size: 24,
       },
-      automargin: true,
+      // automargin must stay off: margins are managed by getLayoutPositions,
+      // and Plotly's automargin push path clips multi-line container-ref
+      // titles when the configured margin is within a few px of the title
+      // height (browser-dependent, e.g. Firefox).
+      automargin: false,
       yref: 'container',
       y: 0.93,
     },
