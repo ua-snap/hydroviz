@@ -76,7 +76,6 @@ onUnmounted(() => {
               >Access the source datasets<img
                 :src="externalLinkIcon"
                 alt="external link"
-                aria-hidden="true"
                 class="ml-1 external-link"
             /></a>
             used in this application, including references to academic papers
@@ -90,7 +89,6 @@ onUnmounted(() => {
               <img
                 :src="externalLinkIcon"
                 alt="external link"
-                aria-hidden="true"
                 class="ml-1 external-link"
             /></a>
           </li>
