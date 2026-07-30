@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useStreamSegmentStore } from '~/stores/streamSegment'
-import externalLinkIcon from '~/assets/external-link.svg'
+import externalLinkIcon from '~/assets/up-right-from-square.svg'
 const streamSegmentStore = useStreamSegmentStore()
 let { segmentId, segmentRegion } = storeToRefs(streamSegmentStore)
 
