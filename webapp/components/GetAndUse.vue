@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useStreamSegmentStore } from '~/stores/streamSegment'
+import externalLinkIcon from '~/assets/external-link.svg'
 const streamSegmentStore = useStreamSegmentStore()
 let { segmentId, segmentRegion } = storeToRefs(streamSegmentStore)
 
@@ -60,15 +61,22 @@ onUnmounted(() => {
           <li><CsvDownload /></li>
           <li>
             <a :href="hydrologyUrl" @click="trackApiClick"
-              >Access this data programmatically</a
+              >Access this data programmatically<span
+                class="tag is-info is-small ml-1"
+                >JSON</span
+              ></a
             >
             with downloads ready for R and Python analysis.
           </li>
           <li v-if="segmentRegion == 'conus'">
             <a
               href="https://www.sciencebase.gov/catalog/item/6373bd3bd34ed907bf6c6e25"
-              >Access the source datasets</a
-            >
+              >Access the source datasets<img
+                :src="externalLinkIcon"
+                alt="external link"
+                aria-hidden="true"
+                class="ml-1 external-link"
+            /></a>
             used in this application, including references to academic papers
             about the dataset.
           </li>
@@ -76,9 +84,13 @@ onUnmounted(() => {
             Read a
             <a href="https://pubs.usgs.gov/publication/tm6B9"
               >description of the National Hydrologic Model for use with the
-              Precipitation-Runoff Modeling System</a
-            >
-            (PRMS)
+              Precipitation-Runoff Modeling System (PRMS)
+              <img
+                :src="externalLinkIcon"
+                alt="external link"
+                aria-hidden="true"
+                class="ml-1 external-link"
+            /></a>
           </li>
         </ul>
         <CitationsConus v-if="segmentRegion == 'conus'" />

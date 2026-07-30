@@ -31,7 +31,10 @@ const trackCsvDownload = (type: 'stats' | 'climatology') => {
         '?format=csv'
       "
       @click="trackCsvDownload('stats')"
-      >complete modeled hydrologic statistics</a
+      >complete modeled hydrologic statistics<span
+        class="tag is-info is-small ml-1"
+        >CSV</span
+      ></a
     >
     or
     <a
@@ -43,8 +46,11 @@ const trackCsvDownload = (type: 'stats' | 'climatology') => {
         '?format=csv'
       "
       @click="trackCsvDownload('climatology')"
-      >modeled daily streamflow climatologies</a
+      >modeled daily streamflow climatologies<span
+        class="tag is-info is-small ml-1"
+        >CSV</span
+      ></a
     >
-    in CSV format for analysis in a spreadsheet.</span
-  >
+    in CSV format for analysis in a spreadsheet.
+  </span>
 </template>
