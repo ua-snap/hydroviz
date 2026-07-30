@@ -3,7 +3,7 @@ import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
 let { segmentId, segmentRegion } = storeToRefs(streamSegmentStore)
 
-// Icon by Font Awesome.
+// arrow-up-right-from-square" icon by Font Awesome, licensed under CC BY 4.0
 import externalLinkIcon from '~/assets/up-right-from-square.svg'
 
 const { $config } = useNuxtApp()
