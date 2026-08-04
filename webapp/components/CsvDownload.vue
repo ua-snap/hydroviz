@@ -10,7 +10,9 @@ const hydrologyPath = computed(() => {
     : '/conus_hydrology'
 })
 
-const trackCsvDownload = (type: 'stats' | 'climatology') => {
+const trackCsvDownload = (
+  type: 'stats' | 'climatology' | 'wt_stats' | 'wt_climatology'
+) => {
   window.trackUmamiEvent('csv-download', {
     type,
     segment: String(segmentId.value),
@@ -32,6 +34,19 @@ const trackCsvDownload = (type: 'stats' | 'climatology') => {
       "
       @click="trackCsvDownload('stats')"
       >complete modeled hydrologic statistics</a
+    ><template v-if="segmentRegion === 'alaska'"
+      >,
+      <a
+        :href="
+          $config.public.snapApiUrl +
+          hydrologyPath +
+          '/wt_stats/' +
+          segmentId +
+          '?format=csv'
+        "
+        @click="trackCsvDownload('wt_stats')"
+        >water temperature statistics</a
+      ></template
     >
     or
     <a
@@ -44,6 +59,19 @@ const trackCsvDownload = (type: 'stats' | 'climatology') => {
       "
       @click="trackCsvDownload('climatology')"
       >modeled daily streamflow climatologies</a
+    ><template v-if="segmentRegion === 'alaska'"
+      >,
+      <a
+        :href="
+          $config.public.snapApiUrl +
+          hydrologyPath +
+          '/wt_climatology/' +
+          segmentId +
+          '?format=csv'
+        "
+        @click="trackCsvDownload('wt_climatology')"
+        >water temperature climatologies</a
+      ></template
     >
     in CSV format for analysis in a spreadsheet.</span
   >
