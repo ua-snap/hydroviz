@@ -33,8 +33,8 @@ const trackCsvDownload = (
         '?format=csv'
       "
       @click="trackCsvDownload('stats')"
-      >complete modeled hydrologic statistics<span
-        class="tag is-info is-small ml-1"
+      >modeled hydrologic statistics<span
+        class="tag is-link is-light is-small ml-1"
         >CSV</span
       ></a
     ><template v-if="segmentRegion === 'alaska'"
@@ -49,11 +49,11 @@ const trackCsvDownload = (
         "
         @click="trackCsvDownload('wt_stats')"
         >modeled water temperature statistics<span
-          class="tag is-info is-small ml-1"
+          class="tag is-link is-light is-small ml-1"
           >CSV</span
         ></a
-      ></template
-    >, or
+      >, </template
+    ><template v-if="segmentRegion === 'conus'"> or </template>
     <a
       :href="
         $config.public.snapApiUrl +
@@ -64,7 +64,7 @@ const trackCsvDownload = (
       "
       @click="trackCsvDownload('climatology')"
       >modeled daily streamflow climatologies<span
-        class="tag is-info is-small ml-1"
+        class="tag is-link is-light is-small ml-1"
         >CSV</span
       ></a
     ><template v-if="segmentRegion === 'alaska'"
@@ -73,17 +73,17 @@ const trackCsvDownload = (
         :href="
           $config.public.snapApiUrl +
           hydrologyPath +
-          '/wt_climatology/' +
+          '/wt_modeled_climatology/' +
           segmentId +
           '?format=csv'
         "
         @click="trackCsvDownload('wt_climatology')"
         >modeled water temperature climatologies<span
-          class="tag is-info is-small ml-1"
+          class="tag is-link is-light is-small ml-1"
           >CSV</span
         ></a
       ></template
     >
-    in CSV format for analysis in a spreadsheet.
+    for analysis in a spreadsheet.
   </span>
 </template>

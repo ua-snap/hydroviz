@@ -64,7 +64,7 @@ onUnmounted(() => {
           <li>
             <a :href="hydrologyUrl" @click="trackApiClick"
               >Access this data programmatically<span
-                class="tag is-info is-small ml-1"
+                class="tag is-link is-light is-small ml-1"
                 >JSON</span
               ></a
             >
