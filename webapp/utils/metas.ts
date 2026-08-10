@@ -4,5 +4,6 @@ export const metas = {
   title: 'Hydrologic Outlooks',
   description:
     'Long-term hydrologic projections across multiple variables, scenarios, and models for the contintental United States, Alaska and parts of Western Canada.',
-  preview: 'preview.png',
+  url: 'https://futurehydrology.org',
+  preview: 'https://futurehydrology.org/preview.jpg',
 }
