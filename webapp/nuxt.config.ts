@@ -94,6 +94,7 @@ export default defineNuxtConfig({
         { name: 'description', content: metas.description },
         { property: 'og:title', content: metas.title },
         { property: 'og:description', content: metas.description },
+        { property: 'og:image', content: metas.preview },
         { name: 'twitter:card', content: 'summary' },
       ],
       link: [
