@@ -119,7 +119,7 @@
       <h2 class="title is-3">Where did the data come from?</h2>
       <div class="content is-size-5 clamp">
         <p>
-          The Hydrologic Futures tool is built primarily on PRMS (the
+          The Hydrologic Outlooks tool is built primarily on PRMS (the
           Precipitation Runoff Modeling System), a USGS model used to simulate
           streamflow and water budgets under a range of climate and land use
           scenarios. For Alaska and parts of western Canada, the tool instead
