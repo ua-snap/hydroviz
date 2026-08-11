@@ -184,7 +184,7 @@
             <li>
               He zooms in on the map and selects the
               <NuxtLink to="/conus/stream/559">Sheepscot River</NuxtLink
-              >&mdash;the outflow segment for a watershed, shown in red.
+              >&mdash;the outflow segment for a watershed, shown in orange.
             </li>
             <li>
               In the results summary, he notes that some model outputs vary by
