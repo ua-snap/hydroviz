@@ -36,7 +36,14 @@ h1 {
 }
 
 .external-link {
+	display: inline-block;
+	margin-right: 0.25em;
 	width: 1em;
 	height: 1em;
+	background-color: var(--bulma-link);
+	mask-image: url('~/assets/up-right-from-square.svg');
+	mask-size: contain;
+	mask-repeat: no-repeat;
+	mask-position: center;
 	vertical-align: -0.125em;
 }

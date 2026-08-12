@@ -3,9 +3,6 @@ import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
 let { segmentId, segmentRegion } = storeToRefs(streamSegmentStore)
 
-// arrow-up-right-from-square" icon by Font Awesome, licensed under CC BY 4.0
-import externalLinkIcon from '~/assets/up-right-from-square.svg'
-
 const { $config } = useNuxtApp()
 
 const hydrologyPath = computed(() =>
@@ -73,11 +70,11 @@ onUnmounted(() => {
           <li v-if="segmentRegion == 'conus'">
             <a
               href="https://www.sciencebase.gov/catalog/item/6373bd3bd34ed907bf6c6e25"
-              >Access the source datasets<img
-                :src="externalLinkIcon"
-                alt="external link"
+              >Access the source datasets<span
                 class="ml-1 external-link"
-            /></a>
+                aria-label="external link"
+              ></span
+            ></a>
             used in this application, including references to academic papers
             about the dataset.
           </li>
@@ -85,12 +82,20 @@ onUnmounted(() => {
             Read a
             <a href="https://pubs.usgs.gov/publication/tm6B9"
               >description of the National Hydrologic Model for use with the
-              Precipitation-Runoff Modeling System (PRMS)
-              <img
-                :src="externalLinkIcon"
-                alt="external link"
+              Precipitation-Runoff Modeling System (PRMS)<span
                 class="ml-1 external-link"
-            /></a>
+                aria-label="external link"
+              ></span
+            ></a>
+          </li>
+          <li v-if="segmentRegion == 'alaska'">
+            Read a
+            <a href="https://nps.edu/web/rasm"
+              >description of the Regional Arctic System Model (RASM)<span
+                class="ml-1 external-link"
+                aria-label="external link"
+              ></span
+            ></a>
           </li>
         </ul>
         <CitationsConus v-if="segmentRegion == 'conus'" />
