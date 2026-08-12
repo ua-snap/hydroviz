@@ -60,15 +60,21 @@ onUnmounted(() => {
           <li><CsvDownload /></li>
           <li>
             <a :href="hydrologyUrl" @click="trackApiClick"
-              >Access this data programmatically</a
+              >Access this data programmatically<span
+                class="tag is-link is-light is-small ml-1"
+                >JSON</span
+              ></a
             >
             with downloads ready for R and Python analysis.
           </li>
           <li v-if="segmentRegion == 'conus'">
             <a
               href="https://www.sciencebase.gov/catalog/item/6373bd3bd34ed907bf6c6e25"
-              >Access the source datasets</a
-            >
+              >Access the source datasets<span
+                class="ml-1 external-link"
+                aria-label="external link"
+              ></span
+            ></a>
             used in this application, including references to academic papers
             about the dataset.
           </li>
@@ -76,9 +82,20 @@ onUnmounted(() => {
             Read a
             <a href="https://pubs.usgs.gov/publication/tm6B9"
               >description of the National Hydrologic Model for use with the
-              Precipitation-Runoff Modeling System</a
-            >
-            (PRMS)
+              Precipitation-Runoff Modeling System (PRMS)<span
+                class="ml-1 external-link"
+                aria-label="external link"
+              ></span
+            ></a>
+          </li>
+          <li v-if="segmentRegion == 'alaska'">
+            Read a
+            <a href="https://nps.edu/web/rasm"
+              >description of the Regional Arctic System Model (RASM)<span
+                class="ml-1 external-link"
+                aria-label="external link"
+              ></span
+            ></a>
           </li>
         </ul>
         <CitationsConus v-if="segmentRegion == 'conus'" />
@@ -87,3 +104,10 @@ onUnmounted(() => {
     </div>
   </section>
 </template>
+
+<style scoped>
+.tag {
+  position: relative;
+  top: -2px;
+}
+</style>
