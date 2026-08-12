@@ -99,3 +99,10 @@ onUnmounted(() => {
     </div>
   </section>
 </template>
+
+<style scoped>
+.tag {
+  position: relative;
+  top: -2px;
+}
+</style>

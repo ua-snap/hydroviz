@@ -87,3 +87,10 @@ const trackCsvDownload = (
     for analysis in a spreadsheet.
   </span>
 </template>
+
+<style scoped>
+.tag {
+  position: relative;
+  top: -2px;
+}
+</style>

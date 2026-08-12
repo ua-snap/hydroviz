@@ -216,7 +216,7 @@ export const getLayout = (
     },
     autosize: true,
     dragmode: false,
-    hovermode: false,
+    // hovermode: false,
     annotations: [
       {
         text: getFooterText(isAlaskaData, chartType),
@@ -298,6 +298,7 @@ export const processLowessAndHydroYear = (
   doys: number[]
 ): number[] => {
   let hydroYearTraceData = convertDoysToHydroYearDoys(traceData)
+  return hydroYearTraceData
 
   // Bit tricky: we index the day-of-year as 1...366 for the x-axis
   // for the purpose of the lowess calculation, but the y-values represent
