@@ -106,7 +106,7 @@ onMounted(() => {
       :style="{ backgroundColor: outletRed }"
       aria-hidden="true"
     ></span>
-    Watershed outflow segments in the map below are shown in red.
+    Watershed outflow segments in the map below are shown in orange.
   </p>
   <div class="report-map-wrapper mb-6">
     <div id="report-map"></div>

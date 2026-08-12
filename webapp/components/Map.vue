@@ -303,7 +303,12 @@ const updatePositionInUrl = () => {
   const c = map.getCenter()
   const query: Record<string, string> = {
     ...safeQuery(),
-    [paramKeys.phase]: String(currentPhase.value),
+  }
+  // Only persist the phase in the URL if it's not the default (Overview).
+  if (currentPhase.value !== MapPhase.Overview) {
+    query[paramKeys.phase] = String(currentPhase.value)
+  } else {
+    delete query[paramKeys.phase]
   }
   if (currentPhase.value >= MapPhase.WmsHuc) {
     query[paramKeys.lat] = c.lat.toFixed(5)
@@ -336,7 +341,8 @@ const goBackPhase = () => {
     query[paramKeys.phase] = String(MapPhase.WmsHuc)
   } else {
     // Phase 1 -> Phase 0, back to the default overview extent.
-    query[paramKeys.phase] = String(MapPhase.Overview)
+    // Don't persist the Overview phase (it's the default).
+    delete query[paramKeys.phase]
     delete query[paramKeys.lat]
     delete query[paramKeys.lng]
   }

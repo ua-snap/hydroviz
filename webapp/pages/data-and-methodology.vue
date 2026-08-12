@@ -64,7 +64,7 @@
             >) model. These projected changes are landscape-level rather than
             site-specific, and are based on projected shifts in logging,
             wildfire, agricultural land use, and other anthropogenic uses. The
-            Hydrologic Futures tool offers this modified dataset via CSV data
+            Hydrologic Outlooks tool offers this modified dataset via CSV data
             downloads for more extensive analysis. This online tool shows values
             with static, not dynamic, land cover.
           </p>
