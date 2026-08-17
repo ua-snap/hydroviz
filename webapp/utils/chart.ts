@@ -216,7 +216,7 @@ export const getLayout = (
     },
     autosize: true,
     dragmode: false,
-    // hovermode: false,
+    hovermode: false,
     annotations: [
       {
         text: getFooterText(isAlaskaData, chartType),
