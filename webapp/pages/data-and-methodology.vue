@@ -418,8 +418,8 @@
                 Hay, L.E., Leavesley, G.H., Clark, M.P., Markstrom, S.L., Viger,
                 R.J. and Umemoto, M. (2006),
                 <cite class="resource-title"
-                  >STEP WISE, MULTIPLE OBJECTIVE CALIBRATION OF A HYDROLOGIC
-                  MODEL FOR A SNOWMELT DOMINATED BASIN1.</cite
+                  >Step Wise, Multiple Objective Calibration of a Hydrologic
+                  Model for a Snowmelt Dominated Basin.</cite
                 >
                 JAWRA Journal of the American Water Resources Association, 42:
                 877-890.
