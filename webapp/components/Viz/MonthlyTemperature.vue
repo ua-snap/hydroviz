@@ -7,6 +7,7 @@ import {
   getDataRange,
   getOffsetXTickVals,
   getGageIdLine,
+  TEMPERATURE_MONTH_KEYS,
 } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
@@ -18,20 +19,8 @@ import { useStreamSegmentStore } from '~/stores/streamSegment'
 const streamSegmentStore = useStreamSegmentStore()
 let { segmentId, gageId, appContext, appEra } = storeToRefs(streamSegmentStore)
 
-const monthKeys = [
-  'oct',
-  'nov',
-  'dec',
-  'jan',
-  'feb',
-  'mar',
-  'apr',
-  'may',
-  'jun',
-  'jul',
-  'aug',
-  'sep',
-]
+// This chart shows only the May 1 - Sept 30 window, not the full hydro year.
+const monthKeys = TEMPERATURE_MONTH_KEYS
 
 const monthLabels = {
   oct: 'Oct',
@@ -47,6 +36,10 @@ const monthLabels = {
   aug: 'Aug',
   sep: 'Sep',
 }
+
+const displayedMonthLabels = monthKeys.map(
+  (monthKey: string) => monthLabels[monthKey]
+)
 
 onMounted(() => {
   initializeChart(
@@ -84,7 +77,7 @@ const buildChart = () => {
   }
 
   let historicalTrace = {
-    x: getOffsetXTickVals(xTickValOffsets, 'historical'),
+    x: getOffsetXTickVals(xTickValOffsets, 'historical', monthKeys.length),
     y: historicalTempDataArray,
     type: 'scatter',
     mode: 'markers',
@@ -105,7 +98,11 @@ const buildChart = () => {
   let showLegend = true
 
   // Use the same xTickVals as CONUS rcp60 scenario
-  let xTickVals = getOffsetXTickVals(xTickValOffsets, 'projected')
+  let xTickVals = getOffsetXTickVals(
+    xTickValOffsets,
+    'projected',
+    monthKeys.length
+  )
 
   monthKeys.forEach((monthKey, idx) => {
     let tempValues = projectedTempData[`wt_mean_${monthKey}`]
@@ -129,8 +126,8 @@ const buildChart = () => {
   const titleText = `Mean monthly modeled water temperature, 2034-2065<br>${scenarioFullNames['ssp370']}${gageIdLine}`
 
   let xAxisSettings = {
-    tickvals: $_.range(Object.values(monthLabels).length),
-    ticktext: Object.values(monthLabels),
+    tickvals: $_.range(displayedMonthLabels.length),
+    ticktext: displayedMonthLabels,
     dtick: 1,
   }
 

@@ -10,6 +10,36 @@ const generalizedChartTypes: Record<string, string> = {
   maxTempDates: 'maxDates',
 }
 
+// The Alaska water temperature charts are limited to this window. DOYs follow
+// the same non-leap numbering the rest of this file uses for month boundaries.
+export const TEMPERATURE_START_DOY = 121 // May 1
+export const TEMPERATURE_END_DOY = 273 // Sept 30
+
+// Months of that window, in the order the monthly temperature chart plots them.
+export const TEMPERATURE_MONTH_KEYS = ['may', 'jun', 'jul', 'aug', 'sep']
+
+// Narrow a hydro-year-ordered (Oct 1 first) series to a calendar DOY window.
+// Callers smooth over the full year before slicing, so the retained values are
+// fitted against their real neighbors instead of treating May 1 as a series
+// edge.
+export const sliceToDoyWindow = <T>(
+  hydroYearSeries: T[],
+  hydroYearDoys: number[],
+  startDoy: number = TEMPERATURE_START_DOY,
+  endDoy: number = TEMPERATURE_END_DOY
+): T[] => {
+  const start = hydroYearDoys.indexOf(startDoy)
+  const end = hydroYearDoys.indexOf(endDoy)
+
+  if (start === -1 || end === -1 || end < start) {
+    throw new Error(
+      `Cannot slice to DOY window ${startDoy}-${endDoy}: not found in series.`
+    )
+  }
+
+  return hydroYearSeries.slice(start, end + 1)
+}
+
 export const getConfig = (filename: string): Partial<Config> => {
   return {
     responsive: true, // changes the height / width dynamically for charts
@@ -73,7 +103,7 @@ const getFooterText = (isAlaskaData: boolean, chartType: string): string => {
 
   if (isAlaskaData) {
     footerText +=
-      'Data provided by Dylan Blaskey, Keith Musselman, Andrew Newman, &amp; Yifan Cheng. (2024). doi:10.18739/A25M62870'
+      'Data: NSF Arctic Rivers Project | Blaskey et al. (2024) | doi:10.18739/A25M62870'
   } else {
     footerText +=
       'Historical data provided by U.S. Geological Survey National Water Information System. doi:10.5066/F7P55KJN<br>' +
@@ -316,9 +346,9 @@ export const processLowessAndHydroYear = (
 // Get offset x-tick values for monthly charts
 export const getOffsetXTickVals = (
   xTickValOffsets: Record<string, number>,
-  scenario: string
+  scenario: string,
+  numMonths: number = 12
 ): number[] => {
-  const numMonths = 12
   const xTickVals = Array.from({ length: numMonths }, (_, i) => i)
   const offset: number = xTickValOffsets[scenario] ?? 0
   const offsetXTickVals = xTickVals.map(tickVal => tickVal + offset)

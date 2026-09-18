@@ -108,6 +108,77 @@
             used in this dataset, and
             <strong> full definitions of all variables </strong>.
           </p>
+          <p>The modeling framework is described in detail in:</p>
+          <ul>
+            <li>
+              Cheng, Y., A. Craig, K. Musselman, A. Bennett, M. Seefeldt, J.
+              Hamman, and A. J. Newman. 2025.
+              <cite class="resource-title"
+                >&ldquo;Coupled High-Resolution Land-Atmosphere Modeling for
+                Hydroclimate and Terrestrial Hydrology in Alaska and the Yukon
+                River Basin (1990&ndash;2021).&rdquo;</cite
+              >
+              Journal of Geophysical Research: Atmospheres 130(1):
+              e2024JD041185.
+              <a href="https://doi.org/10.1029/2024JD041185"
+                >https://doi.org/10.1029/2024JD041185</a
+              >
+            </li>
+            <li>
+              Cheng, Y., K. N. Musselman, S. Swenson, D. Lawrence, J. Hamman, K.
+              Dagon, D. Kennedy, and A. J. Newman. 2023.
+              <cite class="resource-title"
+                >&ldquo;Moving Land Models Toward More Actionable Science: A
+                Novel Application of the Community Terrestrial Systems Model
+                Across Alaska and the Yukon River Basin.&rdquo;</cite
+              >
+              Water Resources Research 59(1): e2022WR032204.
+              <a href="https://doi.org/10.1029/2022WR032204"
+                >https://doi.org/10.1029/2022WR032204</a
+              >
+            </li>
+          </ul>
+
+          <h5>Co-production</h5>
+          <p>
+            The modeling and data products were developed through a
+            collaborative process designed to improve their relevance and
+            usability for communities and decision makers. That process, and
+            what it meant for the modeling work, is described in:
+          </p>
+          <ul>
+            <li>
+              Herman-Mercer, N., A. Andre, V. Buschman, D. Blaskey, C. Brooks,
+              Y. Cheng, E. Combs, K. Cozzetto, S. Fitka, J. Koch, A. Lawlor, E.
+              Moses, E. Murray, E. Mutter, A. J. Newman, C. Prince, P. Salmon,
+              J. Tlen, R. Toohey, M. Williams, and K. N. Musselman. 2023.
+              <cite class="resource-title"
+                >&ldquo;The Arctic Rivers Project: Using an Equitable
+                Co-Production Framework for Integrating Meaningful Community
+                Engagement and Science to Understand Climate
+                Impacts.&rdquo;</cite
+              >
+              Community Science 2(4): e2022CSJ000024.
+              <a href="https://doi.org/10.1029/2022CSJ000024"
+                >https://doi.org/10.1029/2022CSJ000024</a
+              >
+            </li>
+            <li>
+              Cheng, Y., N. Herman-Mercer, A. Newman, K. Musselman, C.
+              Woelfle-Hazard, D. Blaskey, C. Brooks, T. Carlson, J. Koch, M.
+              Morrison, E. Mutter, D. Sarna-Wojcicki, P. Thomas, J. Tlen, and R.
+              Toohey. 2025.
+              <cite class="resource-title"
+                >&ldquo;Toward Co-Designed Earth System Models: Reflecting
+                End-User Priorities in Local Applications From a Modeler&rsquo;s
+                Perspective.&rdquo;</cite
+              >
+              AGU Advances 6(6): e2025AV001921.
+              <a href="https://doi.org/10.1029/2025AV001921"
+                >https://doi.org/10.1029/2025AV001921</a
+              >
+            </li>
+          </ul>
         </div>
         <div class="block pt-5" id="citation">
           <h3 class="title is-3">
@@ -166,12 +237,12 @@
                 <cite class="resource-title"
                   >&ldquo;Coupled High-Resolution Land-Atmosphere Modeling for
                   Hydroclimate and Terrestrial Hydrology in Alaska and the Yukon
-                  River Basin (1990-2021).&rdquo;</cite
+                  River Basin (1990&ndash;2021).&rdquo;</cite
                 >
                 Journal of Geophysical Research: Atmospheres 130(1):
-                e2024JD041185
-                <a href="https://doi.org/10.22541/essoar.171052504.47039219/v1"
-                  >https://doi.org/10.22541/essoar.171052504.47039219/v1</a
+                e2024JD041185.
+                <a href="https://doi.org/10.1029/2024JD041185"
+                  >https://doi.org/10.1029/2024JD041185</a
                 >
               </li>
               <li>
@@ -187,6 +258,38 @@
                 <a href="https://doi.org/10.5065/ZPSB-PS82"
                   >https://doi.org/10.5065/ZPSB-PS82</a
                 >.
+              </li>
+              <li>
+                Cheng, Y., N. Herman-Mercer, A. Newman, K. Musselman, C.
+                Woelfle-Hazard, D. Blaskey, C. Brooks, T. Carlson, J. Koch, M.
+                Morrison, E. Mutter, D. Sarna-Wojcicki, P. Thomas, J. Tlen, and
+                R. Toohey. 2025.
+                <cite class="resource-title"
+                  >&ldquo;Toward Co-Designed Earth System Models: Reflecting
+                  End-User Priorities in Local Applications From a
+                  Modeler&rsquo;s Perspective.&rdquo;</cite
+                >
+                AGU Advances 6(6): e2025AV001921.
+                <a href="https://doi.org/10.1029/2025AV001921"
+                  >https://doi.org/10.1029/2025AV001921</a
+                >
+              </li>
+              <li>
+                Herman-Mercer, N., A. Andre, V. Buschman, D. Blaskey, C. Brooks,
+                Y. Cheng, E. Combs, K. Cozzetto, S. Fitka, J. Koch, A. Lawlor,
+                E. Moses, E. Murray, E. Mutter, A. J. Newman, C. Prince, P.
+                Salmon, J. Tlen, R. Toohey, M. Williams, and K. N. Musselman.
+                2023.
+                <cite class="resource-title"
+                  >&ldquo;The Arctic Rivers Project: Using an Equitable
+                  Co-Production Framework for Integrating Meaningful Community
+                  Engagement and Science to Understand Climate
+                  Impacts.&rdquo;</cite
+                >
+                Community Science 2(4): e2022CSJ000024.
+                <a href="https://doi.org/10.1029/2022CSJ000024"
+                  >https://doi.org/10.1029/2022CSJ000024</a
+                >
               </li>
               <li>
                 LaFontaine, J.H., Hay, L.E., Viger, R.J., Markstrom, S.L.,
