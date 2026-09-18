@@ -23,8 +23,8 @@
     <blockquote>
       Cassano, J. J., A. DuVivier, A. Roberts, M. Hughes, M. Seefeldt, M.
       Brunke, A. Craig, B. Fisel, W. Gutowski, J. Hamman, M. Higgins, W.
-      Maslowski, B. Nijssen, R. Osinski, &amp; X. Zeng (2017). Development of the
-      Regional Arctic System Model (RASM): Near-Surface Atmospheric Climate
+      Maslowski, B. Nijssen, R. Osinski, &amp; X. Zeng (2017). Development of
+      the Regional Arctic System Model (RASM): Near-Surface Atmospheric Climate
       Sensitivity. Journal of Climate,
       <a href="https://doi.org/10.1175/JCLI-D-15-0775.1"
         >https://doi.org/10.1175/JCLI-D-15-0775.1</a
@@ -53,10 +53,11 @@
     </blockquote>
 
     <blockquote>
-      Cheng Y., A. Craig, K. Musselman, A. Bennett, M. Seefeldt, J. Hamman, &amp; A.
-      J. Newman (2024). Coupled high-resolution land-atmosphere modeling for
-      hydroclimate and terrestrial hydrology in Alaska and the Yukon River Basin
-      (1990–2021). Journal of Geophysical Research: Atmospheres,
+      Cheng Y., A. Craig, K. Musselman, A. Bennett, M. Seefeldt, J. Hamman,
+      &amp; A. J. Newman (2025). Coupled high-resolution land-atmosphere
+      modeling for hydroclimate and terrestrial hydrology in Alaska and the
+      Yukon River Basin (1990–2021). Journal of Geophysical Research:
+      Atmospheres,
       <a href="https://doi.org/10.1029/2024JD041185"
         >https://doi.org/10.1029/2024JD041185</a
       >.
@@ -69,6 +70,40 @@
       resolution. NSF National Center for Atmospheric Research,
       <a href="https://doi.org/10.5065/ZPSB-PS82"
         >https://doi.org/10.5065/ZPSB-PS82</a
+      >.
+    </blockquote>
+
+    <blockquote>
+      Cheng Y., K. N. Musselman, S. Swenson, D. Lawrence, J. Hamman, K. Dagon,
+      D. Kennedy, &amp; A. J. Newman (2023). Moving land models toward more
+      actionable science: A novel application of the Community Terrestrial
+      Systems Model across Alaska and the Yukon River Basin. Water Resources
+      Research,
+      <a href="https://doi.org/10.1029/2022WR032204"
+        >https://doi.org/10.1029/2022WR032204</a
+      >.
+    </blockquote>
+
+    <blockquote>
+      Herman-Mercer N., A. Andre, V. Buschman, D. Blaskey, C. Brooks, Y. Cheng,
+      E. Combs, K. Cozzetto, S. Fitka, J. Koch, A. Lawlor, E. Moses, E. Murray,
+      E. Mutter, A. J. Newman, C. Prince, P. Salmon, J. Tlen, R. Toohey, M.
+      Williams, &amp; K. N. Musselman (2023). The Arctic Rivers Project: Using
+      an equitable co-production framework for integrating meaningful community
+      engagement and science to understand climate impacts. Community Science,
+      <a href="https://doi.org/10.1029/2022CSJ000024"
+        >https://doi.org/10.1029/2022CSJ000024</a
+      >.
+    </blockquote>
+
+    <blockquote>
+      Cheng Y., N. Herman-Mercer, A. Newman, K. Musselman, C. Woelfle-Hazard, D.
+      Blaskey, C. Brooks, T. Carlson, J. Koch, M. Morrison, E. Mutter, D.
+      Sarna-Wojcicki, P. Thomas, J. Tlen, &amp; R. Toohey (2025). Toward
+      co-designed Earth system models: Reflecting end-user priorities in local
+      applications from a modeler&rsquo;s perspective. AGU Advances,
+      <a href="https://doi.org/10.1029/2025AV001921"
+        >https://doi.org/10.1029/2025AV001921</a
       >.
     </blockquote>
   </div>
