@@ -7,6 +7,8 @@ import {
   getDataRange,
   convertTo360,
   getGageIdLine,
+  TEMPERATURE_START_DOY,
+  TEMPERATURE_END_DOY,
 } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
@@ -137,13 +139,31 @@ const buildChart = () => {
     isAlaskaData
   )
 
-  let firstOfMonthValues = [
-    1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335,
-  ]
+  // Only label the months inside the displayed May 1 - Sept 30 window.
+  const monthStarts = [
+    { doy: 1, label: 'Jan' },
+    { doy: 32, label: 'Feb' },
+    { doy: 60, label: 'Mar' },
+    { doy: 91, label: 'Apr' },
+    { doy: 121, label: 'May' },
+    { doy: 152, label: 'Jun' },
+    { doy: 182, label: 'Jul' },
+    { doy: 213, label: 'Aug' },
+    { doy: 244, label: 'Sep' },
+    { doy: 274, label: 'Oct' },
+    { doy: 305, label: 'Nov' },
+    { doy: 335, label: 'Dec' },
+  ].filter(
+    ({ doy }) => doy >= TEMPERATURE_START_DOY && doy <= TEMPERATURE_END_DOY
+  )
 
-  firstOfMonthValues = firstOfMonthValues.map((doy: number) => {
-    return convertTo360(doy)
-  })
+  const firstOfMonthValues = monthStarts.map(({ doy }) => convertTo360(doy))
+
+  // Plotly measures `sector` counterclockwise from due East, while this axis
+  // runs clockwise from due North, so a data angle maps to 90 - angle.
+  const sectorEnd = 90 - convertTo360(TEMPERATURE_START_DOY) // May 1 edge
+  const sectorStart = 90 - convertTo360(TEMPERATURE_END_DOY) // Sept 30 edge
+  const sector = [sectorStart, sectorEnd]
 
   let firstPlotDomain = {}
   if (appContext.value === 'mid') {
@@ -167,26 +187,18 @@ const buildChart = () => {
     angularaxis: {
       tickmode: 'array',
       tickvals: firstOfMonthValues,
-      ticktext: [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec',
-      ],
+      ticktext: monthStarts.map(({ label }) => label),
       direction: 'clockwise',
       gridcolor: axisColor,
     },
     radialaxis: {
-      angle: 90,
-      tickangle: 90,
+      // Ride the May 1 edge of the sector. Due north (the full-circle default)
+      // now sits outside the sector, which drops the tick labels and leaves the
+      // axis line crossing the title.
+      angle: sectorEnd,
+      // Polar tick angles are relative to the axis, so matching it keeps the
+      // labels horizontal, as on the max flow dates chart.
+      tickangle: sectorEnd,
       ticksuffix: ' °C',
       tickmode: 'auto',
       nticks: 4,
@@ -194,6 +206,7 @@ const buildChart = () => {
       range: [yMin, yMax],
     },
     domain: firstPlotDomain,
+    sector: sector,
   }
 
   let pngName = `max-temperature-dates_${segmentId.value}_2034-2065`
