@@ -55,6 +55,10 @@ onUnmounted(() => {
   <section class="section" id="get-and-use" ref="sectionEl">
     <div class="container">
       <h3 class="title is-3">Get &amp; use this data</h3>
+      <p v-if="segmentRegion == 'alaska'" class="content is-size-5 clamp">
+        <strong>Note:</strong> all stream temperature data are included in the
+        downloads, but are only validated for May&ndash;September.
+      </p>
       <div class="content is-size-5 clamp">
         <ul>
           <li><CsvDownload /></li>

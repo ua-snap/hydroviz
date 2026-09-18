@@ -67,6 +67,22 @@ const showIfSure = () => {
     </section>
     <section class="section">
       <div class="container">
+        <div class="content is-size-5 clamp">
+          <h3 class="title is-3">Flow</h3>
+          <ul>
+            <li>
+              <strong
+                >This model assumes that glaciers and snowmelt are
+                constant</strong
+              >, and it only accounts for changes in air temperature and
+              precipitation as a driver of changing water flow.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
         <h4 class="title is-4">Mean monthly flow</h4>
         <div class="content clamp is-size-5 mb-6">
           <p>
@@ -132,6 +148,36 @@ const showIfSure = () => {
           </p>
         </div>
         <VizMaxFlowDates :stream-max-flow-dates="streamMaxFlowDates" />
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
+        <div class="content is-size-5">
+          <h3 class="title is-3">Temperature</h3>
+          <ul>
+            <li>
+              <strong>
+                Model data for temperature are only validated for
+                May&ndash;September.
+              </strong>
+            </li>
+            <li>
+              Because headwaters receive no upstream inflow, their temperatures
+              are modeled from air temperature alone using a statistical
+              relationship.
+            </li>
+            <li>
+              Groundwater is difficult to characterize, and where it makes up a
+              substantial amount of segment flow the model may be less accurate.
+              Groundwater is not included in the model.
+            </li>
+            <li>
+              The model assumes that glaciers and snowmelt are constant, and it
+              only accounts for changes in air temperature as a driver of
+              changing water temperature.
+            </li>
+          </ul>
+        </div>
       </div>
     </section>
 
