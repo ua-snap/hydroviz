@@ -26,8 +26,18 @@ const year = computed(() => {
             <a href="https://secasc.ncsu.edu"
               >Southeast Climate Adaptation Science Center</a
             >
-            (SE CASC). Additional support for integrating the Arctic Rivers
-            dataset provided through the
+            (SE CASC).
+          </p>
+
+          <p>
+            The Alaska and Northwestern Canada dataset was developed as part of
+            the NSF-funded
+            <a
+              href="https://www.colorado.edu/research/arctic-rivers/"
+              rel="external"
+              >Arctic Rivers Project</a
+            >. Additional support for integrating the Arctic Rivers dataset
+            provided through the
             <a href="https://akcasc.org/"
               >Alaska Climate Adaptation Science Center</a
             >

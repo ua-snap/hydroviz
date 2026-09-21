@@ -9,6 +9,9 @@ import {
   convertDoysToHydroYearDoys,
   processLowessAndHydroYear,
   getGageIdLine,
+  sliceToDoyWindow,
+  TEMPERATURE_START_DOY,
+  TEMPERATURE_END_DOY,
 } from '~/utils/chart'
 const { $Plotly, $_ } = useNuxtApp()
 import type { Data } from 'plotly.js'
@@ -22,6 +25,12 @@ let { segmentId, gageId, appContext, appEra } = storeToRefs(streamSegmentStore)
 
 const doys = $_.range(1, 366 + 1)
 const hydroDoys = convertDoysToHydroYearDoys(doys)
+
+// This chart shows only May 1 - Sept 30. Series are smoothed across the full
+// hydro year first, then narrowed to the window.
+const windowDoys = sliceToDoyWindow(hydroDoys, hydroDoys)
+const toWindow = (series: number[]): number[] =>
+  sliceToDoyWindow(series, hydroDoys)
 
 onMounted(() => {
   initializeChart(
@@ -65,8 +74,8 @@ function processProjectedAlaskaData(hg, traces: Data[]) {
   )
 
   let meanMinTrace = {
-    x: hydroDoys,
-    y: hydroYearProjectedMeanMin,
+    x: windowDoys,
+    y: toWindow(hydroYearProjectedMeanMin),
     type: 'scatter',
     mode: 'line',
     line: { color: scenarioColors['historical'].fill, width: 0 },
@@ -75,8 +84,8 @@ function processProjectedAlaskaData(hg, traces: Data[]) {
   }
 
   let meanMaxTrace = {
-    x: hydroDoys,
-    y: hydroYearProjectedMeanMax,
+    x: windowDoys,
+    y: toWindow(hydroYearProjectedMeanMax),
     type: 'scatter',
     fill: 'tonexty',
     line: { color: scenarioColors['historical'].fill, width: 0 },
@@ -105,8 +114,8 @@ function processProjectedAlaskaData(hg, traces: Data[]) {
 
     let hydroOrderedSmoothedY = processLowessAndHydroYear(traceData, doys)
     let trace = {
-      x: hydroDoys,
-      y: hydroOrderedSmoothedY,
+      x: windowDoys,
+      y: toWindow(hydroOrderedSmoothedY),
       type: 'scatter',
       mode: 'lines',
       line: {
@@ -140,8 +149,8 @@ const buildChart = hg => {
   )
 
   let historicalMinTrace = {
-    x: hydroDoys,
-    y: hydroYearHistoricalDataMin,
+    x: windowDoys,
+    y: toWindow(hydroYearHistoricalDataMin),
     type: 'scatter',
     mode: 'line',
     line: { color: scenarioColors['historical'].fill, width: 0 },
@@ -150,8 +159,8 @@ const buildChart = hg => {
   }
 
   let historicalMaxTrace = {
-    x: hydroDoys,
-    y: hydroYearHistoricalDataMax,
+    x: windowDoys,
+    y: toWindow(hydroYearHistoricalDataMax),
     type: 'scatter',
     fill: 'tonexty',
     mode: 'none',
@@ -160,8 +169,8 @@ const buildChart = hg => {
   }
 
   let historicalMeanTrace = {
-    x: hydroDoys,
-    y: hydroYearHistoricalDataMean,
+    x: windowDoys,
+    y: toWindow(hydroYearHistoricalDataMean),
     type: 'scatter',
     mode: 'line',
     line: { color: '#f0f0f0', width: 3 },
@@ -175,8 +184,12 @@ const buildChart = hg => {
   processProjectedAlaskaData(hg, traces)
 
   // These numbers correspond to the 1st of each month in a 366-day year,
-  // oriented by the hydro year.
-  let xTickVals = [274, 305, 335, 1, 32, 60, 91, 121, 152, 182, 213, 244]
+  // oriented by the hydro year, then narrowed to the displayed window.
+  let xTickVals = [
+    274, 305, 335, 1, 32, 60, 91, 121, 152, 182, 213, 244,
+  ].filter(
+    (doy: number) => doy >= TEMPERATURE_START_DOY && doy <= TEMPERATURE_END_DOY
+  )
   let xTickLabels = xTickVals.map((doy: number) => {
     return doyToDateString(doy, true)
   })
