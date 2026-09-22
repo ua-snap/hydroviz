@@ -103,10 +103,7 @@ const showIfSure = () => {
       <div class="container">
         <h4 class="title is-4">Hydrograph</h4>
         <!-- Show if sure -->
-        <div
-          v-if="lowFlow && !showLowFlowHydrograph"
-          class="content clamp is-size-5"
-        >
+        <div v-if="lowFlow" class="content clamp is-size-5">
           <p>
             ⚠️ Because this stream segment has relatively low mean annual flow
             (<100 cf/s), a daily hydrograph showing ranges of model outputs can
@@ -114,7 +111,9 @@ const showIfSure = () => {
             flow regime, and is not displayed by default. The monthly chart
             above aggregates these changes and shows a clearer signal of
             possible future change.
-            <a @click.prevent="showIfSure">Show hydrograph anyway.</a>
+            <a v-if="!showLowFlowHydrograph" @click.prevent="showIfSure"
+              >Show hydrograph anyway.</a
+            >
           </p>
         </div>
 
